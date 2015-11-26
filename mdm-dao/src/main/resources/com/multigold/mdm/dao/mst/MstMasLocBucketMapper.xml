@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.MstMasLocBucketMapper">
+
+	<resultMap id="mstMasLocBucketResultMap" type="mstMasLocBucket">
+		<id property="masLoc" column="MAS_LOC" />    
+		<id property="bucket" column="BUCKET" />                                     
+	</resultMap>
+		<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		 insert into mst_mas_loc_bucket(MAS_LOC,BUCKET)values
+	</sql>
+	
+		<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstMasLocBucket">
+		<include refid="insertEntityHeadSql" />
+		(#{masLoc},#{bucket})
+	</insert>
+	
+</mapper>

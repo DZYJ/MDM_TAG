@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<settings>
+		<!-- changes from the defaults -->
+		<setting name="lazyLoadingEnabled" value="false" />
+		<setting name="cacheEnabled" value="false" />
+		<setting name="callSettersOnNulls" value="true" />
+	</settings>
+
+	<typeAliases>
+
+		<!-- log -->
+		<typeAlias alias="securityOperationLog" type="com.multigold.mdm.entity.system.OperationLog" />
+		<typeAlias alias="securityLoginSuccessLog" type="com.multigold.mdm.entity.system.LoginSuccessLog" />
+		<typeAlias alias="securityLoginFailLog" type="com.multigold.mdm.entity.system.LoginFailLog" />
+
+		<!-- MST -->
+		<typeAlias alias="mstLsp" type="com.multigold.mdm.entity.mst.MstLsp" />
+		<typeAlias alias="mstVessel" type="com.multigold.mdm.entity.mst.Vessel" />
+		<typeAlias alias="dataDictionary" type="com.multigold.mdm.entity.mst.DataDictionary" />
+		<typeAlias alias="sysParamConfig" type="com.multigold.mdm.entity.system.SysParamConfig" />
+		<typeAlias alias="mstDispatcher" type="com.multigold.mdm.entity.mst.Dispatcher" />
+		<typeAlias alias="mstSite" type="com.multigold.mdm.entity.mst.Site" />
+		<typeAlias alias="mstCarInfo" type="com.multigold.mdm.entity.mst.CarInfo" />
+		<typeAlias alias="driverInfo" type="com.multigold.mdm.entity.mst.DriverInfo" />
+        <typeAlias alias="mstSelfPickup" type="com.multigold.mdm.entity.mst.MstSelfPickup" />
+		<typeAlias alias="mstTempLspHub" type="com.multigold.mdm.entity.mst.TempLspHub" />
+		<typeAlias alias="mstHubProcessMatrix" type="com.multigold.mdm.entity.mst.HubProcessMatrix" />
+		<typeAlias alias="mstHubProcessMatrixHistory" type="com.multigold.mdm.entity.mst.HubProcessMatrixHistory" />
+		<typeAlias alias="mstLocation" type="com.multigold.mdm.entity.mst.MstLocation"/>
+		<typeAlias alias="mstMasLocBucket" type="com.multigold.mdm.entity.mst.MstMasLocBucket"/>
+		
+		<!-- ADDRESS -->
+		<typeAlias alias="division" type="com.multigold.mdm.entity.address.Division" />
+		
+		<!-- masloc -->
+		<typeAlias alias="mstMasloc" type="com.multigold.mdm.entity.mst.MasLoc" />
+		<typeAlias alias="mstLspDaAmount" type="com.multigold.mdm.entity.mst.MstLspDaAmount" />
+		<typeAlias alias="mstLspDaShare" type="com.multigold.mdm.entity.mst.MstLspDaShare" />
+		<typeAlias alias="mstLspTransport" type="com.multigold.mdm.entity.mst.MstLspTransport" />
+		<typeAlias alias="mstPickup" type="com.multigold.mdm.entity.mst.MstLspPickupSchedule" />
+		<typeAlias alias="lspDayHalfInfo" type="com.multigold.mdm.entity.mst.LspDayHalfInfo" />
+		<typeAlias alias="mstTransCapacity" type="com.multigold.mdm.entity.mst.MstTransCapacity" />
+		
+	</typeAliases>
+
+	<mappers>
+		<mapper resource="com/multigold/mdm/dao/common/common.xml" />
+	</mappers>
+
+</configuration>

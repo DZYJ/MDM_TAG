@@ -1,0 +1,1 @@
+update security_permission  set sp_visible = "N" where sp_id=4207 AND SYS_ID = 4

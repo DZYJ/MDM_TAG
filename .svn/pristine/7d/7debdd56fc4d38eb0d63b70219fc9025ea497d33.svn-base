@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.MstLspPickupScheduleMapper">
+
+	<resultMap id="mstPickupResultMap" type="mstPickup">
+		<id property="id" column="ID" />    
+		<id property="masLoc" column="MAS_LOC" />                                     
+		<id property="masName" column="DESCR" />                                     
+		<id property="lspCode" column="LSP_CODE" />                        
+		<id property="day" column="DAY" />   
+		<id property="time" column="TIME" /> 
+		<id property="active" column="ACTIVE" />                            
+		<id property="insertDate" column="INSERT_DATE" />                             
+		<id property="insertBy" column="INSERT_BY" />                            
+		<id property="modifiedDate" column="MODIFIED_DATE" />                              
+		<id property="modifiedBy" column="MODIFIED_BY" />                                                 
+	</resultMap>
+	
+	<!-- 批量插入 -->
+    <insert id="insertPickupList"  parameterType="java.util.List">
+        INSERT INTO MST_LSP_PICKUP_SCHEDULE (MAS_LOC,LSP_CODE,DAY,TIME,ACTIVE,INSERT_BY,INSERT_DATE,MODIFIED_BY,MODIFIED_DATE)
+        values  
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.masLoc},#{item.lspCode},#{item.day},#{item.time},#{item.active},#{item.insertBy},#{item.insertDate},#{item.modifiedBy},#{item.modifiedDate})  
+        </foreach>  
+    </insert>
+    
+    <!-- 根据ID删除实体 -->
+	<delete id="deleteByLspCode" parameterType="String">
+		DELETE 	FROM MST_LSP_PICKUP_SCHEDULE 
+		WHERE LSP_CODE=#{lspCode}
+	</delete>
+
+
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByLsp" parameterType="String" resultMap="mstPickupResultMap">
+		<include refid="queryEntityHeadSql" />
+		FROM MST_LSP_PICKUP_SCHEDULE P
+		LEFT JOIN MST_MAS_LOC T ON T.MAS_LOC = P.MAS_LOC 
+    	WHERE P.LSP_CODE=#{lspCode}
+	</select>
+
+
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT  P.ID,P.MAS_LOC,t.DESCR,P.LSP_CODE,P.DAY,P.TIME,ACTIVE,P.INSERT_DATE,P.INSERT_BY,P.MODIFIED_DATE,P.MODIFIED_BY
+	</sql>
+
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM MST_LSP_PICKUP_SCHEDULE
+		<where>
+			<if test="lspCode!=null and lspCode!='' "> and LSP_CODE=#{lspCode}</if>
+		</where>
+	</sql>
+
+</mapper>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.CarInfoMapper">
+
+	<resultMap id="carInfoResultMap" type="mstCarInfo">
+		<id property="carId" column="CAR_ID" />    
+		<id property="carNo" column="CAR_NO" />                                     
+		<id property="carCardId" column="CAR_CARD_ID" />                        
+		<id property="carType" column="CAR_TYPE" />   
+		<id property="carLsp" column="CAR_LSP" /> 
+		<id property="carBuyingTime" column="CAR_BUYINGTIME" />                            
+		<id property="defaultDriver" column="DEFAULT_DRIVER" />                              
+		<id property="carModel" column="CAR_MODEL" />                            
+		<id property="carLeaveFactoryDate" column="CAR_LEAVEFACTORY_DATE" />                  
+		<id property="productionCompany" column="PRODUCTION_COMPANY" />                           
+		<id property="carBoxLength" column="CAR_BOX_LENGTH" />                         
+		<id property="oilConsumption" column="OIL_CONSUMPTION" />                                
+		<id property="carVolume" column="CAR_VOLUME" />                         
+		<id property="useNature" column="USE_NATURE" />                        
+		<id property="trainstionInsuranceCompany" column="TRAINSTION_INSURANCE_COMPANY" />
+		<id property="trainstionInsuranceOverDate" column="TRAINSTION_INSURANCE_OVERDATE" />                        
+		<id property="businessInsuranceCompany" column="BUSINESS_INSURANCE_COMPANY" />                                 
+		<id property="bisinessInsuranceOverDate" column="BUSINESS_INSURANCE_OVERDATE" />                        
+		<id property="carImportWay" column="CAR_IMPORT_WAY" />                               
+		<id property="engineNo" column="ENGINE_NO" />                                  
+		<id property="carIsActivity" column="CAR_ISACTIVITY" />                                
+		<id property="comment" column="COMMENT" />                            
+	</resultMap>
+	
+	
+		<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstCarInfo">
+		<include refid="insertEntityHeadSql" />
+		(#{carNo},#{carCardId},#{carType},#{carLsp},#{carBuyingTime},#{defaultDriver},#{carModel},#{carLeaveFactoryDate},#{productionCompany},
+		#{carBoxLength},#{oilConsumption},#{carVolume},#{useNature},#{trainstionInsuranceCompany},#{trainstionInsuranceOverDate},
+		#{businessInsuranceCompany},#{bisinessInsuranceOverDate},#{carImportWay},#{engineNo},#{carIsActivity},#{comment})
+	</insert>
+
+
+	<!-- 更新实体 -->
+	<update id="updateEntity" parameterType="mstCarInfo">
+		update mst_car
+		<set>
+			<if test="carNo!=null and carNo!='' ">CAR_NO=#{carNo},</if>
+			<if test="carCardId!=null and carCardId!=''">CAR_CARD_ID=#{carCardId},</if>
+			<if test="carType!=null and carType!=''">CAR_TYPE=#{carType},</if>
+			<if test="carLsp!=null and carLsp!=''">CAR_LSP=#{carLsp},</if>
+			<if test="carBuyingTime!=null and carBuyingTime!=''">CAR_BUYINGTIME=#{carBuyingTime},</if>
+			<if test="defaultDriver!=null and defaultDriver!=''">DEFAULT_DRIVER=#{defaultDriver},</if>
+			<if test="carModel!=null and carModel!=''">CAR_MODEL=#{carModel},</if>
+			<if test="carLeaveFactoryDate!=null and carLeaveFactoryDate!=''">CAR_LEAVEFACTORY_DATE=#{carLeaveFactoryDate},</if>
+			<if test="productionCompany!=null and productionCompany!=''">PRODUCTION_COMPANY=#{productionCompany},</if>
+			<if test="carBoxLength!=null and carBoxLength!=''">CAR_BOX_LENGTH=#{carBoxLength},</if>
+			<if test="oilConsumption!=null and oilConsumption!=''">OIL_CONSUMPTION=#{oilConsumption},</if>
+			<if test="carVolume!=null and carVolume!=''">CAR_VOLUME=#{carVolume},</if>
+			<if test="useNature!=null and useNature!=''">USE_NATURE=#{useNature},</if>
+			<if test="trainstionInsuranceCompany!=null and trainstionInsuranceCompany!=''">TRAINSTION_INSURANCE_COMPANY=#{trainstionInsuranceCompany},</if>
+			<if test="trainstionInsuranceOverDate!=null and trainstionInsuranceOverDate!=''">TRAINSTION_INSURANCE_OVERDATE=#{trainstionInsuranceOverDate},</if>
+			<if test="businessInsuranceCompany!=null and businessInsuranceCompany!=''">BUSINESS_INSURANCE_COMPANY=#{businessInsuranceCompany},</if>
+			<if test="bisinessInsuranceOverDate!=null and bisinessInsuranceOverDate!=''">BUSINESS_INSURANCE_OVERDATE=#{bisinessInsuranceOverDate},</if>
+			<if test="carImportWay!=null and carImportWay!=''">CAR_IMPORT_WAY=#{carImportWay},</if>
+			<if test="engineNo!=null and engineNo!=''">ENGINE_NO=#{engineNo},</if>
+			<if test="carIsActivity!=null and carIsActivity!=''">CAR_ISACTIVITY=#{carIsActivity},</if>
+			<if test="comment!=null and comment!=''">COMMENT=#{comment}</if>
+		</set>
+		where CAR_ID=#{carId}
+	</update>
+
+
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="mstCarInfo" resultMap="carInfoResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 根据map参数查询列表 -->
+	<select id="queryListByMap" resultMap="carInfoResultMap">
+		<include refid="queryEntityHeadSql" />
+		    FROM MST_CAR
+		<where>
+		   <!-- 自定义查询条件 -->
+		</where>
+	</select>
+
+	<!-- 根据ID删除实体 -->
+	<delete id="deleteByIds" parameterType="String">
+		DELETE 	FROM mst_car where CAR_ID in
+		<foreach item="carId" collection="ids" open="(" separator=","
+	      close=")">
+	      #{carId}
+	    </foreach>
+	</delete>
+
+
+	<!-- 根据对象删除实体，此方法可以根据自己需求实现 -->
+	<delete id="deleteByObject" parameterType="mstCarInfo">
+	     <!-- 自定义删除条件 -->
+	</delete>
+
+	<!-- 根据ID查出实体 -->
+	<select id="queryById" parameterType="long" resultMap="carInfoResultMap">
+	     SELECT  CAR_ID,CAR_NO,CAR_CARD_ID,CAR_TYPE,CAR_LSP,CAR_BUYINGTIME,DEFAULT_DRIVER,CAR_MODEL,CAR_LEAVEFACTORY_DATE,PRODUCTION_COMPANY,CAR_BOX_LENGTH,OIL_CONSUMPTION,CAR_VOLUME,USE_NATURE,TRAINSTION_INSURANCE_COMPANY,TRAINSTION_INSURANCE_OVERDATE,
+		BUSINESS_INSURANCE_COMPANY,BUSINESS_INSURANCE_OVERDATE,CAR_IMPORT_WAY,ENGINE_NO,CAR_ISACTIVITY,COMMENT
+	     FROM MST_LSP
+	     WHERE LSP_CODE=#{lspCode}
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="mstCarInfo" resultMap="carInfoResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="mstCarInfo" resultType="long">
+		select count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		 insert into mst_car(CAR_NO,CAR_CARD_ID,CAR_TYPE,CAR_LSP,CAR_BUYINGTIME,DEFAULT_DRIVER,CAR_MODEL,CAR_LEAVEFACTORY_DATE,PRODUCTION_COMPANY,CAR_BOX_LENGTH,OIL_CONSUMPTION,CAR_VOLUME,USE_NATURE,TRAINSTION_INSURANCE_COMPANY,TRAINSTION_INSURANCE_OVERDATE,
+		 BUSINESS_INSURANCE_COMPANY,BUSINESS_INSURANCE_OVERDATE,CAR_IMPORT_WAY,ENGINE_NO,CAR_ISACTIVITY,COMMENT)values
+	</sql>
+
+
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT  CAR_ID,CAR_NO,CAR_CARD_ID,CAR_TYPE,CAR_LSP,CAR_BUYINGTIME,DEFAULT_DRIVER,CAR_MODEL,CAR_LEAVEFACTORY_DATE,PRODUCTION_COMPANY,CAR_BOX_LENGTH,OIL_CONSUMPTION,CAR_VOLUME,USE_NATURE,TRAINSTION_INSURANCE_COMPANY,TRAINSTION_INSURANCE_OVERDATE,
+		BUSINESS_INSURANCE_COMPANY,BUSINESS_INSURANCE_OVERDATE,CAR_IMPORT_WAY,ENGINE_NO,CAR_ISACTIVITY,COMMENT
+	</sql>
+
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM MST_CAR
+		
+		<where>
+			<if test="carNo!=null and carNo!='' "> and CAR_NO=#{carNo}</if>
+			<if test="carCardId!=null and carCardId!=''"> and CAR_CARD_ID=#{carCardId}</if>
+			<if test="carType!=null and carType!=''"> and CAR_TYPE=#{carType}</if>
+			<if test="carLsp!=null and carLsp!=''"> and CAR_LSP=#{carLsp}</if>
+			<if test="starDate!=null">  and CAR_BUYINGTIME<![CDATA[>]]>=#{starDate}</if>
+			<if test="endDate!=null"><![CDATA[  and CAR_BUYINGTIME<=#{endDate}]]></if>
+		</where>
+	</sql>
+
+</mapper>

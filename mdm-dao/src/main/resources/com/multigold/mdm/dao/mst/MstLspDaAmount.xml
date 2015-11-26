@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.MstLspDaAmountMapper">
+
+	<resultMap id="mstLspDaAmountResultMap" type="mstLspDaAmount"> 
+		<id property="id" column="ID" />                                     
+		<id property="lsp" column="LSP" />                        
+		<id property="daId" column="DA_ID" />                        
+		<id property="minAmount" column="MIN_AMOUNT" />
+		<id property="maxAmount" column="MAX_AMOUNT" />
+		<id property="priority" column="PRIORITY" />
+		<id property="insertBy" column="INSERT_BY" />
+		<id property="insertDate" column="INSERT_DATE" />
+		<id property="modifiedBy" column="MODIFIED_BY" />
+		<id property="modifiedDate" column="MODIFIED_DATE" />
+		<id property="partitionDate" column="PARTITION_DATE" />
+		<id property="orderDownloadBeginTime" column="ORDER_DOWNLOAD_BEGIN_TIME" />
+		<id property="orderDownloadEndTime" column="ORDER_DOWNLOAD_END_TIME" />
+		<id property="divisionCode" column="DIVISION_CODE" />
+		
+	</resultMap>
+	
+    <insert id="createEntity" parameterType="mstLspDaAmount">  
+        <include refid="queryEntityHeadSql" />
+        (#{lsp},#{daId},#{minAmount},#{maxAmount},#{priority},#{insertBy},#{insertDate},#{modifiedBy},#{modifiedDate},#{partitionDate},#{orderDownloadBeginTime},#{orderDownloadEndTime},#{divisionCode}) 
+    </insert>  
+	 
+	 
+	 <!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		INSERT INTO
+		MST_LSP_DA_AMOUNT(LSP,DA_ID,MIN_AMOUNT,MAX_AMOUNT,PRIORITY,INSERT_BY,INSERT_DATE,MODIFIED_BY,MODIFIED_DATE,PARTITION_DATE,ORDER_DOWNLOAD_BEGIN_TIME,ORDER_DOWNLOAD_END_TIME,DIVISION_CODE)
+		VALUES
+	</sql>
+	
+	<select id="getCount" parameterType="java.util.Map" resultType="long">
+    	SELECT COUNT(1)
+        FROM   MST_LSP_DA_AMOUNT A
+        WHERE  A.LSP           = #{lspCode}
+        AND    A.DA_ID         = #{daId}
+        AND    A.DIVISION_CODE = #{divisionCode}
+    </select>
+
+</mapper>

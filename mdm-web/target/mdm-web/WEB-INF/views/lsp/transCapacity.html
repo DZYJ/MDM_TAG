@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>半日达信息</title>
+    [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/jquery.maskedinput.min.js"></script>
+    <script type="text/javascript" src="${resource!}/js/lsp/transcapacity.js"></script>
+    <script type="text/javascript">
+		function formatItem(row){
+			var s = '<span style="font-weight:bold">' + row.division_code + '</span><br/>' +
+					'<span style="color:#888">' + row.division_name + '</span>';
+			return s;
+		}
+	</script>
+  </head>
+  <body  style="visibility: visible;">
+    <div class="top_content">
+      <!-- 查询半日达信息表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 40px;" data-options="collapsible:true" fit="true">
+        <form id="transcapacity_search_form" method="post">
+        <table>
+          <tr>
+            <td  class="search_form_tdl"><label for="lspCode">承运商：</label></td>
+            <td  class="search_form_tdr"><input class="easyui-combobox" id="lspCode" name="lspCode"
+	            data-options="valueField:'lspCode',textField:'lspName',panelWidth: 250" editable="false" ></td>
+	        <td  class="search_form_tdl"><label for="masLoc">仓库：</label></td>
+	        <td  class="search_form_tdr"><input class="easyui-combobox" id="masLoc" name="masLoc" 
+	            data-options="valueField:'masLoc',textField:'descr',panelWidth: 250" editable="false"></td>
+	      	<td>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" id="search_form_reset">重置</a>
+            </td>
+	      </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+    <div id="transcapacity_grid" class="grid_content">
+      <!--承运商列表GRID -->
+      <table id="transcapacityView" fit="true">
+      </table>
+    </div>
+    
+    <!--  添加模块 begin -->
+    <div id="transcapacity_add_dialog" class="easyui-dialog" style="width: 600px; height: 400px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <form id="transcapacity_add_form" method="post" novalidate class="ftitle_form">
+        <table>
+             <tr>
+             	<td><label for="masLoc">仓库:</label> </td>
+				 <td><input class="easyui-combobox" id="masLocAdd" name="masLocAdd" 
+	            data-options="valueField:'masLoc',textField:'descr',panelWidth: 250" editable="false" class="easyui-validatebox"  required="true"> 
+	             </td>
+	             <td style="width: 80px;"><label for="firstLevel">省:</label> </td>
+				 <td><input class="easyui-combobox" name="firstLevel" id="firstLevel" 
+				          data-options="valueField:'division_code',textField:'division_name',formatter: formatItem" editable="false"/> 
+	             </td>
+             </tr>
+             <tr>
+	             <td style="width: 80px;"><label for="lsp">承运商:</label> </td>
+				 <td><input class="easyui-combobox" id="lspCodeAdd" name="lspCodeAdd" 
+	            data-options="valueField:'lspCode',textField:'lspName',panelWidth: 250" editable="false" class="easyui-validatebox"  required="true"> 
+	             </td>
+	             <td><label for="secondLevel">市:</label> </td>
+				 <td><input class="easyui-combobox" name="secondLevel" id="secondLevel" 
+				          data-options="valueField:'division_code',textField:'division_name',formatter: formatItem" editable="false" /> 
+	             </td>
+             </tr>
+             <tr>
+           	    <td><label for="transQty">运能数量:</label></td>
+				<td><input name="transQty" required="true" id="transQty" class="easyui-numberbox" required="true"/></td>
+	             <td><label for="divisionCode">区/县:</label> </td>
+				 <td><input class="easyui-combobox" name="divisionCode" id="divisionCode"  class="easyui-validatebox"  required="true"
+				          data-options="valueField:'division_code',textField:'division_name',formatter: formatItem" editable="false"/></td>
+           </tr>
+           <tr>
+	             <td><label for="deliveryTimeLot">配送时间:</label></td>
+				 <td><input name="deliveryTimeLot" id="deliveryTimeLot" class="easyui-validatebox" required="true"/></td>
+	             <td><label for="enabled">是否有效:</label></td>
+				 <td><input name="enabled" id="enabled" class="easyui-combobox" data-options="valueField:'enabled',textField:'enabledView',
+					               data:[{enabled:'1',enabledView:'是'},{enabled:'0',enabledView:'否'}]" class="easyui-validatebox"  required="true"/>
+	             </td>
+           </tr>
+           <tr>
+	             <td><label for="lotSeq">时间规则:</label></td>
+				 <td><input class="easyui-combobox" name="lotSeq" id="lotSeq" 
+					        data-options="valueField:'lotSeq',textField:'lotSeq'" editable="false" class="easyui-validatebox"  required="true"/>
+	             </td>
+	             <td><label for="startTime">开始时间:</label></td>
+				 <td><input name="startTime" id="startTime" disabled="true"/></td>
+           </tr>
+           <tr>
+	             <td><label for="endTime">结束时间:</label></td>
+				 <td> <input name="endTime" id="endTime" disabled="true"/></td>
+	             <td><label for="standardTime">标准时间:</label></td>
+				 <td><input name="standardTime" id="standardTime" disabled="true"/></td>
+           </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 添加运力模块 end -->
+    
+    
+    <!--  修改运力模块 begin -->
+    <div id="transcapacity_edit_dialog" class="easyui-dialog" style="width: 600px; height: 400px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <form id="transcapacity_edit_form" method="post" novalidate class="ftitle_form">
+        <table>
+           <tr>
+             	<td><label for="masLoc">仓库:</label> </td>
+				 <td><input class="easyui-combobox" id="masLocAdd" name="masLocAdd" 
+	            data-options="valueField:'masLoc',textField:'descr',panelWidth: 250" editable="false" class="easyui-validatebox"  required="true"> 
+	             </td>
+	             <td style="width: 80px;"><label for="lsp">承运商:</label> </td>
+				 <td><input class="easyui-combobox" id="lspCodeAdd" name="lspCodeAdd" 
+	            data-options="valueField:'lspCode',textField:'lspName',panelWidth: 250" editable="false" class="easyui-validatebox"  required="true"> 
+	             </td>
+             </tr>
+             <tr>
+           	    <td><label for="transQty">运能数量:</label></td>
+				<td><input name="transQty" id="transQty" class="easyui-numberbox" required="true"/></td>
+	            <td><label for="divisionCode">区/县:</label> </td>
+	            <td><input name="divisionCode" id="divisionCode" readonly="true"/></td>
+           </tr>
+           <tr>
+	             <td><label for="deliveryTimeLot">配送时间:</label></td>
+				 <td><input name="deliveryTimeLot" id="deliveryTimeLot" class="easyui-validatebox" required="true"/></td>
+	             <td><label for="enabled">是否有效:</label></td>
+				 <td><input name="enabled" id="enabled" class="easyui-combobox" data-options="valueField:'enabled',textField:'enabledView',
+					               data:[{enabled:'1',enabledView:'是'},{enabled:'0',enabledView:'否'}]" class="easyui-validatebox"  required="true"/>
+	             </td>
+           </tr>
+           <tr>
+	             <td><label for="lotSeq">时间规则:</label></td>
+				 <td><input class="easyui-combobox" name="lotSeq" id="lotSeq" 
+					        data-options="valueField:'lotSeq',textField:'lotSeq'" editable="false" class="easyui-validatebox"  required="true"/>
+	             </td>
+	             <td><label for="startTime">开始时间:</label></td>
+				 <td><input name="startTime" id="startTime" disabled="true"/></td>
+           </tr>
+           <tr>
+	             <td><label for="endTime">结束时间:</label></td>
+				 <td> <input name="endTime" id="endTime" disabled="true"/></td>
+	             <td><label for="standardTime">标准时间:</label></td>
+				 <td><input name="standardTime" id="standardTime" disabled="true"/></td>
+           </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 修改运力模块 end -->
+  </body>
+</html>

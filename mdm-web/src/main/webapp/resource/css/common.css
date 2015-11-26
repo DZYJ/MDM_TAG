@@ -1,0 +1,4 @@
+@charset "utf-8";
+.search_form_tdl {text-align: right; padding-right: 15px; color: #0e2d5f;}
+.search_form_tdr {text-align: left; }
+#top_content .panel { width: 100% !important; }

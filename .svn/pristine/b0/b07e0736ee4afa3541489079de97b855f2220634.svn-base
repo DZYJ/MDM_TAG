@@ -1,0 +1,258 @@
+package com.multigold.mdm.web.controller.po;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.common.collect.Maps;
+import com.multigold.common.constants.Constants;
+import com.multigold.common.service.BaseService;
+import com.multigold.common.util.JsonUtil;
+import com.multigold.common.web.controller.BaseCRUDAction;
+import com.multigold.common.web.springmvc.MessageResolver;
+import com.multigold.mdm.web.controller.util.UserSessionProvider;
+import com.multigold.t6.vo.po.InvoiceVO;
+import com.multigold.t6.vo.po.MgRdAndInvVO;
+import com.multigold.t6.vo.po.PaymentSettlementVO;
+import com.multigold.t6.service.api.po.InvoiceService;
+
+@Controller
+@RequestMapping(value = "${adminPath}/po/invoice")
+public class InvoiceController extends BaseCRUDAction<InvoiceVO, String> {
+
+	@Autowired
+	InvoiceService<InvoiceVO, String> invoiceService;
+	
+	@Override
+	public BaseService<InvoiceVO, String> getBaseService() {
+		return invoiceService;
+	}
+
+	@Override
+	protected void setDefaultValue(HttpServletRequest request, InvoiceVO invoiceVO,
+			String operateFlag) {
+		invoiceVO.setInsertBy(UserSessionProvider.getUserSerssion(request).getAccount());
+		invoiceVO.setModifiedBy(UserSessionProvider.getUserSerssion(request).getAccount());
+	}
+	
+	/*
+	 * 获取发票单列表
+	 * @return
+	 */
+	@RequestMapping(value = "invoice", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getInvoiceLists(HttpServletRequest request, String invoiceId, String venCode, String status, Long page, Integer rows) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		Map<String, Object> map = Maps.newHashMap();
+		if (!StringUtils.isEmpty(invoiceId)) {
+			map.put("invoiceId", invoiceId);
+		}
+		if (!StringUtils.isEmpty(venCode)) {
+			map.put("venCode", venCode);
+		}
+		if (!StringUtils.isEmpty(status)) {
+			map.put("status", status);
+		}
+		map.put("page", page);
+		map.put("rows", rows);
+		resultMap= invoiceService.getInvoiceLists(map);
+		return resultMap;
+		
+	}
+	
+	/*
+	 * 新增发票
+	 * @return
+	 */
+	@RequestMapping(value = "createInvoice", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> createInvoice(HttpServletRequest request, String invoiceId, String billingDate, String venCode, String venName,
+			String businessType, String sum, String tax, String taxRate, String price,String rdId) {
+//		Map<String, Object> resultMap = Maps.newHashMap();
+		Map<String, Object> map = Maps.newHashMap();
+		InvoiceVO invoiceVO = new InvoiceVO();
+		
+		String[] ss = rdId.split(",");
+		if (!StringUtils.isEmpty(invoiceId)) {
+			invoiceVO.setInvoiceId(invoiceId);
+		}
+		if (!StringUtils.isEmpty(venCode)) {
+			invoiceVO.setVenCode(venCode);
+		}
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = null;
+		try {
+			date = formatter.parse(billingDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		if (!StringUtils.isEmpty(billingDate)) {
+			invoiceVO.setBillingDate(date);
+		}
+		if (!StringUtils.isEmpty(venName)) {
+			invoiceVO.setVenName(venName);
+		}else{
+			invoiceVO.setVenName("供应商");
+		}
+		invoiceVO.setBusinessType(1);
+		if (!StringUtils.isEmpty(sum)) {
+			invoiceVO.setSum(new BigDecimal(sum));
+		}
+		if (!StringUtils.isEmpty(tax)) {
+			invoiceVO.setTax(new BigDecimal(tax));
+		}
+		if (!StringUtils.isEmpty(taxRate)) {
+			invoiceVO.setTaxRate(new BigDecimal(taxRate));
+		}
+		if (!StringUtils.isEmpty(price)) {
+			invoiceVO.setPrice(new BigDecimal(price));
+		}
+		if (!StringUtils.isEmpty(rdId)) {
+			//invoiceVO.setPrice(new BigDecimal(price));
+			
+		}
+		invoiceVO.setInputer("admin");
+		invoiceVO.setCreateTd(new Date());
+		invoiceVO.setStatus(1);//新建
+		try {
+			//获取最大ID
+			int MaxPaymentSettlementNo = invoiceService.getMaxInvoiceNo();
+			MaxPaymentSettlementNo++;
+			invoiceVO.setId(MaxPaymentSettlementNo);
+			//插入发票表信息
+			invoiceService.createInvoice(invoiceVO);
+			//插入发票、入库单关联信息表
+			MgRdAndInvVO mgRdAndInvVOs = null;
+			for (int i = 0; i < ss.length; i++) {
+				mgRdAndInvVOs = new MgRdAndInvVO();
+				mgRdAndInvVOs.setRdId(Integer.parseInt(ss[i]));
+				mgRdAndInvVOs.setInvoiceId(MaxPaymentSettlementNo);
+				invoiceService.createMgRdAndInv(mgRdAndInvVOs);
+			}
+			map.put("msg", MessageResolver.getMessage(request,
+					Constants.Message.SUCCESS_SAVE));
+			map.put("state", Constants.State.TRUE);
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("msg", MessageResolver.getMessage(request,
+					Constants.Message.FAILED_UPDATE));
+			map.put("state", Constants.State.FALSE);
+		}
+		
+		return map;
+		
+	}
+	
+	/*
+	 * @Title: Invoice 
+	 * @Description: 更改
+	 * @return 
+	 */
+	@RequestMapping(value = "updateInvoice", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updateInvoice(HttpServletRequest request, String id, String billingDate, String venCode, String venName,
+			String businessType, String sum, String tax, String taxRate, String price,String rdId) {
+		final Map<String, Object> map = Maps.newHashMap();
+		InvoiceVO invoiceVO = new InvoiceVO();
+		String[] ss = rdId.split(",");
+		if (!StringUtils.isEmpty(id)) {
+			invoiceVO.setId(Integer.parseInt(id));
+		}
+		if (!StringUtils.isEmpty(venCode)) {
+			invoiceVO.setVenCode(venCode);
+		}
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = null;
+		try {
+			date = formatter.parse(billingDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		if (!StringUtils.isEmpty(billingDate)) {
+			invoiceVO.setBillingDate(date);
+		}
+		if (!StringUtils.isEmpty(venName)) {
+			invoiceVO.setVenName(venName);
+		}else{
+			invoiceVO.setVenName("供应商");
+		}
+		invoiceVO.setBusinessType(1);
+		if (!StringUtils.isEmpty(sum)) {
+			invoiceVO.setSum(new BigDecimal(sum));
+		}
+		if (!StringUtils.isEmpty(tax)) {
+			invoiceVO.setTax(new BigDecimal(tax));
+		}
+		if (!StringUtils.isEmpty(taxRate)) {
+			invoiceVO.setTaxRate(new BigDecimal(taxRate));
+		}
+		if (!StringUtils.isEmpty(price)) {
+			invoiceVO.setPrice(new BigDecimal(price));
+		}
+		invoiceVO.setInputer("admin");
+		invoiceVO.setCreateTd(new Date());
+		invoiceVO.setStatus(1);//新建
+		try {
+			invoiceService.updateInvoice(invoiceVO);
+			//插入发票、入库单关联信息表
+			MgRdAndInvVO mgRdAndInvVOs = null;
+			for (int i = 0; i < ss.length; i++) {
+				mgRdAndInvVOs = new MgRdAndInvVO();
+				mgRdAndInvVOs.setRdId(Integer.parseInt(ss[i]));
+				mgRdAndInvVOs.setInvoiceId(Integer.parseInt(id));
+				invoiceService.updateMgRdAndInv(mgRdAndInvVOs);
+			}
+			map.put("msg", MessageResolver.getMessage(request,
+					Constants.Message.SUCCESS_SAVE));
+			map.put("state", Constants.State.TRUE);
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("msg", MessageResolver.getMessage(request,
+					Constants.Message.FAILED_UPDATE));
+			map.put("state", Constants.State.FALSE);
+		}
+		return map;
+	}
+	
+	@RequestMapping(value = "commitByIds", method = RequestMethod.POST)
+	@ResponseBody
+	public void getCommitByIds(HttpServletRequest request,String rowsData) {
+		List<InvoiceVO> invList  = new ArrayList<InvoiceVO>();
+		if(null!=rowsData && !("").equals(rowsData)){
+			invList = (List<InvoiceVO>)JsonUtil.jsonToList(rowsData, InvoiceVO.class);
+		}
+		for (InvoiceVO i : invList) {
+			i.setStatus(2);//提交并结算
+			invoiceService.commitByIds(i);
+		}
+	}
+	
+	/*
+	 * @Title: mg_rd_and_inv 
+	 * @Description: 选择列表 关联关系表
+	 * @return list
+	 */
+	@RequestMapping(value = "mgRdAndInv", method = RequestMethod.POST)
+	@ResponseBody
+	public List<MgRdAndInvVO> queryMgRdAndInv(HttpServletRequest request, String vendorSelectVal){
+		
+		//MgRdAndInvVO mgRdAndInvVO = new MgRdAndInvVO();
+		//String strVendorSelectVal = vendorSelectVal;
+		List<MgRdAndInvVO> list = invoiceService.queryMgRdAndInv();
+		return list;
+	}
+
+}

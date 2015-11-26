@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.TempLspHubMapper">
+
+	<resultMap id="mstTempLspHubResultMap" type="mstTempLspHub"> 
+		<id property="masLoc" column="MAS_LOC" />                                     
+		<id property="divisionCode" column="DIVISION_CODE" />                        
+		<id property="lineHaul" column="LINE_HAUL" />                              
+		<id property="lspCode" column="LSP_CODE" />                             
+		<id property="shipMethod" column="SHIP_METHOD" />                            
+		<id property="tradeInIdentifier" column="TRADE_IN_IDENTIFIER" />                              
+		<id property="paymentTerm" column="PAYMENT_TERM" />                            
+		<id property="supportDirection" column="SUPPORT_DIRECTION" />                  
+		<id property="selfPickup" column="SELF_PICKUP" />                           
+		<id property="goodsCollectFlag" column="GOODS_COLLECT_FLAG" />                         
+		<id property="deliveryLeadTime" column="DELIVERY_LEAD_TIME" />
+		
+		<id property="hubType" column="HUB_TYPE" />
+		<id property="daId" column="DA_ID" />
+		<id property="parentDivisionCode" column="PARENT_DIVISION_CODE" />
+		
+	</resultMap>
+	<!-- 批量插入 -->
+    <insert id="insertTempLspHubList"  parameterType="java.util.List">  
+        INSERT INTO TEMP_LSP_HUB (MAS_LOC,DIVISION_CODE,LINE_HAUL,LSP_CODE,SHIP_METHOD,TRADE_IN_IDENTIFIER,
+        PAYMENT_TERM,SUPPORT_DIRECTION,SELF_PICKUP,GOODS_COLLECT_FLAG,DELIVERY_LEAD_TIME)   
+        values  
+        <foreach collection="list" item="item" index="index" separator="," >  
+            (#{item.masLoc},#{item.divisionCode},#{item.lineHaul},#{item.lspCode},#{item.shipMethod},#{item.tradeInIdentifier}
+            ,#{item.paymentTerm},#{item.supportDirection},#{item.selfPickup},#{item.goodsCollectFlag},#{item.deliveryLeadTime})  
+        </foreach>  
+    </insert>  
+	 
+	<!-- 批量删除 -->
+    <delete id="deleteAll">
+      DELETE FROM TEMP_LSP_HUB
+    </delete>
+    
+    <!-- 查询要插入HubProcessMatrix表中的数据 -->
+	<select id="getTempListToHubProcess" parameterType="mstTempLspHub" resultMap="mstTempLspHubResultMap">
+		   SELECT T.*,M.HUB_TYPE,D.DA_ID,D.PARENT_DIVISION_CODE
+    	   FROM   TEMP_LSP_HUB T
+           ,MST_MAS_LOC  M
+           ,MST_DIVISION D
+           WHERE  T.MAS_LOC = M.MAS_LOC
+           AND    T.DIVISION_CODE = D.DIVISION_CODE
+           ORDER BY T.MAS_LOC,T.DIVISION_CODE,T.LINE_HAUL,T.LSP_CODE
+	</select>
+    
+
+	<!-- 根据实体查询列表 -->
+	<select id="getTempLspHubList" parameterType="mstTempLspHub" resultMap="mstTempLspHubResultMap">
+		  SELECT DISTINCT *
+          FROM TEMP_LSP_HUB
+	</select>
+	
+	<!-- 1.检查有无不存在的仓库代码  resultMap 或者resultType 前台用List<String>接受-->
+	<select id="getErrorMasList"  resultType="String">
+		  SELECT DISTINCT T.MAS_LOC
+      	  FROM   TEMP_LSP_HUB T
+      	  WHERE NOT EXISTS (SELECT 1 FROM MST_MAS_LOC M WHERE M.MAS_LOC = T.MAS_LOC)
+	</select>
+	
+	<!-- 1-1.检查是否有多个对应的仓库代码的承运商 -->
+	<select id="getMoreMasOfLineHaulList" resultType="String">
+		  SELECT DISTINCT H.LINE_HAUL
+          FROM   TEMP_LSP_HUB H
+          WHERE H.LINE_HAUL IN  (SELECT T.LSP FROM
+          (SELECT L.LSP, COUNT(*) AS COUNTS FROM MST_MAS_LOC L GROUP BY L.LSP) T WHERE T.COUNTS>1)
+	</select>
+	
+	<!-- 2.检查有无不存在的行政区域代码 -->
+	<select id="getErrorDivisionList" resultType="String">
+		  SELECT DISTINCT T.DIVISION_CODE
+      	  FROM   TEMP_LSP_HUB T
+          WHERE NOT EXISTS (SELECT 1 FROM MST_DIVISION D WHERE D.DIVISION_CODE = T.DIVISION_CODE)
+	</select>
+	
+	<!-- 3.检查有无不存在的干线承运商代码 -->
+	<select id="getErrorLineList"  resultType="String">
+		  SELECT DISTINCT T.LINE_HAUL
+          FROM   TEMP_LSP_HUB T
+          WHERE NOT EXISTS (SELECT 1 FROM MST_LSP L WHERE L.LSP_CODE = T.LINE_HAUL AND L.ENABLED='1')
+	</select>
+	
+	<!-- 4.检查有无不存在的支线承运商代码 -->
+	<select id="getErrorLspList"  resultType="String">
+		  SELECT DISTINCT T.LSP_CODE
+          FROM   TEMP_LSP_HUB T
+          WHERE NOT EXISTS (SELECT 1 FROM MST_LSP L WHERE L.LSP_CODE = T.LSP_CODE AND L.ENABLED='1')
+	</select>
+	
+	<!-- 5.检查货运方式ShipMethod-->
+	<select id="getErrorShipList" resultType="String">
+		   SELECT DISTINCT T.SHIP_METHOD
+           FROM   TEMP_LSP_HUB T WHERE upper(T.SHIP_METHOD) NOT IN ('ALL','A','G','T')
+	</select>
+	
+	<!-- 6.检查特殊承运商分配标识TradeInIdentifier-->
+	<select id="getErrorTradeList" resultType="String">
+		   SELECT DISTINCT T.TRADE_IN_IDENTIFIER
+           FROM   TEMP_LSP_HUB T WHERE upper(T.TRADE_IN_IDENTIFIER)  NOT IN ('N','MOBILE89','10','12','14','ALL','WRT','CM','CU','CT','GCU','GCM','GCT')
+	</select>
+	
+	<!-- 7.检查支付方式PaymentTerm-->
+	<select id="getErrorPaymentList" resultType="String">
+		   SELECT DISTINCT T.PAYMENT_TERM
+           FROM   TEMP_LSP_HUB T  WHERE upper(T.PAYMENT_TERM)  NOT IN ('ALL','COD','PAID')
+	</select>
+	
+	<!-- 8.检查物流方向SUPPORT_DIRECTION  ('SMI','PKP','GFT','3FM','USE','3PP','3PKP')在程序中判断-->
+	<select id="getErrorDirectionList" resultType="String">
+		   SELECT DISTINCT T.SUPPORT_DIRECTION
+           FROM   TEMP_LSP_HUB T
+	</select>
+	
+	<!-- 9.检查自提标志SELF_PICKUP-->
+	<select id="getErrorPickupList" resultType="String">
+		    SELECT DISTINCT T.SELF_PICKUP
+            FROM   TEMP_LSP_HUB T WHERE upper(T.SELF_PICKUP)  NOT IN ('ALL','Y','N')
+	</select>
+	
+	<!-- 10.检查上门取货标志GOODS_COLLECT_FLAG-->
+	<select id="getErrorCollectList" resultType="String">
+		    SELECT DISTINCT T.GOODS_COLLECT_FLAG
+            FROM   TEMP_LSP_HUB T WHERE upper(T.GOODS_COLLECT_FLAG)  NOT IN ('ALL','Y','N')
+	</select>
+	
+	<!-- 11-1.判断SMI仓库不会在C4配置'3PP','3PKP'属性-->
+	<select id="getErrorSMIProductList" resultType="String">
+		     SELECT DISTINCT T.SUPPORT_DIRECTION
+             FROM   TEMP_LSP_HUB T
+             ,MST_MAS_LOC  M
+             WHERE  T.MAS_LOC  = M.MAS_LOC
+             AND    M.HUB_TYPE = 'SMI'
+	</select>
+	
+	<!-- 11-2.判断3PP仓库不会在C4配置'SMI','PKP'属性-->
+	<select id="getError3ppProductList" resultType="String">
+		     SELECT DISTINCT T.SUPPORT_DIRECTION
+             FROM   TEMP_LSP_HUB T
+             ,MST_MAS_LOC  M
+             WHERE  T.MAS_LOC  = M.MAS_LOC
+             AND    M.HUB_TYPE = '3PP'
+	</select>
+	
+	<!-- 12.检查逆向配置与支持上门取货一致-->
+	<select id="getErrorDifferenceList" resultType="long">
+		     SELECT COUNT(1) as  num
+             FROM   TEMP_LSP_HUB T
+             WHERE  T.SUPPORT_DIRECTION   = 'PKP'
+             AND    T.GOODS_COLLECT_FLAG  = 'N'
+             AND    T.LINE_HAUL !='VLSP'
+	</select>
+</mapper>

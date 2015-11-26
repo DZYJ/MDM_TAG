@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>仓库信息列表</title>
+    [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/masLoc/masLoc.js"></script>
+    <script type="text/javascript">
+    	function data_import() {
+   			var file = $("#file").val();
+   		    if (file == "") {
+   		        $.messager.alert('Excel批量导入', '请选择将要上传的文件!');        
+   		    } else {
+   		    	var strtype = file.substr(file.length-4,file.length-1);
+   		    	strtype = strtype.toUpperCase();
+   		        if (strtype != '.XLS' && strtype != 'XLSX') {
+   		            $.messager.alert('Excel批量导入','文件类型不正确，请选择EXCEL文件!'); 
+   		        } else { 
+   		        	$('#import_form').form('submit', {
+   		        		url: "../masLoc/import.htm",
+   		        		method: "post",
+   		        		onSubmit: function(){
+   		        			return true;
+   		        		},
+   		        		success: function(data){
+   		        			var _data = $.parseJSON(data);
+   		        			$.messager.alert("提示", _data.msg);
+   		        		}
+   		        	});
+   		        	
+   		       
+   		        }
+   		    }
+    	}
+    	function exportTemplate() {
+    		$('#import_form').form('submit', {
+        		url: "../masLoc/exportTemplate.htm",
+        		method: "post",
+        		onSubmit: function(){
+        			return true;
+        		},
+        		success: function(data){
+        			//var _data = $.parseJSON(data);
+        			$.messager.alert("提示",data);
+        		}
+        	});
+    	}
+    </script>
+  </head>
+  <body  style="visibility: visible;">
+    <div class="top_content">
+      <!-- 查询系统参数表单  -->
+      <div class="" title=""  style="border-bottom: 0; height: 65px;" data-options="collapsible:true" fit="true">
+        <form id="masLoc_form">
+        <table>
+          <tr>
+            <td  class="search_form_tdl"><label for="masLoc">仓库代码：</label></td>
+            <td  class="search_form_tdr"><input name="masLoc" id="masLoc" type="text"/></td>
+            <td  class="search_form_tdl"><label for="descr">仓库名称：</label></td>
+            <td  class="search_form_tdr"><input name="descr" id="descr" type="text"/></td>
+          </tr>
+          <tr>
+          	<td class="search_form_tdlf">&nbsp;</td>
+			<td colspan="3" class="search_form_tdr">
+				<input type="hidden" id="ids" name="ids" value=""/>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+            </td>
+          </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+    <div id="masLoc_grid" class="grid_content">
+      <!--系统参数列表GRID -->
+      <table id="masLocView" fit="true">
+      </table>
+    </div>
+
+    <!-- 添加仓库信息 begin validType="length[4,100]"  remote['${ctx!}/masLoc/unique.json','masLoc']-->
+    <div id="masLoc_add_dialog" class="easyui-dialog" style="width: 400px; height: 400px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">仓库信息</div>
+      <form id="masLoc_add_form" method="post" novalidate class="ftitle_form">
+        <input type="hidden" name="enabled" id="enabled" value="1"> 
+        <div class="fitem fitem_odd">
+          <label for="masLoc">仓库代码:</label> 
+          <input name="masLoc" id="masLoc" class="easyui-validatebox"  
+                         data-options="required:true,validType:{
+                               length:[1,8],
+                               custom_remote:['${ctx!}/masLoc/unique.json','masLoc','该仓库编码已经存在！']
+                          }" > 
+        </div>
+        <div class="fitem fitem_even">
+          <label  for="descr">仓库名称:</label> 
+          <input name="descr" id="descr" required="true" class="easyui-validatebox" validType="chinese"> 
+        </div>
+      </form>
+    </div>
+    <!-- 添加仓库信息 end -->
+
+    <!-- 修改仓库信息 begin -->
+    <div id="masLoc_edit_dialog" class="easyui-dialog" style="width: 500px; height: 500px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">仓库信息</div>
+      <form id="masLoc_edit_form" method="post" novalidate class="ftitle_form">
+      	<input type="hidden" name="enabled" id="enabled" value="1">
+        <div class="fitem fitem_odd">
+          <label for="masLoc">仓库代码:</label> 
+          <input name="masLoc" id="masLoc" class="easyui-validatebox"  readonly = "readonly">
+          <input name="id" type="hidden" />
+        </div>
+        <div class="fitem fitem_even">
+          <label for="descr">仓库名称:</label> 
+          <input name="descr" id="descr" class="easyui-validatebox" required="true" validType="chinese"> 
+        </div>
+      </form>
+    </div>
+    <!-- 修改仓库信息 end -->
+    
+    <!-- 仓库信息 begin -->
+    <div id="masLoc_detail_dialog" title="仓库信息" class="easyui-dialog" 
+      style="width: 800px; height: 400px; padding: 10px 20px" closed="true" buttons="#detail-dlg-buttons">
+     <div class="ftitle">仓库信息</div>
+      <form id="masLoc_detail_form" class="detail_form" novalidate>
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class="detail_form_odd">
+            <td width="20%" class="detail_form_tdl">仓库代码:</td>
+            <td width="30%" class="detail_form_tdr"><input name="masLoc" id="masLoc"  readonly="readonly"/></td>
+            <td width="20%" class="detail_form_tdl">仓库名称:</td>
+            <td width="30%" class="detail_form_tdr"><input name="descr" id="descr"  readonly="readonly"/></td>
+          </tr>
+         </table>
+       </form>
+     </div>
+     <!-- 仓库信息 end -->
+     
+     <!-- 仓库信息导入begin -->
+     	<div id="data_import_dialog" title="仓库信息导入" class="easyui-dialog" 
+     	style="width: 400px; height: 200px; padding: 10px 20px" closed="true">
+     	<form id="import_form" enctype="multipart/form-data" method="post">
+     		<table>
+         		<tr>
+		          	<td colspan="4">
+		          		<input type="file" name="file" id="file" style="width: 250px;">
+		          	</td>
+          		</tr>
+          		<tr>
+          			<td>
+          				【1】只能导入EXCEL文件
+          			</td>
+          		</tr>
+          		<tr>
+          			<td>
+          				【2】仓库编号和名称不能为空
+          			</td>
+          		</tr>
+          		<tr>
+          			<td>
+          				【3】数据列依次为：仓库编码、承运商编码、仓库名称、中心坐标、主库类型、配船编码、区域编码、
+          				时区、库区类型、国家代码、父节点仓库编码、联系人名称、联系人电话、地址、邮编、可控类型、可控标识、传送方类型、城市
+          			</td>
+          		</tr>
+          		<tr>
+          			<td colspan="4" style="height:40px;">
+          				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" onclick="javascript:exportTemplate();" id="exportTemplate">模板下载</a>
+              			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" onclick="javascript:data_import();" id="data_import">导入</a>
+            		</td>
+          		</tr>
+          </table>
+     	</form>
+     </div>  
+     <!-- 仓库信息导入end -->
+     
+  </body>
+</html>

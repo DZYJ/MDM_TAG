@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.DataDictionaryMapper">
+
+	<resultMap id="dataDictionaryResultMap" type="dataDictionary">
+		<id property="id" column="ID" />
+		<id property="englishName" column="ENGLISH_NAME" />
+		<id property="chineseName" column="CHINESE_NAME" />
+		<id property="indicateName" column="INDICATE_NAME" />
+		<id property="columnValue" column="COLUMN_VALUE" />
+		<id property="isActivity" column="ISACTIVITY" />
+		<id property="insertBy" column="CREATE_PEOPLE"/>
+		<id property="insertDate" column="INSERTDATE"/>
+		<id property="modifiedBy" column="ALTER_PEOPLE"/>
+		<id property="modifiedDate" column="MODIFIEDDATE"/>
+		<id property="comment" column="COMMENT"/>
+	</resultMap>
+
+    <!-- 创建实体 -->
+	<insert id="createEntity" parameterType="dataDictionary">
+		<include refid="insertEntityHeadSql" />
+		(#{englishName},#{chineseName},#{indicateName},#{columnValue},#{isActivity},#{insertBy},#{insertDate},#{modifiedBy},#{modifiedDate},#{comment})
+	</insert>
+	
+	<!-- 更新实体 -->
+	<update id="updateEntity" parameterType="dataDictionary">
+		UPDATE MST_DATA_DICTIONARY
+		<set>
+			<if test="englishName!=null">ENGLISH_NAME=#{englishName},</if>
+			<if test="chineseName!=null">CHINESE_NAME=#{chineseName},</if>
+			<if test="indicateName!=null">INDICATE_NAME=#{indicateName},</if>
+			<if test="columnValue!=null">COLUMN_VALUE=#{columnValue},</if>
+			<if test="isActivity!=null">ISACTIVITY=#{isActivity},</if>
+			<if test="insertBy!=null">CREATE_PEOPLE=#{insertBy},</if>
+			<if test="insertDate!=null">INSERTDATE=#{insertDate},</if>
+			<if test="modifiedBy!=null">ALTER_PEOPLE=#{modifiedBy},</if>
+			<if test="modifiedDate!=null">MODIFIEDDATE=#{modifiedDate},</if>
+			<if test="comment!=null">COMMENT=#{comment}</if>
+		</set>
+		WHERE ID=#{id}
+	</update>
+	
+	<!-- 根据ID删除实体 -->
+	<delete id="deleteById" parameterType="int">
+		DELETE FROM MST_DATA_DICTIONARY
+		WHERE ID=#{id}
+	</delete>
+	
+	 <!-- 批量删除 -->
+	<delete id="deleteByIds">
+		DELETE FROM MST_DATA_DICTIONARY where id in
+		<foreach item="item" collection="ids" open="(" separator=","
+			close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<!-- 根据ID查出实体 -->
+	<select id="queryById" parameterType="int" resultMap="dataDictionaryResultMap">
+		SELECT *
+		FROM MST_DATA_DICTIONARY WHERE ID=#{id}
+	</select>
+	
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="dataDictionary" resultMap="dataDictionaryResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="dataDictionary" resultMap="dataDictionaryResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+	
+	<!-- 根据map参数查询列表 -->
+	<select id="queryListByMap" resultMap="dataDictionaryResultMap">
+		<include refid="queryEntityHeadSql" />
+		FROM MST_DATA_DICTIONARY 
+		<where>
+			<!-- 自定义查询条件 -->
+		</where>
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="dataDictionary" resultType="long">
+		select count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+    <!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		INSERT INTO
+		MST_DATA_DICTIONARY(ENGLISH_NAME,CHINESE_NAME,INDICATE_NAME,COLUMN_VALUE,ISACTIVITY,CREATE_PEOPLE,INSERTDATE,ALTER_PEOPLE,MODIFIEDDATE,COMMENT)
+		VALUES
+	</sql>
+	
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT *
+	</sql>
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM MST_DATA_DICTIONARY
+		<where>
+		    <if test="id!=null and id!=''">
+				ID= #{id}
+			</if>
+		    <if test="englishName!=null and englishName!=''">
+				and ENGLISH_NAME= #{englishName}
+			</if>
+			<if test="chineseName!=null and chineseName!=''">
+				and CHINESE_NAME= #{chineseName}
+			</if>
+			<if test="indicateName!=null and indicateName!=''">
+				and INDICATE_NAME= #{indicateName}
+			</if>
+			<if test="columnValue!=null and columnValue!=''">
+				and COLUMN_VALUE= #{columnValue}
+			</if>
+			<if test="isActivity!=null and isActivity!=''">
+				and ISACTIVITY= #{isActivity}
+			</if>
+			<if test="insertBy!=null and insertBy!=''">
+				and CREATE_PEOPLE= #{insertBy}
+			</if>
+			<if test="modifiedBy!=null and modifiedBy!=''">
+				and ALTER_PEOPLE= #{modifiedBy}
+			</if>
+			<if test="comment!=null and comment!=''">
+				and id IN (${comment})
+			</if>
+		</where>
+	</sql>
+
+	<!-- 批量插入 -->
+    <insert id="insertMstDataDictionaryList"  parameterType="java.util.List">  
+        INSERT INTO
+		MST_DATA_DICTIONARY(ENGLISH_NAME,CHINESE_NAME,INDICATE_NAME,COLUMN_VALUE,ISACTIVITY,CREATE_PEOPLE,INSERTDATE,ALTER_PEOPLE,MODIFIEDDATE,COMMENT)
+		VALUES 
+        <foreach collection="list" item="item" index="index" separator="," >  
+            (#{item.englishName},#{item.chineseName},#{item.indicateName},#{item.columnValue},#{item.isActivity},#{item.insertBy}
+            ,#{item.insertDate},#{item.modifiedBy},#{item.modifiedDate},#{item.comment})  
+        </foreach>  
+    </insert>
+
+</mapper>

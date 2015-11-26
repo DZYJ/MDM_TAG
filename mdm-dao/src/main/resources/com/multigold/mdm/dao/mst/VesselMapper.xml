@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.VesselMapper">
+
+	<resultMap id="vesselResultMap" type="mstVessel">
+		<id property="vesselNo" column="VESSEL_NO" />
+		<id property="vesselName" column="VESSEL_NAME" />
+		<id property="fromDepartment" column="FROM_DEPARTMENT" />
+		<id property="vesselCoverage" column="VESSEL_COVERAGE" />
+		<id property="material" column="MATERIAL" />
+		<id property="quality" column="QUALITY" />
+		<id property="vesselState" column="VESSEL_STATE" />
+		<id property="insertBy"   column="CREATE_PEOPLE" />             
+	    <id property="insertDate"     column="CREATE_DATE" />                
+	    <id property="modifiedBy"      column="ALTER_PEOPLE" />                  
+	    <id property="modifiedDate"      column="ALTER_DATE" />  
+	    <id property="comment"      column="COMMENT" />                  
+	    <id property="vesselHeight"      column="VESSEL_HEIGHT" /> 
+	    <id property="vesselWidth"      column="VESSEL_WIDTH" />                  
+	    <id property="vesselLength"      column="VESSEL_LENGTH" /> 
+	    <id property="vesselVolume"      column="VESSEL_VOLUME" />                  
+	</resultMap>
+
+	<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstVessel">
+		<include refid="insertEntityHeadSql" />
+		(#{vesselName},#{fromDepartment},#{vesselCoverage},#{material},#{quality},#{vesselState},#{insertBy},
+		#{insertDate},#{comment},#{vesselHeight},#{vesselWidth},#{vesselLength},#{vesselVolume})
+	</insert>
+
+	<!-- 更新实体 -->
+	<update id="updateEntity" parameterType="mstVessel">
+		UPDATE mst_vessel
+		<set>
+			<if test="vesselName!=null">VESSEL_NAME=#{vesselName},</if>
+			<if test="fromDepartment!=null">FROM_DEPARTMENT=#{fromDepartment},</if>
+			<if test="vesselCoverage!=null">VESSEL_COVERAGE=#{vesselCoverage},</if>
+			<if test="material!=null">MATERIAL=#{material},</if>
+			<if test="quality!=null">QUALITY=#{quality},</if>
+			<if test="vesselState!=null">VESSEL_STATE=#{vesselState},</if>
+			<if test="modifiedBy!=null">ALTER_PEOPLE=#{modifiedBy},</if>
+			<if test="modifiedDate!=null">ALTER_DATE=#{modifiedDate},</if>
+			<if test="comment!=null">COMMENT=#{comment},</if>
+			<if test="vesselHeight!=null">VESSEL_HEIGHT=#{vesselHeight},</if>
+			<if test="vesselWidth!=null">VESSEL_WIDTH=#{vesselWidth},</if>
+			<if test="vesselLength!=null">VESSEL_LENGTH=#{vesselLength},</if>
+			<if test="vesselVolume!=null">VESSEL_VOLUME=#{vesselVolume}</if>
+		</set>
+		WHERE VESSEL_NO=#{vesselNo}
+	</update>
+
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="mstVessel" resultMap="vesselResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 根据map参数查询列表 -->
+	<select id="queryListByMap" resultMap="vesselResultMap">
+		<include refid="queryEntityHeadSql" />
+		 FROM mst_vessel mv
+		<where>
+		   <!-- 自定义查询条件 -->
+		</where>
+	</select>
+
+	<!-- 根据ID删除实体 -->
+	<delete id="deleteById" parameterType="long">
+		DELETE FROM mst_vessel
+		WHERE VESSEL_NO=#{vesselNo}
+	</delete>
+
+	<!-- 根据对象删除实体，此方法可以根据自己需求实现 -->
+	<delete id="deleteByObject" parameterType="mstVessel">
+	     <!-- 自定义删除条件 -->
+	</delete>
+
+	<!-- 根据ID查出实体 -->
+	<select id="queryById" parameterType="long" resultMap="vesselResultMap">
+		SELECT *
+		FROM mst_vessel mv WHERE mv.VESSEL_NO=#{vesselNo}
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="mstVessel" resultMap="vesselResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="mstVessel" resultType="long">
+		SELECT count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		INSERT INTO
+		mst_vessel(VESSEL_NAME,FROM_DEPARTMENT,VESSEL_COVERAGE,MATERIAL,QUALITY,VESSEL_STATE,
+		CREATE_PEOPLE,CREATE_DATE,COMMENT,VESSEL_HEIGHT,
+		VESSEL_WIDTH,VESSEL_LENGTH,VESSEL_VOLUME)
+		VALUES
+	</sql>
+
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT
+		mv.VESSEL_NO,mv.VESSEL_NAME,mv.FROM_DEPARTMENT,mv.VESSEL_COVERAGE,mv.MATERIAL,mv.QUALITY,mv.VESSEL_STATE,
+		mv.CREATE_PEOPLE,mv.CREATE_DATE,mv.ALTER_PEOPLE,mv.ALTER_DATE,mv.COMMENT,mv.VESSEL_HEIGHT,
+		mv.VESSEL_WIDTH,mv.VESSEL_LENGTH,mv.VESSEL_VOLUME
+	</sql>
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM mst_vessel mv
+		<where>
+			<if test="vesselNo!=null and vesselNo!=''">mv.VESSEL_NO= #{vesselNo}</if>
+			<if test="vesselName!=null and vesselName!=''">and mv.VESSEL_NAME= #{vesselName}</if>
+			<if test="fromDepartment!=null and fromDepartment!=''">and mv.FROM_DEPARTMENT= #{fromDepartment}</if>
+			<if test="vesselCoverage!=null and vesselCoverage!=''">and mv.VESSEL_COVERAGE= #{vesselCoverage}</if>
+			<if test="material!=null and material!=''">and mv.MATERIAL= #{material}</if>
+			<if test="quality!=null and quality!=''">and mv.QUALITY= #{quality}</if>
+			<if test="vesselState!=null and vesselState!=''">and mv.VESSEL_STATE= #{vesselState}</if>
+			<if test="insertBy!=null!=null and insertBy!=null!=''">and mv.CREATE_PEOPLE= #{insertBy}</if>
+			<if test="modifiedBy!=null and modifiedBy!=''">and mv.ALTER_PEOPLE= #{modifiedBy}</if>
+			<if test="comment!=null and comment!=''">and mv.COMMENT= #{comment}</if>
+	        <if test="vesselHeight!=null and vesselHeight!=''">and mv.VESSEL_HEIGHT= #{vesselHeight}</if>
+	        <if test="vesselWidth!=null and vesselWidth!=''">and mv.VESSEL_WIDTH= #{vesselWidth}</if>
+	        <if test="vesselLength!=null and vesselLength!=''">and mv.VESSEL_LENGTH= #{vesselLength}</if>
+	        <if test="vesselVolume!=null and vesselVolume!=''">and mv.VESSEL_VOLUME= #{vesselVolume}</if>
+		</where>
+	</sql>
+	
+	<!-- 批量删除 -->
+  <delete id="deleteByIds">
+    delete from mst_vessel where VESSEL_NO in
+    <foreach item="item" collection="ids" open="(" separator=","
+      close=")">
+      #{item}
+    </foreach>
+  </delete>
+
+</mapper>

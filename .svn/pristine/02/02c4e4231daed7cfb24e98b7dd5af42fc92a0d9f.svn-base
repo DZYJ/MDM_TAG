@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>取货时间</title>
+    [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/jquery.maskedinput.min.js"></script>
+    <script type="text/javascript" src="${resource!}/js/lsp/pickuptime.js"></script>
+    <style type="text/css">
+      table { border-collapse: collapse; border-spacing: 0; }
+      .pickuptime_dlg tbody{ padding: 5px 0; }
+      .pickuptime_dlg th{ text-align: center; }
+      .pickuptime_dlg tbody tr td { padding: 4px 0; }
+      .pickuptime_dlg tr.tr_odd { background-color: #fafafa; }
+      .pickuptime_time { width: 60px; letter-spacing: 2px; text-align: center; }
+      #add_put_dlg_btn { float: left; }
+    </style>
+  </head>
+  <body  style="visibility: visible;">
+    <div class="top_content">
+      <!-- 查询承运商信息表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 40px;" data-options="collapsible:true" fit="true">
+        <form id="pickuptime_search_form">
+        <table>
+          <tr>
+            <td  class="search_form_tdl"><label for="lspCode">承运商编号：</label></td>
+            <td  class="search_form_tdr"><input name="lspCode" id="lspCode"/></td>
+            <td  class="search_form_tdl"><label for="lspName">承运商名称：</label></td>
+            <td  class="search_form_tdr"><input name="lspName" id="lspName"/></td>
+            <td  class="search_form_tdl"><label for="lspType">承运商类型：</label></td>
+            <td  class="search_form_tdr"><input name="lspType" id="lspType"/></td>
+            <td  class="search_form_tdl"><label for="enable">是否活动：</label></td>
+            <td  class="search_form_tdr"><input name="enabled" id="enabled"/></td>
+            <td class="search_form_tdl">
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" id="search_form_reset">重置</a>
+            </td>
+          </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+    <div id="pickuptime_grid" class="grid_content">
+      <!--承运商列表GRID -->
+      <table id="pickuptimeView" fit="true">
+      </table>
+    </div>
+    
+    <div id="pickuptime_dlg" class="pickuptime_dlg" style="width: 650px; height: 450px; display: none;">
+      <form>
+        <table style="width: 100%;">
+          <thead style="background-color: #ddd;">
+            <tr>
+              <th width="55%">仓库<br/>MasterLocation</th>
+              <th width="15%">星期<br/>Day</th>
+              <th width="15%">时间 <br/>Hour</th>
+              <th width="15%">有效状态 <br/>Active</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </form>
+    </div>
+    <div id="pickuptime_tr_mirror" style="display: none;">
+      <table>
+        <tr class="pickuptime_tr">
+          <td style="padding-left: 20px;">
+            <input class="pickuptime_master" name="put_master" id="put_master" style="width: 300px;"/>
+            <input type="hidden"/>
+          </td>
+          <td>
+            <select class="pickuptime_day" name="put_day" style="width:80px;">
+              <option value="">--请选择--</option>
+              <option value="1">星期一</option>
+              <option value="2">星期二</option>
+              <option value="3">星期三</option>
+              <option value="4">星期四</option>
+              <option value="5">星期五</option>
+              <option value="6">星期六</option>
+              <option value="7">星期日</option>
+            </select>
+          </td>
+          <td align="center">
+            <input type="text" class="pickuptime_time" name="put_time"/>
+          </td>
+          <td align="center">
+            <input type="checkbox" class="pickuptime_state" name="put_state"/>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Implementation-Title: MDM Web
+Implementation-Version: 1.0.0.tag
+Implementation-Build-Timestamp: 
+Implementation-Vendor-Id: com.multigold.mdm
+Build-Jdk: 1.7.0_15
+Built-By: zhanghua
+Implementation-Build-Branch: 
+Created-By: Maven Integration for Eclipse
+Implementation-SCM-URL: 
+Implementation-Build: 
+

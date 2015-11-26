@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.LspDayHalfInfoMapper">
+
+	<resultMap id="lspDayHalfInfoMap" type="lspDayHalfInfo">
+		<id property="id" column="ID" />    
+		<id property="buid" column="BUID" />                                     
+		<id property="lspCode" column="LSP_CODE" />                        
+		<id property="exFromDate" column="EX_FROM_DATE" />   
+		<id property="exToDate" column="EX_TO_DATE" /> 
+		<id property="nextDayFlg" column="NEXT_DAY_FLG" />                            
+		<id property="dlDate" column="DL_DATE" />                            
+		<id property="isEffectiveFlg" column="IS_EFFECTIVE_FLG" />   
+		<id property="interDayFlg" column="INTER_DAY_FLG" />
+		<id property="insertDate" column="INSERT_DATE" />                             
+		<id property="insertBy" column="INSERT_BY" />                            
+		<id property="modifiedDate" column="MODIFIED_DATE" />                              
+		<id property="modifiedBy" column="MODIFIED_BY" />                                                 
+	</resultMap>
+	
+	<!-- 批量插入 -->
+    <insert id="insertLspDayHalfList"  parameterType="java.util.List">
+        INSERT INTO LSP_DAY_HALF_INFO (BUID,LSP_CODE,EX_FROM_DATE,EX_TO_DATE,NEXT_DAY_FLG,DL_DATE,
+        IS_EFFECTIVE_FLG,INSERT_BY,INSERT_DATE,MODIFIED_BY,MODIFIED_DATE,ID,INTER_DAY_FLG)
+        values  
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.buid},#{item.lspCode},#{item.exFromDate},#{item.exToDate},#{item.nextDayFlg},#{item.dlDate},#{item.isEffectiveFlg},
+            #{item.insertBy},#{item.insertDate},#{item.modifiedBy},#{item.modifiedDate},#{item.id},#{item.interDayFlg})  
+        </foreach>  
+    </insert>
+    
+    <!-- 根据ID删除实体 -->
+	<delete id="deleteByLspCode" parameterType="String">
+		DELETE 	FROM LSP_DAY_HALF_INFO where LSP_CODE =#{lspCode}
+	</delete> 
+
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByLsp" parameterType="String" resultMap="lspDayHalfInfoMap">
+		<include refid="queryEntityHeadSql" />
+		FROM LSP_DAY_HALF_INFO 
+        WHERE LSP_CODE=#{lspCode}  ORDER BY ID
+	</select>
+
+
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT  BUID,LSP_CODE,EX_FROM_DATE,EX_TO_DATE,NEXT_DAY_FLG,DL_DATE,
+        IS_EFFECTIVE_FLG,INSERT_BY,INSERT_DATE,MODIFIED_BY,MODIFIED_DATE,ID,INTER_DAY_FLG
+	</sql>
+
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM LSP_DAY_HALF_INFO
+		<where>
+			<if test="lspCode!=null and lspCode!='' "> and LSP_CODE=#{lspCode}</if>
+		</where>
+	</sql>
+
+</mapper>

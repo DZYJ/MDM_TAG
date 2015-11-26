@@ -1,0 +1,93 @@
+$(function() {
+	/*初始化系统参数grid高度*/
+	$("#masLoc_grid").height($(window).height()-120);
+	
+	/*系统参数GRID*/
+	$('#masLocView').myDatagrid({
+		"title": "仓库信息列表",
+		"url": "../masLoc/list.json",
+		"singleSelect": false, //多选
+		"method": "post", 
+		"columns" : [[
+			{field : 'masLoc', title : '仓库编码', 	 width : 40, align : 'center', sortable : true},
+			{field : 'descr', title : '仓库名称', 	 width : 60, align : 'center', sortable : true}
+		]],
+		/*导入导出按钮*/
+		"toolbar": [{
+			id : 'data_form_import',
+			text : '导入',
+			iconCls : 'icon-filter',
+			handler : function() {
+				var file1 = $("#file"); 
+				file1.after(file1.clone().val(""));
+				file1.remove();
+				$('#data_import_dialog').dialog({
+					title: '仓库信息导入',    
+				    width: 500,    
+				    height: 240,    
+				    closed: false,    
+				    cache: false,    
+				    href: '',    
+				    modal: true
+				}); 
+			}
+		},{
+			id : 'data_form_export',
+			text : '导出',
+			iconCls : 'icon-filter',
+			handler : function() {
+				var checkedItems = $("#masLocView").datagrid("getChecked");
+				var names = [];
+				$.each(checkedItems, function(index, item){
+					names.push("'"+item.masLoc+"'");
+				});
+				$('#ids').val(names);
+				$('#masLoc_form').form('submit', {
+					url: "../masLoc/export.htm",
+					method: "post",
+					onSubmit: function(){
+						return true;
+					},
+					success: function(data){
+						var _data = $.parseJSON(data);
+						$.messager.alert("提示", _data);
+					}
+				});
+			}
+		}],
+		"model": "masLoc", //当不指定form、dialog的ID，插件会根据该属性来自动匹配页面元素，如修改系统参数窗口，将自动匹配ID：sysParam_edit_dialog
+		"dblClickHandler": "detailHandler", //双击行时进行的操作(当定义了onDblClickRow时，此参数将失效)
+		/*增删改查配置*/
+		"editHandler": {
+			"enable": true,
+			"title": "修改", 
+			"form": {"validate":true, "submitUrl": "../masLoc/update.do"}
+		},
+		"addHandler": {
+			"enable": true,
+			"title": "添加", 
+			"form": {"validate":true, "submitUrl": "../masLoc/create.do"}
+		},
+		"detailHandler": {
+			"enable": true,
+			"title": "查看"
+		},
+		"removeHandler": {
+			"enable": true,
+			"title": "删除",
+			"removeUrl": "../masLoc/deleteByIds.json", 
+			"idField": "masLoc",
+			"idParams": "ids"
+		}
+	});
+	
+	/*查询grid*/
+	//$("#sysParam_search_form").find("#account")[0].disabled = false;
+	$("#search_form_submit").on("click", function(){
+		$('#masLocView').datagrid("load", $("#masLoc_form").form("formToJson"));
+	});
+	$("#search_form_reset").on("click", function(){
+		$("#masLoc_form").form("reset");
+	});
+	
+});

@@ -1,0 +1,294 @@
+$(function() {
+
+	
+	/*初始化预付单grid高度*/
+	$("#prePayment_grid").height($(window).height()-120);
+	
+	/*预付单GRID*/
+	$('#prePaymentView').myDatagrid({
+		"title": "预付单列表",
+		"url": "../prePayment/prePaymentLists.json",
+		"singleSelect": false, //多选
+		"method": "post", 
+		"columns" : [[
+		    {field : 'id', title : 'id', align : 'center', sortable : true,hidden:true},
+			{field : 'paymentCode', title : '单据编号', align : 'center', sortable : true},
+			{field : 'venCode', title : '供应商', align : 'center', sortable : true}, 
+			{field : 'clearingForm',title : '结算方式', align : 'center'}, 
+			{field : 'settlementSubject',title : '结算科目',align : 'center', sortable : true}, 
+			{field : 'vendorBank',title : '供应商银行',align : 'center'},
+			/*{field : 'isActivity',title : '是否活动', width : 40, align : 'center', sortable : true,formatter:function(value){
+				if(value=="Y"){
+					value="是";
+				}else if(value=="N"){
+					value="否";
+				}
+				return value;
+			}},*/
+			{field : 'vendorAccount',title : '供应商账户',align : 'center', sortable : true},
+			{field : 'itemCode',title : '项目大类编码',align : 'center', sortable : true},
+			{field : 'oppSubject',title : '对方科目',align : 'center', sortable : true},
+			{field : 'oppItemCode',title : '对方项目编码',align : 'center', sortable : true},
+			{field : 'payType',title : '预付类型',align : 'center', sortable : true},
+			{field : 'type',title : '款项类型',align : 'center', sortable : true},
+			{field : 'sum',title : '金额',align : 'center', sortable : true},
+	
+			{field : 'status',title : '状态',align : 'center', sortable : true,formatter:function(value){
+				if(value=="1"){
+					value="新建";
+				}else if(value=="2"){
+					value="已提交";
+				}else if(value=="3"){
+					value="已审核";
+				}else if(value=="4"){
+					value="作废";
+				}
+				return value;
+			}},
+			{field : 'inputer',title : '录入人',align : 'center', sortable : true},
+			{field : 'createTd',title : '录入时间',align : 'center', sortable : true},
+			{field : 'digest',title : '摘要',align : 'center', sortable : true}
+		]],
+		"model": "prePayment", //当不指定form、dialog的ID，插件会根据该属性来自动匹配页面元素，如修改预付单窗口，将自动匹配ID：dataDictionary_edit_dialog
+		//"dblClickHandler": "detailHandler", //双击行时进行的操作(当定义了onDblClickRow时，此参数将失效)
+		/*增删改查配置*/
+		"editHandler": {
+			"enable": true,
+			"title": "修改", 
+			"handler" : function() {
+				var $tb  = $("#paymentSettlementView");
+				var rows = $tb.datagrid("getSelections");
+				//已提交不能修改
+				var aStatus = rows[0].status;
+				if( aStatus=='2' ){
+					$.messager.alert("警告", "已提交，不能修改");
+					return;
+				}
+				comboboxVenNameUpdate();
+			},
+			"form": {"validate":true, "submitUrl": "../prePayment/updatePrePayment.do"}
+		},
+		"addHandler": {
+			"enable": true,
+			"title": "新建", 
+			"handler" : function() {
+				comboboxVenNameUpdate();
+			},
+			/*"form": {"validate":true, "submitUrl": "../paymentSettlement/create.do"}*/
+			"form": {"validate":true, "submitUrl": "../prePayment/createPrePayment.do"}
+		},
+		"detailHandler": {
+			"enable": true,
+			"title": "查看",
+            "handler": function(){
+				//是否活动显示
+				var active = $(this).find("input[name='isActivity']");
+				var val = active.val();
+				if(!val || val=="Y"){
+					active.val("是");
+				}else {
+					active.val("否");
+				}
+			}
+		},
+		"subHandler": {
+			"enable": true,
+			"title": "提交",
+			"submitUrl": "../prePayment/commitByIds.json", 
+			"dataParams": "rowsData"
+		}
+	});
+	
+	/*查询grid*/
+	$("#search_form_submit").on("click", function(){
+		$('#prePaymentView').datagrid("load", $("#prePayment_search_form").form("formToJson"));
+	});
+	$("#search_form_reset").on("click", function(){
+		$("#prePayment_search_form").form("reset");
+	});
+	
+});
+
+function comboboxVenName(){
+	$("#venName").combobox({ 
+		//$("#venName1").combobox({ 
+		url:"../prePayment/prePaymentVenNameList.json",
+//		valueField:'name',$("input[name='venName']")[1]
+//		textField:'name',
+		valueField:'venCode',
+		textField:'venName',
+		method:'post',
+		onSelect:function(param){
+			$("#venName").val(param.venName);
+			var venCode = $("input[name='venCode']");
+			venCode[1].value = param.venCode;
+		},
+		onUnselect:function(param){
+			$("#venName").val("");
+		}
+
+	});
+}
+
+function comboboxVenNameUpdate(){
+	$("#venName").combobox({ 
+		//$("#venName1").combobox({ 
+		url:"../prePayment/prePaymentVenNameList.json",
+//		valueField:'name',$("input[name='venName']")[1]
+//		textField:'name',
+		valueField:'venCode',
+		textField:'venName',
+		method:'post',
+		onSelect:function(param){
+			$("#venName").val(param.venName);
+			var venCode = $("input[name='venCode']");
+			venCode[2].value = param.venCode;
+		},
+		onUnselect:function(param){
+			$("#venName").val("");
+		}
+		
+	});
+}
+
+$(document).ready(function(){
+	$("#button1").click(function(){
+		//var vendorSelectVal = $("#venName1").val();
+		var vendorSelectVal = $("input[name='venName']").val();
+		var payType = $("#payType1").val();
+		//payType = parseFloat(payType);
+		//alert(payType);
+		//alert("000");
+		if(vendorSelectVal == null || vendorSelectVal ==""){
+			alert("请先选择供应商！");
+			return false;
+		}else{
+			//根据供应商查询预付单
+			$("#prepayment_grid").height($(window).height()-120);
+			$('#prepaymentView').myDatagrid({
+				"title": "预付单列表",
+				"url": "../paymentSettlement/prepayment.json?vendorSelectVal="+vendorSelectVal,
+				"singleSelect": false, //多选
+				"method": "post", 
+				/*"onClickRow":function (rowIndex, rowData) {
+					   alert("1111");
+					},*/
+				"onSelect":function (rowIndex, rowData) {//选择一行时
+					   var varSun = rowData.sum;
+					   if(payType != ""){
+						   payType = parseFloat(payType) + parseFloat(varSun);
+					   }else{
+						   payType = parseFloat(varSun);
+					   }
+					   $("#payType1").val(payType);
+					},
+				"onUnselect":function (rowIndex, rowData) {//不选择一行时
+					var varSun = rowData.sum;
+					if(payType != ""){
+						payType = parseFloat(payType) - parseFloat(varSun);
+					}
+					$("#payType1").val(payType);
+				},
+//			var url=encodeURI("../paymentSettlement/prepayment.json");
+//			$.ajax({
+//				url: url,
+//		        type: 'post',
+//		        dataType: 'text',
+//		        data:{"vendorSelectVal":vendorSelectVal},
+//		        success: function (data) {
+		          //if(data=="S")
+		          //{
+		          	 //alert("查询成功！");
+		          	
+	      		"columns" : [[
+	      		            {field : 'id', title : 'id', align : 'center', sortable : true,hidden:true},  
+	      					{field : 'paymentCode', title : '单据编号', align : 'center', sortable : true},
+	      					{field : 'venCode', title : '供应商', align : 'center', sortable : true}, 
+	      					{field : 'clearingForm',title : '结算方式', align : 'center'}, 
+	      					{field : 'settlementSubject',title : '结算科目',align : 'center', sortable : true}, 
+	      					{field : 'vendorBank',title : '供应商银行',align : 'center'},
+	      					{field : 'vendorAccount',title : '供应商账户',align : 'center', sortable : true},
+	      					{field : 'itemCode',title : '项目大类编码',align : 'center', sortable : true},
+	      					{field : 'oppSubject',title : '对方科目',align : 'center', sortable : true},
+	      					{field : 'oppItemCode',title : '对方项目编码',align : 'center', sortable : true},
+	      					{field : 'payType',title : '预付类型',align : 'center', sortable : true},
+	      					{field : 'type',title : '款项类型',align : 'center', sortable : true},
+	      					{field : 'sum',title : '金额',align : 'center', sortable : true},
+	      				
+	      					{field : 'status',title : '状态',align : 'center', sortable : true},
+	      					{field : 'inputer',title : '录入人',align : 'center', sortable : true},
+	      					{field : 'createTd',title : '录入时间',align : 'center', sortable : true},
+	      					{field : 'digest',title : '摘要',align : 'center', sortable : true}
+	      					]]
+			});
+		}
+	});
+	$("#button2").click(function(){
+		var vendorSelectVal = $("#venName1").val();
+		if(vendorSelectVal == null || vendorSelectVal ==""){
+			alert("请先选择供应商！");
+			return false;
+		}else{
+			//根据供应商查询发票
+			$("#invoice_grid").height($(window).height()-120);
+			$('#invoiceView').myDatagrid({
+				"title": "发票列表",
+				"url": "../paymentSettlement/invoice.json?vendorSelectVal="+vendorSelectVal,
+				"singleSelect": false, //多选
+				"method": "post", 
+          		"columns" : [[
+          					{field : 'id', title : '单据编号', align : 'center', sortable : true},
+          					{field : 'englishName', title : '供应商', align : 'center', sortable : true}, 
+          					{field : 'chineseName',title : '结算方式', align : 'center'}, 
+          					{field : 'indicateName',title : '结算科目',align : 'center', sortable : true}, 
+          					{field : 'columnValue',title : '供应商银行',align : 'center'}
+          					]]
+          	 });
+			/*var url=encodeURI("../paymentSettlement/invoice.json?");
+			$.ajax({
+				url: url,
+		        type: 'post',
+		        dataType: 'text',
+		        data:{"vendorSelectVal":vendorSelectVal},
+		        success: function (data) {
+		          if(data=="S")
+		          {
+		          	 alert("查询成功！");
+		          	 $('#invoiceView').myDatagrid({
+		          		 
+		          	 });
+		          }else
+		          {
+		          	alert("查询失败！");
+		          }
+		       	}
+			});*/
+		}
+	});
+});
+
+function checkOther(obj){
+    var str = obj.value;
+   	if(str!=null&&str!="")
+   	{
+	   	var reg = /^([0-9]|(\.))*$/;
+		if (reg.test(str)) 
+		{
+			if(str.length>10)
+	   		{
+//				obj.defaults.missingMessage = '1234567';
+//				$.obj.defaults.missingMessage = '该输入项为必输项';
+				$.messager.alert("提示", "&nbsp;&nbsp;长度不能超过10！");
+				return;
+//				obj.messager.alert("提示", "&nbsp;&nbsp;长度不能超过10！");
+//	   			alert("长度不能超过10");
+//	   			obj.focus();
+	   		}
+		}else
+		{
+//			$.messager.alert("提示", "&nbsp;&nbsp;只能是数字或英文小数点！");
+			alert("只能是数字或英文小数点");
+			obj.focus();
+		}
+   	}
+}

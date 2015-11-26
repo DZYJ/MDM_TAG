@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.system.SysParamConfigMapper">
+
+	<resultMap id="sysParamResultMap" type="sysParamConfig">
+		<id property="id" column="ID" />
+		<id property="code" column="CODE" />
+		<id property="description" column="DESCRIPTION" />
+		<id property="param_type" column="PARAM_TYPE" />
+		<id property="remark" column="REMARK" />
+	</resultMap>
+
+   <!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		INSERT INTO
+		MST_PARAMETER(CODE,DESCRIPTION,PARAM_TYPE,REMARK)
+		VALUES
+	</sql>
+	
+    <!-- 创建实体 -->
+	<insert id="createEntity" parameterType="sysParamConfig">
+		<include refid="insertEntityHeadSql" />
+		(#{code},#{description},#{param_type},#{remark})
+	</insert>
+	
+	<!-- 更新实体 -->
+	<update id="updateEntity" parameterType="sysParamConfig">
+		UPDATE MST_PARAMETER
+		<set>
+			<if test="code!=null">CODE=#{code},</if>
+			<if test="description!=null">DESCRIPTION=#{description},</if>
+			<if test="param_type!=null">PARAM_TYPE=#{param_type},</if>
+			<if test="remark!=null">REMARK=#{remark}</if>
+		</set>
+		WHERE ID=#{id}
+	</update>
+	
+	<!-- 根据ID删除实体 -->
+	<delete id="deleteById" parameterType="int">
+		DELETE FROM MST_PARAMETER
+		WHERE ID=#{id}
+	</delete>
+	
+	 <!-- 批量删除 -->
+	<delete id="deleteByIds">
+		DELETE FROM MST_PARAMETER where id in
+		<foreach item="item" collection="ids" open="(" separator=","
+			close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<!-- 根据ID查出实体 -->
+	<select id="queryById" parameterType="int" resultMap="sysParamResultMap">
+		SELECT *
+		FROM MST_PARAMETER WHERE ID=#{id}
+	</select>
+	
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="sysParamConfig" resultMap="sysParamResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="sysParamConfig" resultMap="sysParamResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+	
+	<!-- 根据map参数查询列表 -->
+	<select id="queryListByMap" resultMap="sysParamResultMap">
+		<include refid="queryEntityHeadSql" />
+		FROM MST_PARAMETER 
+		<where>
+			<!-- 自定义查询条件 -->
+		</where>
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="sysParamConfig" resultType="long">
+		select count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT ID,CODE,DESCRIPTION,PARAM_TYPE,REMARK
+	</sql>
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM MST_PARAMETER
+		<where>
+		    <if test="code!=null and code!=''">
+				CODE= #{code}
+			</if>
+			<if test="param_type!=null and param_type!=''">
+				and PARAM_TYPE= #{param_type}
+			</if>
+			<if test="description!=null and description!=''">
+				and DESCRIPTION= #{description}
+			</if>
+			<if test="remark!=null and remark!=''">
+				and REMARK= #{remark}
+			</if>
+		</where>
+	</sql>
+
+</mapper>

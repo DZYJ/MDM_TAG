@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.MstLspMapper">
+
+	<resultMap id="mstLspResultMap" type="mstLsp">
+		<id property="buid" column="buid" />    
+		<id property="lspCode" column="lsp_code" />                                     
+		<id property="lspName" column="lsp_name" />                        
+		<id property="lspAddress1" column="lsp_address1" />                              
+		<id property="lspAddress2" column="lsp_address2" />                             
+		<id property="lspAddress3" column="lsp_address3" />                            
+		<id property="lspAddress4" column="lsp_address4" />                              
+		<id property="lspAddress5" column="lsp_address5" />                            
+		<id property="lspContact" column="lsp_contact" />                  
+		<id property="lspEmail" column="lsp_email" />                           
+		<id property="lspPhone" column="lsp_phone" />                         
+		<id property="lspFax" column="lsp_fax" />                                
+		<id property="lspStCode" column="lsp_st_code" />                         
+		<id property="lspCyCode" column="lsp_cy_code" />                        
+		<id property="lspZipCode" column="lsp_zip_code" />
+		<id property="lspDescription" column="lsp_description" />                        
+		<id property="enabled" column="enabled" />                                 
+		<id property="creditRankingService" column="credit_ranking_service" />                        
+		<id property="creditRankingFinance" column="credit_ranking_finance" />                               
+		<id property="codRate" column="cod_rate" />                                  
+		<id property="insuranceRate" column="insurance_rate" />                                
+		<id property="paymentCycleTime" column="payment_cycle_time" />                            
+		<id property="codFlag" column="cod_flag" />                        
+		<id property="codCashFlag" column="cod_cash_flag" />                                    
+		<id property="codPosFlag" column="cod_pos_flag" />                                      
+		<id property="codCashMax" column="cod_cash_max" />                                
+		<id property="codCashCurrent" column="cod_cash_current" />
+		<id property="tradeInFlag" column="trade_in_flag" />                                 
+		<id property="vipFlag" column="vip_flag" />                            
+		<id property="selfPickupFlag" column="self_pickup_flag" />                                    
+		<id property="contractDueDate" column="contract_due_date" />                            
+		<id property="shipMethod" column="ship_method" />                                    
+		<id property="lspType" column="lsp_type" />                                 
+		<id property="returnPickupFlag" column="return_pickup_flag" />                                                   
+		<id property="cartonWeightLimit" column="carton_weight_limit" />                                                  
+		<id property="wsFlag" column="ws_flag" />                          
+		<id property="fbCircle" column="fb_circle" />
+		<id property="fbDate" column="fb_date" />
+	</resultMap>
+	
+	
+		<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstLsp">
+		<include refid="insertEntityHeadSql" />
+		(#{buid},#{lspCode},#{lspName},#{lspPhone},#{lspType},#{lspContact},#{insuranceRate},#{lspAddress1},#{lspAddress2},#{lspAddress3},#{lspAddress4},#{lspAddress5},
+		#{codRate},#{shipMethod},#{lspZipCode},#{lspFax},#{enabled},#{lspDescription},#{fbCircle},#{fbDate},#{codCashMax})
+	</insert>
+	
+		<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		 insert into mst_lsp(BUID,LSP_CODE,LSP_NAME,LSP_PHONE,LSP_TYPE,LSP_CONTACT,INSURANCE_RATE,LSP_ADDRESS1,LSP_ADDRESS2,LSP_ADDRESS3,LSP_ADDRESS4,LSP_ADDRESS5,COD_RATE,SHIP_METHOD,LSP_ZIP_CODE,LSP_FAX,ENABLED,LSP_DESCRIPTION,fb_circle,fb_date,cod_cash_max)values
+	</sql>
+
+
+	<!-- 更新实体 -->
+	<update id="updateEntity" parameterType="mstLsp">
+		update mst_lsp
+		<set>
+			<if test="lspCode!=null and lspCode!='' ">LSP_CODE=#{lspCode},</if>
+			<if test="lspName!=null and lspName!=''">LSP_NAME=#{lspName},</if>
+			<if test="lspPhone!=null and lspPhone!=''">LSP_PHONE=#{lspPhone},</if>
+			<if test="lspType!=null and lspType!=''">LSP_TYPE=#{lspType},</if>
+			<if test="lspContact!=null and lspContact!=''">LSP_CONTACT=#{lspContact},</if>
+			<if test="insuranceRate!=null and insuranceRate!=''">INSURANCE_RATE=#{insuranceRate},</if>
+			<if test="lspAddress1!=null and lspAddress1!=''">LSP_ADDRESS1=#{lspAddress1},</if>
+			<if test="lspAddress2!=null and lspAddress2!=''">LSP_ADDRESS2=#{lspAddress2},</if>
+			<if test="lspAddress3!=null and lspAddress3!=''">LSP_ADDRESS3=#{lspAddress3},</if>
+			<if test="lspAddress4!=null and lspAddress4!=''">LSP_ADDRESS4=#{lspAddress4},</if>
+			<if test="lspAddress5!=null and lspAddress5!=''">LSP_ADDRESS5=#{lspAddress5},</if>
+			<if test="codRate!=null and codRate!=''">COD_RATE=#{codRate},</if>
+			<if test="shipMethod!=null and shipMethod!=''">SHIP_METHOD=#{shipMethod},</if>
+			<if test="lspZipCode!=null and lspZipCode!=''">LSP_ZIP_CODE=#{lspZipCode},</if>
+			<if test="lspFax!=null and lspFax!=''">LSP_FAX=#{lspFax},</if>
+			<if test="enabled==0 ">ENABLED=#{enabled},</if>
+			<if test="enabled==1 ">ENABLED=#{enabled},</if>
+			<if test="lspDescription!=null and lspDescription!=''">LSP_DESCRIPTION=#{lspDescription},</if>
+			<if test="fbCircle!=null and fbCircle!=0">fb_circle=#{fbCircle},</if>
+			<if test="fbDate!=null and fbDate!=''">fb_date=#{fbDate},</if>
+			<if test="codCashMax!=null and codCashMax!=''">cod_cash_max=#{codCashMax}</if>
+						
+		</set>
+		where LSP_CODE=#{lspCode}
+	</update>
+
+
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="mstLsp" resultMap="mstLspResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 根据map参数查询列表 -->
+	<select id="queryListByMap" resultMap="mstLspResultMap">
+		<include refid="queryEntityHeadSql" />
+		    FROM MST_LSP
+		<where>
+		   <!-- 自定义查询条件 -->
+		</where>
+	</select>
+
+	<!-- 根据ID删除实体 -->
+
+<!-- 	<update id="deleteByIds" parameterType='String'>
+	      update mst_lsp set enabled=0  where LSP_CODE  in 
+		<foreach item="lspCode" collection="ids" open="(" separator=","
+	      close=")">
+	      #{lspCode}
+	    </foreach>
+	</update> -->
+	<delete id="deleteByIds" parameterType="String"><!--  真删除 -->
+	     delete from mst_lsp  where LSP_CODE  in 
+		<foreach item="lspCode" collection="ids" open="(" separator=","
+	      close=")">
+	      #{lspCode}
+	    </foreach>
+	</delete>
+
+	<!-- 根据对象删除实体，此方法可以根据自己需求实现 -->
+	<delete id="deleteByObject" parameterType="mstLsp">
+	     <!-- 自定义删除条件 -->
+	</delete>
+
+	<!-- 根据ID查出实体 -->
+		<select id="queryById" parameterType="long" resultMap="mstLspResultMap">
+         <include refid="queryEntityHeadSql" />
+	     FROM MST_LSP
+	     WHERE LSP_CODE=#{lspCode}
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="mstLsp" resultMap="mstLspResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="mstLsp" resultType="long">
+		select count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+
+
+
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+			   SELECT BUID,LSP_CODE,LSP_NAME,LSP_ADDRESS1,LSP_ADDRESS2,LSP_ADDRESS3,LSP_ADDRESS4,LSP_ADDRESS5,LSP_CONTACT,LSP_EMAIL,LSP_PHONE,LSP_FAX,LSP_ST_CODE,LSP_CY_CODE,LSP_ZIP_CODE,INSERT_DATE,INSERT_BY,MODIFIED_DATE,
+               MODIFIED_BY,LSP_DESCRIPTION,ENABLED,CREDIT_RANKING_SERVICE,CREDIT_RANKING_FINANCE,COD_RATE,INSURANCE_RATE,PAYMENT_CYCLE_TIME,COD_FLAG,COD_CASH_FLAG,COD_POS_FLAG,COD_CASH_MAX,COD_CASH_CURRENT,TRADE_IN_FLAG,
+               VIP_FLAG,SELF_PICKUP_FLAG,CONTRACT_DUE_DATE,SHIP_METHOD,LSP_TYPE,RETURN_PICKUP_FLAG,CARTON_WEIGHT_LIMIT,WS_FLAG,FB_CIRCLE,FB_DATE,COD_CASH_MAX
+	</sql>
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM MST_LSP
+		<where>
+		     1=1
+		    <if test="enabled==null"> and enabled=1</if>
+		    <if test="enabled!=null"> and enabled=#{enabled}</if>
+			<if test="lspCode!=null and lspCode!=''"> and LSP_CODE=#{lspCode}</if>
+			<if test="lspName!=null and lspName!=''"> and LSP_NAME=#{lspName}</if>
+			<if test="lspType!=null and lspType!=''"> and LSP_TYPE=#{lspType}</if>
+		</where>
+	</sql>
+
+</mapper>

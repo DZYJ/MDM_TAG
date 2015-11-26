@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>配送员信息列表</title>
+    [#include "../include/base_js_css.html"/]
+    <link rel="stylesheet" type="text/css" href="${resource!}/css/common.css">
+    <script type="text/javascript" src="${resource!}/js/dispatcher/dispatcher.js"></script>
+  </head>
+  <body  style="visibility: visible;">
+    <div class="top_content">
+      <!-- 查询配送员信息表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 65px;" data-options="collapsible:true" fit="true">
+        <form id="dispatcher_search_form">
+        <table>
+          <tr>
+            <td  class="search_form_tdl"><label for="id">配送员编号：</label></td>
+            <td  class="search_form_tdr"><input name="id" id="id" type="text"/></td>
+            <td  class="search_form_tdl"><label for="name">配送员姓名：</label></td>
+            <td  class="search_form_tdr"><input name="name" id="name" type="text"/></td>
+            <td  class="search_form_tdl"><label for="siteCode">配送站点：</label></td>
+            <td  class="search_form_tdr"><input class="easyui-combobox" name="siteCode" id="search_siteCode" data-options="valueField:'masLoc',textField:'descr'"/></td>
+          </tr>
+          <tr>
+          	<td class="search_form_tdlf">&nbsp;</td>
+			<td colspan="5" class="search_form_tdr">
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+            </td>
+          </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+    <div id="dispatcher_grid" class="grid_content">
+      <!--配送员信息列表GRID -->
+      <table id="dispatcherView" fit="true">
+      </table>
+    </div>
+
+      <!-- 添加配送员模块 begin -->
+    <div id="dispatcher_add_dialog" class="easyui-dialog" style="width: 650px; height: 390px; padding: 10px 20px" closed="true">
+      <div class="ftitle">添加配送员</div>
+      <form id="dispatcher_add_form" method="post" novalidate class="ftitle_form">
+        <table style="width:100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class=form_tr_odd>
+            <td width="20%" class="form_tdl"><label for="siteCode">配送站点:</label></td>
+            <td width="30%" class="form_tdr"><input name="siteCode" id="add_siteCode" class="easyui-combobox" style="width:165px;" required="true" data-options="valueField:'masLoc',textField:'descr'" editable="false"/> </td>
+            <td width="20%" class="form_tdl"><label for="name">姓名:</label></td>
+            <td width="30%" class="form_tdr"><input name="name" id="name" class="easyui-validatebox" style="width:160px;" required="true" validType="unnormal"/> </td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label  for="sex">性别:</label></td>
+            <td class="form_tdr"><select class="easyui-combobox" name="sex" id="sex" style="width:165px;" editable="false" style="width:132px" required="true"/><option value="0">男</option><option value="1">女</option></select></td>
+            <td class="form_tdl"><label for="telephoneNum">电话:</label></td>
+            <td class="form_tdr"><input name="telephoneNum" required="true" id="telephoneNum" style="width:165px;" class="easyui-numberbox" validType="mobile"></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="identification">身份证:</label></td>
+            <td class="form_tdr"><input name="identification" required="true" class="easyui-validatebox" style="width:156px;" id="identification" validType="isIdCardNo"/></td>
+            <td class="form_tdl"><label for="password">系统密码:</label></td>
+            <td class="form_tdr"><input name="password" required="true" class="easyui-validatebox" id="password"  type="password" validType="unnormal"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="effectDate">密码生效时间:</label></td>
+            <td class="form_tdr"><input name="effectDate" class="easyui-datebox" id="effectDate" required="true" editable="false"/></td>
+            <td class="form_tdl"><label for="expireDate">密码失效时间:</label></td>
+            <td class="form_tdr"><input name="expireDate" class="easyui-datebox" id="expireDate" required="true" editable="false"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="active">是否活动:</label></td>
+            <td class="form_tdr"><select class="easyui-combobox" name="active" id="active"   style="width:165px;" editable="false" required="true"/><option value="Y">是</option><option value="N">否</option></select></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 添加配送员模块 end -->
+
+    <!-- 修改配送员信息模块 begin -->
+    <div id="dispatcher_edit_dialog" class="easyui-dialog" style="width: 650px; height: 390px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">配送员信息信息</div>
+      <form id="dispatcher_edit_form" method="post" novalidate class="ftitle_form">
+          <table style="width:100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class=form_tr_odd>
+            <td width="20%" class="form_tdl"><label for="siteCode">配送站点:</label></td>
+            <td width="30%" class="form_tdr"><input name="siteCode" id="edit_siteCode" style="width:165px;" class="easyui-combobox" required="true" data-options="valueField:'masLoc',textField:'descr'" editable="false"/> </td>
+            <td width="20%" class="form_tdl"><label for="name">姓名:</label></td>
+            <td width="30%" class="form_tdr"><input name="name" id="name" style="width:160px;" class="easyui-validatebox" required="true" validType="unnormal"/> </td>
+            <input name="id" id="id" style="display:none"/>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label  for="sex">性别:</label></td>
+            <td class="form_tdr"><select class="easyui-combobox" name="sex" id="sex" editable="false" style="width:165px;"/><option value="0">男</option><option value="1">女</option></select></td>
+            <td class="form_tdl"><label for="telephoneNum">电话:</label></td>
+            <td class="form_tdr"><input name="telephoneNum" required="true" id="telephoneNum" style="width:165px;" class="easyui-numberbox" validType="mobile"></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="identification">身份证:</label></td>
+            <td class="form_tdr"><input name="identification" required="true" class="easyui-validatebox" style="width:160px;" id="identification" validType="isIdCardNo"/></td>
+            <td class="form_tdl"><label for="password">系统密码:</label></td>
+            <td class="form_tdr"><input name="password" required="true" style="width:164px;" class="easyui-validatebox" id="password"  type="password" validType="unnormal"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="effectDate">密码生效时间:</label></td>
+            <td class="form_tdr"><input name="effectDate" class="easyui-datebox" id="effectDate" required="true" editable="false"/></td>
+            <td class="form_tdl"><label for="expireDate">密码失效时间:</label></td>
+            <td class="form_tdr"><input name="expireDate" class="easyui-datebox" id="expireDate" required="true" editable="false"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="active">是否活动:</label></td>
+            <td class="form_tdr"><select class="easyui-combobox" name="active" id="active" editable="false" required="true" style="width:165px;" /><option value="Y">是</option><option value="N">否</option></select></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 修改配送员信息模块 end -->
+    
+    <!-- 配送员信息详细信息 begin -->
+    <div id="dispatcher_detail_dialog" title="配送员信息信息" class="easyui-dialog" 
+      style="width: 600px; height: 360px; padding: 10px 20px" closed="true" buttons="#detail-dlg-buttons">
+     <div class="ftitle">配送员信息详细信息</div>
+      <form id="dispatcher_detail_form" class="detail_form" novalidate>
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class="detail_form_odd">
+            <td  class="detail_form_tdl">配送站点：</td>
+            <td  class="detail_form_tdr"><input name="siteCode" id="siteCode"  readonly="readonly" /></td>
+            <td  class="detail_form_tdl">配送员姓名：</td>
+            <td  class="detail_form_tdr"><input name="name" id="name"  readonly="readonly"/></td>
+          </tr>
+          <tr>
+            <td class="detail_form_tdl">配送员性别：</td>
+            <td class="detail_form_tdr"><input name="sex" id="sex" readonly="readonly"/></td>
+            <td class="detail_form_tdl">配送员电话：</td>
+            <td class="detail_form_tdr"><input name="telephoneNum" id="telephoneNum"  readonly="readonly"/></td>
+          </tr>
+          <tr class="detail_form_odd">
+             <td class="detail_form_tdl">配送员身份证号：</td>
+             <td class="detail_form_tdr"><input name="identification" id="identification"  readonly="readonly"/></td>
+             <td class="detail_form_tdl">密码生效时间：</td>
+             <td class="detail_form_tdr"><input name="effectDate" id="effectDate"  readonly="readonly" /></td>
+          </tr>
+          <tr>
+            <td class="detail_form_tdl">密码失效时间：</td>
+            <td class="detail_form_tdr"><input name="expireDate" id="expireDate"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">是否活动：</td>
+            <td class="detail_form_tdr"><input name="active" id="active" readonly="readonly"/></td>
+          </tr>
+         </table>
+       </form>
+       </div>
+     <!-- 配送员信息详细信息 end -->
+  </body>
+</html>

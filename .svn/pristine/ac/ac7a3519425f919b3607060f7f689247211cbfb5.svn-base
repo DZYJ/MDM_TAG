@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.VesselService" ref="vesselServiceImpl"  group="${service.group}"/>
+    <dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.DispatcherService" ref="dispatcherServiceImpl"  group="${service.group}"/>
+    <dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.SiteService" ref="siteServiceImpl"  group="${service.group}"/>
+    <dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.DataDictionaryService" ref="dataDictionaryServiceImpl"  group="${service.group}"/>
+    <dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.CarInfoService" ref="carInfoServiceImpl"  group="${service.group}"/>
+    <dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.DriverInfoService" ref="driverInfoServiceImpl"  group="${service.group}"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.MasLocService" ref="masLocServiceImpl"  group="mdm"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.HubProcessMatrixService" ref="hubProcessMatrixServiceImpl"  group="${service.group}"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.HubProcessMatrixHistoryService" ref="hubProcessMatrixHistoryServiceImpl"  group="${service.group}"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.TempLspHubService" ref="tempLspHubServiceImpl"  group="${service.group}"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.MstLspDaShareService" ref="mstLspDaShareServiceImpl"  group="${service.group}"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.MstLspDaAmountService" ref="mstLspDaAmountServiceImpl"  group="${service.group}"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.MstLocationService" ref="mstLocationServiceImpl"  group="${service.group}"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.MstMasLocBucketService" ref="mstMasLocBucketServiceImpl"  group="${service.group}"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.MstLspPickupScheduleService" ref="mstLspPickupScheduleServiceImpl"  group="${service.group}"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.LspDayHalfInfoService" ref="lspDayHalfInfoServiceImpl"  group="${service.group}"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.MstLspTransportService" ref="mstLspTransportServiceImpl"  group="${service.group}"/>
+	<dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.MstTransCapacityService" ref="mstTransCapacityServiceImpl"  group="${service.group}"/>
+    <dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.MstSelfPickupService" ref="mstSelfPickupServiceImpl"  group="${service.group}"/>
+    <dubbo:service timeout="${dubbo-timeout}" retries="${dubbo-retries}" interface="com.multigold.mdm.service.api.mst.MstLspService" ref="mstLspServiceImpl"  group="${service.group}"/>
+</beans>

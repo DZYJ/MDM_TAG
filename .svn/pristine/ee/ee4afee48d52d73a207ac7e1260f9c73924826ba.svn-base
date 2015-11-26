@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="mdm-service">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <dependent-module archiveName="mdm-dto-1.0.0.tag.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mdm-dto/mdm-dto">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mdm-entity-1.0.0.tag.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mdm-entity/mdm-entity">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="core-common-1.0.0.tag.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/core-common/core-common">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mdm-dao-1.0.0.tag.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mdm-dao/mdm-dao">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mdm-service-api-1.0.0.tag.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mdm-service-api/mdm-service-api">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mdm-service-impl-1.0.0.tag.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mdm-service-impl/mdm-service-impl">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="mdm-service"/>
+        <property name="java-output-path" value="/mdm-service/target/classes"/>
+        <property name="component.inclusion.patterns" value="*.jsp,*.html,css/,html/,img/,js/,common/**,resource/**,WEB-INF/*.xml,WEB-INF/common/,WEB-INF/views/,WEB-INF/tlds/,WEB-INF/ftl/,WEB-INF/lib/upms*.jar,WEB-INF/lib/core-common*.jar,WEB-INF/lib/dubbo*.jar,WEB-INF/lib/mdm*.jar,WEB-INF/classes/*.properties,WEB-INF/classes/*.xml,WEB-INF/classes/locale/,WEB-INF/classes/com/,WEB-INF/classes/cache/"/>
+        <property name="component.exclusion.patterns" value="WEB-INF/web.xml"/>
+    </wb-module>
+</project-modules>

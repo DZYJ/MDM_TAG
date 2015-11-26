@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+[#include "../../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>付款单列表</title>
+    [#include "../../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/query/paymentSettmentQuery/paymentSettmentQuery.js"></script>
+  
+  </head>
+  <body>
+  	<div class="top_content">
+      <!-- 查询付款单表单    查询条件 -->
+      <div class="" title=""  style="border-bottom: 0; height: 95px;" data-options="collapsible:true" fit="true">
+        <form id="paymentSettmentQuery_search_form">
+        <table>
+        	<tr>
+	        	<td  class="search_form_tdl"><label for="paymentCode">单据编号：</label></td>
+	            <td  class="search_form_tdr"><input name="paymentCode" id="paymentCode" type="text"/></td>
+	        	<td  class="search_form_tdl"><label for="venCode">供应商：</label></td>
+	            <td  class="search_form_tdr"><input name="venCode" id="venCode" type="text"/></td>
+	            <td  class="search_form_tdr">状态
+            	<select class="easyui-combobox" name="status" id="status" style="width:162px"/>
+            		<option value=""></option>
+            		<option value="1">新建</option>
+            		<option value="2">已提交</option>
+            		<option value="3">已审核</option>
+            		<option value="4">已作废</option>
+            	</select>
+            </td>
+            </tr>
+            <tr>
+             <td  class="search_form_tdr">预付类型
+            	<select class="easyui-combobox" name="payType" id="payType" style="width:162px"/>
+            		<option value=""></option>
+            		<option value="1">采购</option>
+            		<option value="2">委外</option>
+            	</select>
+            </td>
+             <td  class="search_form_tdr">款项类型
+            	<select class="easyui-combobox" name="type" id="type" style="width:162px"/>
+            		<option value=""></option>
+            		<option value="1">预付款</option>
+            		<option value="2">应付款</option>
+            	</select>
+            </td>
+            </tr>
+            <tr>
+            <td class="search_form_tdlf">&nbsp;</td>
+				<td colspan="7" class="search_form_tdr">
+					<input type="hidden" id="comment" name="comment" value=""/>
+	              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+	              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+	            </td>
+            </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+	 
+	<div id="paymentSettmentQuery_grid" class="grid_content">
+      <!--付款单信息列表GRID -->
+      <table id="paymentSettmentQueryView" fit="true">
+      </table>
+    </div>
+
+      <!-- 明细信息 begin -->
+    <div id="data_detail_dialog" title="发票明细" class="easyui-dialog" 
+     	style="width: 400px; height: 200px; padding: 10px 20px" closed="true">
+    
+      <!--系统参数列表GRID -->
+      <table id="paymentSettmentQueryDetailView" fit="true">
+      </table>
+    </div>
+     <!-- 明细信息 end -->
+  </body>
+</html>

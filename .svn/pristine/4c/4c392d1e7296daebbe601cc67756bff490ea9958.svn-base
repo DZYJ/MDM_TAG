@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.MstLspDaShareMapper">
+
+	<resultMap id="mstLspDaShareResultMap" type="mstLspDaShare">                         
+		<id property="lsp" column="LSP" />      
+		<id property="daId" column="DA_ID" />                  
+		<id property="maxOrdQty" column="MAX_ORD_QTY" />
+		<id property="sharePercent" column="SHARE_PERCENT" />
+		<id property="minDivisor" column="MIN_DIVISOR" />
+		<id property="insertBy" column="INSERT_BY" />
+		<id property="insertDate" column="INSERT_DATE" />
+		<id property="modifiedBy" column="MODIFIED_BY" />
+		<id property="modifiedDate" column="MODIFIED_DATE" />
+		<id property="partitionDate" column="PARTITION_DATE" />
+		<id property="divisionCode" column="DIVISION_CODE" />
+		
+	</resultMap>
+	
+    <insert id="createEntity" parameterType="mstLspDaShare">  
+        <include refid="queryEntityHeadSql" />
+        (#{lsp},#{daId},#{maxOrdQty},#{sharePercent},#{minDivisor},#{insertBy},#{insertDate},#{modifiedBy},#{modifiedDate},#{partitionDate},#{divisionCode}) 
+    </insert>  
+	 
+	 
+	 <!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		INSERT INTO
+		MST_LSP_DA_AMOUNT(LSP,DA_ID,MAX_ORD_QTY,SHARE_PERCENT,MIN_DIVISOR,INSERT_BY,INSERT_DATE,MODIFIED_BY,MODIFIED_DATE,PARTITION_DATE,DIVISION_CODE)
+		VALUES
+	</sql>
+	
+	<select id="getCount" parameterType="java.util.Map" resultType="long">
+        SELECT  COUNT(1)
+        FROM    MST_LSP_DA_SHARE S
+        WHERE   S.LSP           = #{lspCode}
+        AND     S.DIVISION_CODE = #{divisionCode}
+    </select>
+
+</mapper>

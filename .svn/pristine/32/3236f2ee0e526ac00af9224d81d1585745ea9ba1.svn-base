@@ -1,0 +1,299 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>承运商信息列表</title>
+    [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/mstLsp/mstLsp.js"></script>
+  </head>
+  <body  style="visibility: visible;">
+    <div class="top_content">
+      <!-- 查询承运商信息表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 80px;" data-options="collapsible:true" fit="true">
+        <form id="mstLsp_search_form">
+        <table>
+          <tr>
+            <td  class="search_form_tdl"><label for="lspCode">承运商编码：</label></td>
+            <td  class="search_form_tdr"><input name="lspCode" id="lspCode" type="text"/></td>
+            <td  class="search_form_tdl"><label for="lspName">承运商名称：</label></td>
+            <td  class="search_form_tdr"><input name="lspName" id="lspName" type="text"/></td>
+            <td  class="search_form_tdl"><label for="lspType">承运商类型：</label></td>
+            <td  class="search_form_tdr"><input name="lspType" id="lspType" type="text"/></td>
+            <td  class="search_form_tdl"><label for="enabled">是否有效:</label></td>
+            <td  class="search_form_tdr">  <input name="enabled" id="queryEnabled" class="easyui-combobox" data-options="valueField:'enabled',textField:'enabledView',
+				          data:[{enabled:'1',enabledView:'是'},{enabled:'0',enabledView:'否'}]" editable="false"/>
+                                      </td>
+          </tr>
+          <tr style="background-color: #fdfdfd;">
+            <td>&nbsp;</td>
+            <td colspan="5">
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+            </td>
+          </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+    <div id="mstLsp_grid" class="grid_content">
+      <!--承运商列表GRID -->
+      <table id="mstLspView" fit="true">
+      </table>
+    </div>
+
+    <!-- 添加承运商模块 begin -->
+    <div id="mstLsp_add_dialog" class="easyui-dialog" style="width: 800px; height: 400px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">承运商信息</div>
+      <form id="mstLsp_add_form" method="post" novalidate class="ftitle_form">
+        <table>
+             <tr>
+	             <td>
+	               <div class="fitem fitem_odd">
+				          <label for="lspCode">承运商编码:</label> 
+				          <input name="lspCode" id="lspCode" class="easyui-validatebox"  required="true"  validType="remote['${ctx!}/mstLsp/unique.json','lspCode']" invalidMessage="该承运商已经存在"> 
+                   </div>
+                    
+	             </td>
+	             <td>
+	                 <div class="fitem fitem_even">
+					       <label  for="lspName">承运商名称:</label> 
+					       <input name="lspName" id="lspName" class="easyui-validatebox" required="true"> 
+                      </div>
+                  </td>
+	             <td>
+	                  <div class="fitem fitem_odd">
+				          <label  for="lspPhone">承运商电话:</label> 
+				          <input name="lspPhone" required="true" id="lspPhone" class="easyui-validatebox">
+                      </div>
+	             </td>
+             </tr>
+           <tr>
+           	    <td>
+           	            <div class="fitem fitem_odd">
+					       <label for="lspContact">承运商联系人:</label>
+					       <input name="lspContact" required="true" id="lspContact" class="easyui-validatebox" validType="value" />
+                        </div>
+	             </td>
+	             <td>
+	                   <div class="fitem fitem_even">
+                           <label for="insuranceRate">保险费率:</label>
+                           <input name="insuranceRate" required="true" id="insuranceRate" class="easyui-numberbox" />
+                       </div>
+	             </td>
+	             <td>
+	                   <div class="fitem fitem_even">
+				          <label for="lspType">承运商类型</label> 
+				          <input name="lspType" required="true" id="lspType"  class="easyui-combobox"  data-options="valueField:'lspType',textField:'lspTypeView',
+				          data:[{lspType:'自营',lspTypeView:'自营'},{lspType:'3PL',lspTypeView:'3PL'}]" editable="false">
+                      </div>
+	             </td>
+           </tr>
+           <tr>
+           	     <td>
+           	            <div class="fitem fitem_odd">
+					        <label for="codRate">代收费率:</label>
+					        <input name="codRate" id="codRate" class="easyui-validatebox"  />
+                       </div>
+	             </td>
+	             <td>
+	                   <div class="fitem fitem_odd">
+					         <label for="shipMethod">货运方式:</label>
+					         <input name="shipMethod" required="true" id="shipMethod"  class="easyui-combobox"  data-options="valueField:'shipMethod',textField:'shipMethodView',
+				          data:[{shipMethod:'1',shipMethodView:'陆运'},{shipMethod:'2',shipMethodView:'空运'},{shipMethod:'3',shipMethodView:'海运'}]" editable="false">
+                       </div>
+	             </td>
+	             <td>
+	                     <div class="fitem fitem_odd">
+					         <label for="lspZipCode">承运商邮编:</label>
+					         <input name="lspZipCode" id="lspZipCode" class="easyui-validatebox"  />
+                         </div>
+	             </td>
+           </tr>
+           <tr>
+           	  <td>
+	                    <div class="fitem fitem_odd">
+                           <label for="lspAddress1">承运商地址:</label>
+                           <input name="lspAddress1" id="lspAddress1" class="easyui-validatebox"  />
+                       </div>
+	             </td>
+              <td>
+                      <div class="fitem fitem_odd">
+						     <label for="lspFax">承运商传真:</label>
+						     <input name="lspFax" id="lspFax" class="easyui-validatebox"  />
+                      </div>
+              </td>
+              <td>
+                       <div class="fitem fitem_odd">
+					          <label for="enabled">是否有效:</label>
+					          <input name="enabled" id="enabled" class="easyui-combobox" data-options="valueField:'enabled',textField:'enabledView',
+				          data:[{enabled:'1',enabledView:'是'},{enabled:'0',enabledView:'否'}]" editable="false"/>
+                      </div>
+              </td>
+           </tr>
+   
+           <tr>
+                <td colspan="3">
+                     <div class="fitem fitem_odd">
+                             <label for="lspDescription">备注:</label>
+                             <input name="lspDescription" id="lspDescription" class="easyui-validatebox"  />
+                     </div>
+                </td>
+                
+           </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 添加承运商模块 end -->
+
+  <!--  修改承运商信息模块 begin -->
+    <div id="mstLsp_edit_dialog" class="easyui-dialog" style="width: 800px; height: 400px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">承运商信息</div>
+      <form id="mstLsp_edit_form" method="post" novalidate class="ftitle_form">
+        <table>
+             <tr>
+	             <td>
+	               <div class="fitem fitem_odd">
+				          <label for="lspCode">承运商编码:</label> 
+				          <input name="lspCode" id="lspCode" class="easyui-validatebox"  readonly="readonly"> 
+                   </div>
+                       <input name="buid" id="buid" type="hidden" value="8270"> 
+	             </td>
+	             <td>
+	                 <div class="fitem fitem_even">
+					       <label  for="lspName">承运商名称:</label> 
+					       <input name="lspName" id="lspName" class="easyui-validatebox" required="true"> 
+                      </div>
+                  </td>
+	             <td>
+	                  <div class="fitem fitem_odd">
+				          <label  for="lspPhone">承运商电话:</label> 
+				          <input name="lspPhone" required="true" id="lspPhone" class="easyui-validatebox">
+                      </div>
+	             </td>
+             </tr>
+           <tr>
+           	    <td>
+           	            <div class="fitem fitem_odd">
+					       <label for="lspContact">承运商联系人:</label>
+					       <input name="lspContact" required="true" id="lspContact" class="easyui-validatebox" validType="value" />
+                        </div>
+	             </td>
+	             <td>
+	                   <div class="fitem fitem_even">
+                           <label for="insuranceRate">保险费率:</label>
+                           <input name="insuranceRate" required="true" id="insuranceRate" class="easyui-numberbox" />
+                       </div>
+	             </td>
+	             <td>
+	                  <div class="fitem fitem_even">
+				          <label for="lspType">承运商类型</label> 
+				          <input name="lspType" required="true" id="lspType"  class="easyui-combobox"  data-options="valueField:'lspType',textField:'lspTypeView',
+				          data:[{lspType:'自营',lspTypeView:'自营',selected:true},{lspType:'3PL',lspTypeView:'3PL'}]" editable="false">
+                      </div>
+	             </td>
+           </tr>
+           <tr>
+           	     <td>
+           	            <div class="fitem fitem_odd">
+					        <label for="codRate">代收费率:</label>
+					        <input name="codRate" id="codRate" class="easyui-validatebox"  />
+                       </div>
+	             </td>
+	             <td>
+	                   <div class="fitem fitem_odd">
+					         <label for="shipMethod">货运方式:</label>
+					         <input name="shipMethod" required="true" id="shipMethod"  class="easyui-combobox"  data-options="valueField:'shipMethod',textField:'shipMethodView',
+				              data:[{shipMethod:'1',shipMethodView:'陆运',selected:true},{shipMethod:'2',shipMethodView:'空运'},{shipMethod:'3',shipMethodView:'海运'}]" editable="false">
+                       </div>
+	             </td>
+	             <td>
+	                     <div class="fitem fitem_odd">
+					         <label for="lspZipCode">承运商邮编:</label>
+					         <input name="lspZipCode" id="lspZipCode" class="easyui-validatebox"  />
+                         </div>
+	             </td>
+           </tr>
+           <tr>
+           	  <td>
+	                    <div class="fitem fitem_odd">
+                           <label for="lspAddress1">承运商地址:</label>
+                           <input name="lspAddress1" id="lspAddress1" class="easyui-validatebox"  />
+                       </div>
+	             </td>
+              <td>
+                      <div class="fitem fitem_odd">
+						     <label for="lspFax">承运商传真:</label>
+						     <input name="lspFax" id="lspFax" class="easyui-validatebox"  />
+                      </div>
+              </td>
+              <td>
+                     <div class="fitem fitem_odd">
+					          <label for="enabled">是否有效:</label>
+					          <input name="enabled" id="enabled" class="easyui-combobox" data-options="valueField:'enabled',textField:'enabledView',
+				          data:[{enabled:'1',enabledView:'是'},{enabled:'0',enabledView:'否'}]" editable="false" />
+                      </div>
+              </td>
+           </tr>
+   
+           <tr>
+                <td colspan="3">
+                     <div class="fitem fitem_odd">
+                             <label for="lspDescription">备注:</label>
+                             <input name="lspDescription" id="lspDescription" class="easyui-validatebox"  />
+                     </div>
+                </td>
+                
+           </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 修改承运商信息模块 end -->
+    
+    <!-- 承运商详细信息 begin -->
+    <div id="mstLsp_detail_dialog" title="承运商信息" class="easyui-dialog" 
+      style="width: 1000px; height: 400px; padding: 10px 20px" closed="true" buttons="#detail-dlg-buttons">
+     <div class="ftitle">承运商详细信息</div>
+      <form id="mstLsp_detail_form" class="detail_form" novalidate>
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class="detail_form_odd">
+            <td class="detail_form_tdl">承运商编码:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="lspCode" id="lspCode"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">承运商名称:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="lspName" id="lspName"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">承运商类型:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="lspType" id="lspType"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">承运商联系人:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="lspContact" id="lspContact"  readonly="readonly"/></td>
+          </tr>
+          <tr>
+            <td class="detail_form_tdl">承运商电话:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="lspPhone" id="lspPhone"  readonly="readonly"/></td>
+ 			<td class="detail_form_tdl">承运商地址:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="lspAddress1" id="lspAddress1"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">承运商邮编:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="lspZipCode" id="lspZipCode"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">承运商传真:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="lspFax" id="lspFax"  readonly="readonly"/></td>
+          </tr>
+          <tr class="detail_form_odd">
+            <td class="detail_form_tdl">是否有效:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="enabled" id="enabled"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">代收费率:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="codRate" id="codRate"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">保险费率:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="insuranceRate" id="insuranceRate"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">货运方式:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="shipMethod" id="shipMethod"  readonly="readonly"/></td>
+          </tr>
+           <tr class="detail_form_odd">
+            <td class="detail_form_tdl">备注:</td>
+            <td class="detail_form_tdr">&nbsp;&nbsp;<input name="lspDescription" id="lspDescription"  readonly="readonly"/></td>
+          </tr>
+         </table>
+       </form>
+     </div>
+     <!-- 承运商详细信息 end -->
+  </body>
+</html>

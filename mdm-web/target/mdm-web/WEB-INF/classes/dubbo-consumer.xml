@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+ 
+    <!-- 提供方应用信息，用于计算依赖关系 -->
+    <dubbo:application name="mdmService"  />
+ 
+    <!-- 使用multicast广播注册中心暴露服务地址 -->
+	<dubbo:registry address="${registry.address}" />
+	
+		
+    <!-- 权限系统 使用multicast广播注册中心暴露服务地址-->	
+     <!-- 使用权限系统服务， dubbo:reference需要配置registry="upms"-->
+	<dubbo:registry id="upms" address="${registry.upms.address}" default="false" />
+	 <!-- 使用T6接口系统服务， dubbo:reference需要配置registry="upms"-->
+	<dubbo:registry id="tsix" address="${registry.tsix.address}" default="false" />
+ 
+ 	<!-- for upms security-->
+ 	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="userRoleService" interface="com.multigold.upms.service.api.security.UserRoleService" group="${service.upms.group}" registry="upms"  check="false"/>
+ 	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="userService" interface="com.multigold.upms.service.api.security.UserService" group="${service.upms.group}" registry="upms"  check="false"/>
+ 	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="resourceService" interface="com.multigold.upms.service.api.security.ResourceService" group="${service.upms.group}" registry="upms"  check="false"/>
+ 	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="departmentService" interface="com.multigold.upms.service.api.security.DepartmentService" group="${service.upms.group}" registry="upms"  check="false"/>
+ 	
+	<!-- for mst-->
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="mstLspService" interface="com.multigold.mdm.service.api.mst.MstLspService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="vesselService" interface="com.multigold.mdm.service.api.mst.VesselService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="dataDictionaryService" interface="com.multigold.mdm.service.api.mst.DataDictionaryService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="dispatcherService" interface="com.multigold.mdm.service.api.mst.DispatcherService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="siteService" interface="com.multigold.mdm.service.api.mst.SiteService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="mstSelfPickupService" interface="com.multigold.mdm.service.api.mst.MstSelfPickupService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="masLocService" interface="com.multigold.mdm.service.api.mst.MasLocService" group="${service.group}"   check="false"/>
+	
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="carInfoService" interface="com.multigold.mdm.service.api.mst.CarInfoService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="driverInfoService" interface="com.multigold.mdm.service.api.mst.DriverInfoService"  group="${service.group}"    check="false"/>
+	
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="hubProcessMatrixService" interface="com.multigold.mdm.service.api.mst.HubProcessMatrixService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="hubProcessMatrixHistoryService" interface="com.multigold.mdm.service.api.mst.HubProcessMatrixHistoryService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="tempLspHubService" interface="com.multigold.mdm.service.api.mst.TempLspHubService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="mstLspDaAmountService" interface="com.multigold.mdm.service.api.mst.MstLspDaAmountService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="mstLspDaShareService" interface="com.multigold.mdm.service.api.mst.MstLspDaShareService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="mstLocationService" interface="com.multigold.mdm.service.api.mst.MstLocationService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="mstMasLocBucketService" interface="com.multigold.mdm.service.api.mst.MstMasLocBucketService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="mstLspPickupScheduleService" interface="com.multigold.mdm.service.api.mst.MstLspPickupScheduleService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="lspDayHalfInfoService" interface="com.multigold.mdm.service.api.mst.LspDayHalfInfoService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="mstLspTransportService" interface="com.multigold.mdm.service.api.mst.MstLspTransportService"  group="${service.group}"    check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="mstTransCapacityService" interface="com.multigold.mdm.service.api.mst.MstTransCapacityService"  group="${service.group}"    check="false"/>
+	 
+	<!-- log -->
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="loginFailService" interface="com.multigold.mdm.service.api.system.LoginFailService"  group="${service.group}"    check="false"/>
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="loginSuccessService" interface="com.multigold.mdm.service.api.system.LoginSuccessService"   group="${service.group}"   check="false"/>
+	<dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="sysParamConfigService" interface="com.multigold.mdm.service.api.system.SysParamConfigService"  group="${service.group}"    check="false"/>
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="operationLogService" interface="com.multigold.mdm.service.api.system.OperationLogService"  group="${service.group}"    check="false"/>
+
+    <!-- address -->
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="divisionService" interface="com.multigold.mdm.service.api.address.DivisionService"  group="${service.group}"    check="false"/>
+    <!-- po -->
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="rdrecordService" interface="com.multigold.t6.service.api.po.RdrecordService"  group="${service.tsix.group}"    check="false"/>
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="commonService" interface="com.multigold.t6.service.api.common.CommonService"  group="${service.tsix.group}"    check="false"/>
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="paymentSettlementService" interface="com.multigold.t6.service.api.po.PaymentSettlementService"  group="${service.tsix.group}"    check="false"/>
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="prePaymentService" interface="com.multigold.t6.service.api.po.PrePaymentService"  group="${service.tsix.group}"    check="false"/>
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="accvouchService" interface="com.multigold.t6.service.api.accvouch.AccvouchService"  group="${service.tsix.group}"    check="false"/>
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="invoiceService" interface="com.multigold.t6.service.api.po.InvoiceService"  group="${service.tsix.group}"    check="false"/>
+    <!-- query 业务查询 -->
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="paymentSettmnetQueryService" interface="com.multigold.t6.service.api.query.PaymentSettmentQueryService"  group="${service.tsix.group}"    check="false"/>
+    <dubbo:reference timeout="${dubbo-timeout}" retries="${dubbo-retries}" id="invoiceQueryService" interface="com.multigold.t6.service.api.query.InvoiceQueryService"  group="${service.tsix.group}"    check="false"/>
+    
+</beans>

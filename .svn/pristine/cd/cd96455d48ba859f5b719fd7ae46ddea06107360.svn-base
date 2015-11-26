@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.SiteMapper">
+
+	<resultMap id="siteResultMap" type="mstSite">
+	    <id property="siteCode" column="site_code" />
+	    <id property="siteName" column="site_name" />
+		<id property="lsp" column="lsp" />
+		<id property="lspName" column="lsp_name" />
+		<id property="departmentCode"      column="department_code" />  
+		<id property="departmentName"      column="department_name" />  
+		<id property="insertDate"     column="insert_date" />  
+		<id property="insertBy" column="insert_by" />
+		<id property="modifiedDate"      column="modified_date" /> 
+		<id property="modifiedBy" column="modified_by" />
+		<id property="enabled"       column="enabled" />
+		<id property="centralLocation" column="central_location" />
+		<id property="hubType"   column="hub_type" />             
+	    <id property="ccnCode"     column="ccn_code" />                
+	    <id property="areaCode"      column="area_code" />                  
+	    <id property="timezone"      column="timezone" />  
+	    <id property="bucketType"      column="bucket_type" />                  
+	    <id property="countryCode"      column="country_code" /> 
+	    <id property="parentMasLoc"      column="parent_mas_loc"/>                  
+	    <id property="contactName"      column="contact_name" /> 
+	    <id property="contactPhone"      column="contact_phone" />
+	    <id property="address"      column="address" />  
+	    <id property="zipCode"      column="zip_code" />  
+	    <id property="manageableType"      column="manageable_type" />  
+	    <id property="manageableFlag"      column="manageable_flag" />  
+	    <id property="sendHubType"      column="send_hub_type" />  
+	    <id property="city"      column="city" />  
+	</resultMap>
+
+	<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		INSERT INTO mst_mas_site (site_code,site_name,lsp,insert_date,insert_by,modified_date,modified_by,contact_name,contact_phone,address,department_code)
+		VALUES
+	</sql>
+	
+	<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstSite">
+		<include refid="insertEntityHeadSql" />
+		(#{siteCode},#{siteName},#{lsp},#{insertDate},#{insertBy},#{modifiedDate},#{modifiedBy},#{contactName},#{contactPhone},#{address},#{departmentCode})
+	</insert>
+	
+	<!-- 更新实体 -->
+	<update id="updateEntity" parameterType="mstSite">
+		UPDATE mst_mas_site
+		<set>
+		    <if test="siteName!=null">site_name=#{siteName},</if>
+			<if test="lsp!=null">lsp=#{lsp},</if>
+			<if test="insertDate!=null">insert_date=#{insertDate},</if>
+			<if test="insertBy!=null">insert_by=#{insertBy},</if>
+			<if test="modifiedDate!=null">modified_date=#{modifiedDate},</if>
+			<if test="modifiedBy!=null">modified_by=#{modifiedBy},</if>
+			<if test="contactName!=null">contact_name=#{contactName},</if>
+			<if test="contactPhone!=null">contact_phone=#{contactPhone},</if>
+			<if test="address!=null">address=#{address},</if>
+		    <if test="enabled!=null">enabled=#{enabled},</if>
+			<if test="centralLocation!=null">central_location=#{centralLocation},</if>
+      		<if test="hubType!=null">hub_type=#{hubType},</if>
+			<if test="ccnCode!=null">ccn_code=#{ccnCode},</if>
+			<if test="areaCode!=null">area_code=#{areaCode},</if>
+			<if test="timezone!=null">timezone=#{timezone},</if>
+			<if test="bucketType!=null">bucket_type=#{bucketType},</if>
+			<if test="countryCode!=null">country_code=#{countryCode},</if>
+			<if test="parentMasLoc!=null">parent_mas_loc=#{parentMasLoc},</if>
+			<if test="zipCode!=null">zip_code=#{zipCode},</if>
+			<if test="manageableType!=null">manageable_type=#{manageableType},</if>
+			<if test="manageableFlag!=null">manageable_flag=#{manageableFlag},</if>
+			<if test="sendHubType!=null">send_hub_type=#{sendHubType},</if>
+			<if test="city!=null">city=#{city},</if>
+			<if test="departmentCode!=null">department_code=#{departmentCode}</if>
+		</set>
+		WHERE site_code=#{siteCode}
+	</update>
+
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="mstSite" resultMap="siteResultMap">
+		 SELECT ms.site_code,ms.site_name,ms.lsp,
+		        ms.insert_date,ms.insert_by,ms.modified_date,ms.modified_by,
+		        ms.enabled,ms.central_location,ms.hub_type,ms.ccn_code,ms.area_code,ms.timezone,ms.bucket_type,
+		        ms.country_code,ms.parent_mas_loc,ms.contact_name,ms.contact_phone,ms.address,ms.zip_code,
+		        ms.manageable_type,ms.manageable_flag,ms.send_hub_type,ms.city
+	     FROM mst_mas_site ms
+	</select>
+
+	<!-- 根据map参数查询列表 -->
+	<select id="queryListByMap" resultMap="siteResultMap">
+		<include refid="queryEntityHeadSql" />
+		 FROM mst_mas_site 
+	</select>
+
+	<!-- 根据ID删除实体 -->
+	<delete id="deleteById" parameterType="long">
+		DELETE FROM mst_mas_site
+		WHERE site_code=#{siteCode}
+	</delete>
+
+	<!-- 根据对象删除实体，此方法可以根据自己需求实现 -->
+	<delete id="deleteByObject" parameterType="mstSite">
+	     <!-- 自定义删除条件 -->
+	</delete>
+
+	<!-- 根据Code查出实体 -->
+	<select id="queryByCode" parameterType="String" resultMap="siteResultMap">
+        SELECT site_name
+        FROM  mst_mas_site
+		WHERE site_code = #{siteCode}
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="mstSite" resultMap="siteResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="mstSite" resultType="long">
+		SELECT count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT  ms.site_code,ms.site_name,mp.lsp_name lsp_name,sd.department_code,sd.department_name departmentName,ms.lsp,
+		        ms.insert_date,ms.insert_by,ms.modified_date,ms.modified_by,
+		        ms.enabled,ms.central_location,ms.hub_type,ms.ccn_code,ms.area_code,ms.timezone,ms.bucket_type,
+		        ms.country_code,ms.parent_mas_loc,ms.contact_name,ms.contact_phone,ms.address,ms.zip_code,
+		        ms.manageable_type,ms.manageable_flag,ms.send_hub_type,ms.city
+	</sql>
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM mst_mas_site ms, mst_lsp mp, security_department sd
+		<where>
+		    <if test="siteCode!=null and siteCode!=''">ms.site_code=#{siteCode}</if>
+		    <if test="siteName!=null and siteName!=''"> and ms.site_name=#{siteName}</if>
+			<if test="lsp!=null and lsp!=''">and ms.lsp=#{lsp}</if>
+			<if test="contactName!=null and contactName!=''"> and ms.contact_name=#{contactName}</if>
+			<if test="departmentCode!=null and departmentCode!=''">and ms.department_code=#{departmentCode}</if>
+			and ms.lsp = mp.lsp_code and ms.department_code = sd.department_code
+		</where>
+	</sql>
+	
+  <!-- 批量删除 -->
+  <delete id="deleteByIds">
+    delete from mst_mas_site where site_code in
+    <foreach item="item" collection="ids" open="(" separator=","
+      close=")">
+      #{item}
+    </foreach>
+  </delete>
+
+</mapper>

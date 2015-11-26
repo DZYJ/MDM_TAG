@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>管理员列表</title>
+    [#include "../include/base_js_css.html"/]
+    <link rel="stylesheet" type="text/css" href="${ctxpathcss!}/frame-dialog.css">
+    <link rel="stylesheet" type="text/css" href="${resource!}/css/user/user.css">
+    <script type="text/javascript" src="${resource!}/js/user/user.js"></script>
+  </head>
+  <body style="visibility: visible;">
+    <!-- 用户信息列表GRID -->
+    <table id="userview" fit="true">
+    </table>
+    <div style="padding-top: 5px; padding-left: 10px;"><span style="color: red;">*</span>提示：双击用户管理用户的角色。</div>
+    <!-- 添加用户模块 -->
+    <div id="dlg" class="easyui-dialog" style="width: 400px; height: 300px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">用户信息</div>
+      <form id="fm" method="post" novalidate>
+        <div class="fitem">
+          <label for="account">账户:</label> 
+          <input name="account" id="account" class="easyui-validatebox" 
+            required="true"  validType="remote['${ctx!}/user/unique.json','account']" invalidMessage="该账户已经存在"> 
+          <input name="id" type="hidden" />
+        </div>
+        <div class="fitem">
+          <label for="name">用户名:</label> 
+          <input name="name" id="name" class="easyui-validatebox" required="true"> 
+        </div>
+        <div class="fitem">
+          <label for="password">密 码:</label> 
+          <input name="password" required="true" id="password" type="password" class="easyui-validatebox" validType="minLength[6]">
+        </div>
+        <div class="fitem">
+          <label for="repassword">确认密码:</label> 
+          <input name="repassword" required="true" id="repassword" type="password" class="easyui-validatebox" validType="equalTo['#password']" invalidMessage="两次输入密码不匹配!">
+        </div>
+        <div class="fitem">
+          <label for="email">E-mail:</label>
+          <input name="email" required="true" class="easyui-validatebox" validType="email" />
+        </div>
+      </form>
+    </div>
+    <div id="dlg-buttons">
+      <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveUser()">保存</a> 
+      <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>
+    </div>
+
+    <!-- 用户角色管理 begin -->
+    <div id="role_manage" title="用户角色管理" data-options="iconCls:'icon-save'"
+      style="display: none; position: relative;">
+      <div style="padding: 5px 0 5px 30px;" id="role_user_info">用户：张三</div>
+      <div style="width: 335px; float: left; margin: 0 0 5px 10px;">
+        <div id="new_roles" class="easyui-panel" data-options="iconCls:'icon-save',closable:false,tools:'#urn_tt'" 
+          title="可选角色" style="width: 335px; height: 400px; padding: 10px;">
+        </div>
+      </div>
+      <div style="width: 335px; margin-left: 390px; margin-top: 0; margin-bottom: 5px;">
+        <div id="own_roles" class="easyui-panel" data-options="iconCls:'icon-save',closable:false,tools:'#uro_tt'"
+          title="已选角色" style="width: 335px; height: 400px; padding: 10px;">
+        </div>
+      </div>
+      <div style="padding-left: 30px;"><span style="color: red; vertical-align: middle;">*</span>提示：您还可以通过拖动或双击来管理用户的角色。</div>
+      <div class="role_mbtn">
+        <a title="添加角色" id="add_user_roles">&gt;</a> <br/>
+        <a title="删除角色" id="del_user_roles">&lt;</a>
+      </div>
+    </div>
+    <div id="urn_tt">
+      <a href="javascript:void(0)" class="role_sbtn" onclick="javascript:selectRoles('new',true)">全选</a>
+      <a href="javascript:void(0)" class="role_sbtn" onclick="javascript:selectRoles('new',false)">反选</a>
+    </div>
+    <div id="uro_tt">
+      <a href="javascript:void(0)" class="role_sbtn" onclick="javascript:selectRoles('own', true)">全选</a>
+      <a href="javascript:void(0)" class="role_sbtn" onclick="javascript:selectRoles('own', false)">反选</a>
+    </div>
+    <!-- 用户角色管理 end -->
+    
+    
+    
+    <div id="detail-dialog" title="用户信息" class="easyui-dialog" 
+		style="width: 700px; height: 500px; padding: 10px 20px" closed="true" buttons="#detail-dlg-buttons">
+		
+	   <div class="ftitle">用户详细信息</div>
+	    <form id="detailForm" method="post" novalidate>
+	        <div class="fitem">
+	          <label for="account">账户:</label> 
+	          <input name="account" id="account" type="text" style="border:none;" readonly="readonly" /> 
+	        </div>
+	        <div class="fitem">
+	          <label for="name">用户名:</label> 
+	          <input name="name" id="name"  type="text" style="border:none;" readonly="readonly"> 
+	        </div>
+	        <div class="fitem">
+	          <label for="extension">分机号码:</label> 
+	          <input name="extension" id="extension" type="text" style="border:none;" readonly="readonly">
+	        </div>
+	        <div class="fitem">
+	          <label for="remake">备注:</label> 
+	          <input name="remake" id="remake" type="text" style="border:none;" readonly="readonly">
+	        </div>
+	        <div class="fitem">
+	          <label for="email">E-mail:</label>
+	          <input name="email" id="email"  type="text" style="border:none;" readonly="readonly"/>
+	        </div>
+	        <div class="fitem">
+	          <label for="extension">分机:</label>
+	          <input name="extension" id="extension"  type="text" style="border:none;" readonly="readonly"/>
+	        </div>
+	        <div class="fitem">
+	          <label for="active">是否有效:</label>
+	          <input name="active" id="active"  type="text" style="border:none;" readonly="readonly"/>
+	        </div>
+	        <div class="fitem">
+	          <label for="admin_flag">是否为管理员:</label>
+	          <input name="admin_flag" id="admin_flag"  type="text" style="border:none;" readonly="readonly"/>
+	        </div>
+	        <div class="fitem">
+	          <label for="remark">备注:</label>
+	          <input name="remark" id="remark"  type="text" style="border:none;" readonly="readonly"/>
+	        </div>
+	        <div class="fitem">
+	          <label for="roles">角色:</label>
+	          <input name="roles" id="roles"  type="text" style="border:none;" readonly="readonly"/>
+	        </div>
+	        <div class="fitem">
+	          <label for="title">标题:</label>
+	          <input name="title" id="title"  type="text" style="border:none;" readonly="readonly"/>
+	        </div>
+	        <div class="fitem">
+	          <label for="is_employee">是否为企业员工:</label>
+	          <input name="is_employee" id="is_employee"  type="text" style="border:none;" readonly="readonly"/>
+	        </div>	        <div class="fitem">
+	          <label for="manager_email">管理员E-mail:</label>
+	          <input name="manager_email" id="manager_email"  type="text" style="border:none;" readonly="readonly"/>
+	        </div>
+	        <div class="fitem">
+	          <label for="insert_by">创建人:</label>
+	          <input name="insert_by" id="insert_by"  type="text" style="border:none;" readonly="readonly"/>
+	        </div>
+	         <div class="fitem">
+	          <label for="insert_date">创建时间:</label>
+	          <input name="insert_date" id="insert_date"  type="text" style="border:none;" readonly="readonly"/>
+	        </div>	  
+	     </form>
+       </div>
+	<div id="detail-dlg-buttons">
+      <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#detail-dialog').dialog('close')">取消</a>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.DriverInfoMapper">
+
+	<resultMap id="driverInfoResultMap" type="driverInfo">
+		<id property="driverId" column="DRIVER_ID" />    
+		<id property="driverNo" column="DRIVER_NO" />                                     
+		<id property="driverName" column="DRIVER_NAME" />                        
+		<id property="driverLsp" column="DRIVER_LSP" />   
+		<id property="driverDepartment" column="DRIVER_DEPARTMENT" /> 
+		<id property="driverCard" column="DRIVER_CARD" />                            
+		<id property="driverBrithDay" column="DRIVER_BRITHDAY" />                              
+		<id property="driverIdCard" column="DRIVER_IDCARD" />                            
+		<id property="driverPhone" column="DRIVER_PHONE" />                  
+		<id property="driverAddress" column="DRIVER_ADDRESS" />                           
+		<id property="driverLevel" column="DRIVER_LEVEL" />                         
+		<id property="enterWorkDate" column="ENTER_WORK_DATE" />                                
+		<id property="driverCardCheck" column="DRIVER_CARD_CHECKDATE" />                         
+		<id property="driverCardDate" column="DRIVER_CARD_DATE" />                        
+		<id property="enterWorkId" column="ENTER_WORK_ID"/>
+		<id property="driverSkillLevel" column="DRIVER_SKILL_LEVEL" />                        
+		<id property="driverCarType" column="DRIVER_CAR_TYPE" />                                 
+		<id property="driverIsActivity" column="DRIVER_ISACTIVITY" />                        
+		<id property="comment" column="COMMENT" />                                                        
+	</resultMap>
+	
+	
+		<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="driverInfo">
+		<include refid="insertEntityHeadSql" />
+		(#{driverNo},#{driverName},#{driverLsp},#{driverDepartment},#{driverCard},#{driverBrithDay},#{driverIdCard},#{driverPhone},#{driverAddress},
+		#{driverLevel},#{enterWorkDate},#{driverCardCheck},#{driverCardDate},#{enterWorkId},#{driverSkillLevel},
+		#{driverCarType},#{driverIsActivity},#{comment})
+	</insert>
+
+
+	<!-- 更新实体 -->
+	<update id="updateEntity" parameterType="driverInfo">
+		update mst_driver
+		<set>
+			<if test="driverNo!=null and driverNo!='' ">DRIVER_NO=#{driverNo},</if>
+			<if test="driverName!=null and driverName!=''">DRIVER_NAME=#{driverName},</if>
+			<if test="driverLsp!=null and driverLsp!=''">DRIVER_LSP=#{driverLsp},</if>
+			<if test="driverDepartment!=null and driverDepartment!=''">DRIVER_DEPARTMENT=#{driverDepartment},</if>
+			<if test="driverCard!=null and driverCard!=''">DRIVER_CARD=#{driverCard},</if>
+			<if test="driverBrithDay!=null and driverBrithDay!=''">DRIVER_BRITHDAY=#{driverBrithDay},</if>
+			<if test="driverIdCard!=null and driverIdCard!=''">DRIVER_IDCARD=#{driverIdCard},</if>
+			<if test="driverPhone!=null and driverPhone!=''">DRIVER_PHONE=#{driverPhone},</if>
+			<if test="driverAddress!=null and driverAddress!=''">DRIVER_ADDRESS=#{driverAddress},</if>
+			<if test="driverLevel!=null and driverLevel!=''">DRIVER_LEVEL=#{driverLevel},</if>
+			<if test="enterWorkDate!=null and enterWorkDate!=''">ENTER_WORK_DATE=#{enterWorkDate},</if>
+			<if test="driverCardCheck!=null and driverCardCheck!=''">DRIVER_CARD_CHECKDATE=#{driverCardCheck},</if>
+			<if test="driverCardDate!=null and driverCardDate!=''">DRIVER_CARD_DATE=#{driverCardDate},</if>
+			<if test="enterWorkId!=null and enterWorkId!=''">ENTER_WORK_ID=#{enterWorkId},</if>
+			<if test="driverSkillLevel!=null and driverSkillLevel!=''">DRIVER_SKILL_LEVEL=#{driverSkillLevel},</if>
+			<if test="driverCarType!=null and driverCarType!=''">DRIVER_CAR_TYPE=#{driverCarType},</if>
+			<if test="driverIsActivity!=null and driverIsActivity!=''">DRIVER_ISACTIVITY=#{driverIsActivity},</if>
+			<if test="comment!=null and comment!=''">COMMENT=#{comment}</if>
+		</set>
+		where DRIVER_ID=#{driverId}
+	</update>
+
+
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="driverInfo" resultMap="driverInfoResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 根据map参数查询列表 -->
+	<select id="queryListByMap" resultMap="driverInfoResultMap">
+		<include refid="queryEntityHeadSql" />
+		    FROM MST_DRIVER
+		<where>
+		   <!-- 自定义查询条件 -->
+		</where>
+	</select>
+
+	<!-- 根据ID删除实体 -->
+	<delete id="deleteByIds" parameterType="String">
+		DELETE 	FROM mst_driver where DRIVER_ID in
+		<foreach item="driverId" collection="ids" open="(" separator=","
+	      close=")">
+	      #{driverId}
+	    </foreach>
+	</delete>
+
+
+	<!-- 根据对象删除实体，此方法可以根据自己需求实现 -->
+	<delete id="deleteByObject" parameterType="driverInfo">
+	     <!-- 自定义删除条件 -->
+	</delete>
+
+	<!-- 根据ID查出实体 -->
+	<select id="queryById" parameterType="long" resultMap="driverInfoResultMap">
+	     SELECT  CAR_ID,DRIVER_NO,CAR_CARD_ID,CAR_TYPE,CAR_LSP,CAR_BUYINGTIME,DEFAULT_DRIVER,CAR_MODEL,CAR_LEAVEFACTORY_DATE,PRODUCTION_COMPANY,CAR_BOX_LENGTH,OIL_CONSUMPTION,CAR_VOLUME,USE_NATURE,TRAINSTION_INSURANCE_COMPANY,TRAINSTION_INSURANCE_OVERDATE,
+			BUSINESS_INSURANCE_COMPANY,BUSINESS_INSURANCE_OVERDATE,CAR_IMPORT_WAY,ENGINE_NO,CAR_ISACTIVITY,COMMENT
+	     FROM MST_LSP
+	     WHERE LSP_CODE=#{lspCode}
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="driverInfo" resultMap="driverInfoResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="driverInfo" resultType="long">
+		select count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		 insert into mst_driver(DRIVER_NO,DRIVER_NAME,DRIVER_LSP,DRIVER_DEPARTMENT,DRIVER_CARD,DRIVER_BRITHDAY,DRIVER_IDCARD,DRIVER_PHONE,DRIVER_ADDRESS,DRIVER_LEVEL,ENTER_WORK_DATE,DRIVER_CARD_CHECKDATE,DRIVER_CARD_DATE,ENTER_WORK_ID,DRIVER_SKILL_LEVEL,DRIVER_CAR_TYPE,
+		DRIVER_ISACTIVITY,COMMENT)values
+	</sql>
+
+
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT  DRIVER_ID,DRIVER_NO,DRIVER_NAME,DRIVER_LSP,DRIVER_DEPARTMENT,DRIVER_CARD,DRIVER_BRITHDAY,DRIVER_IDCARD,DRIVER_PHONE,DRIVER_ADDRESS,DRIVER_LEVEL,ENTER_WORK_DATE,DRIVER_CARD_CHECKDATE,DRIVER_CARD_DATE,ENTER_WORK_ID,DRIVER_SKILL_LEVEL,DRIVER_CAR_TYPE,
+		DRIVER_ISACTIVITY,COMMENT
+	</sql>
+
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM MST_DRIVER
+		<where>
+			<if test="driverNo!=null and driverNo!='' "> and DRIVER_NO LIKE CONCAT(CONCAT(#{driverNo}),'%')</if>
+			<if test="driverName!=null and driverName!=''"> and DRIVER_NAME LIKE CONCAT(CONCAT(#{driverName}),'%')</if>
+			<if test="driverDepartment!=null and driverDepartment!=''"> and DRIVER_DEPARTMENT=#{driverDepartment}</if>
+			<if test="driverLsp!=null and driverLsp!=''"> and DRIVER_LSP LIKE CONCAT(CONCAT(#{driverLsp}),'%')</if>
+			<if test="starDate!=null">  and driverBrithDay<![CDATA[>]]>=#{starDate}</if>
+			<if test="endDate!=null"><![CDATA[  and driverBrithDay<=#{endDate}]]></if>
+		</where>
+	</sql>
+
+</mapper>

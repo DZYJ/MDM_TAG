@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>自提点管理</title>
+    [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/mstSelfPickup/mstSelfPickup.js"></script>
+    <script type="text/javascript">
+    	function data_import() {
+   			var file = $("#file").val();
+   		    if (file == "") {
+   		        $.messager.alert('Excel批量导入', '请选择将要上传的文件!');        
+   		    } else {
+   		    	var strtype = file.substr(file.length-4,file.length-1);
+   		    	strtype = strtype.toUpperCase();
+   		        if (strtype != '.XLS' && strtype != 'XLSX') {
+   		            $.messager.alert('Excel批量导入','文件类型不正确，请选择EXCEL文件!'); 
+   		        } else { 
+   		        	$('#import_form').form('submit', {
+   		        		url: "../mstSelfPickup/import.do",
+   		        		method: "post",
+   		        		onSubmit: function(){
+   		        			return true;
+   		        		},
+   		        		success: function(data){
+   		        			var _data = $.parseJSON(data);
+   		        			$.messager.alert("提示", _data.msg);
+   		        		}
+   		        	});
+   		        }
+   		    }    
+    	}
+    	function exportTemplate() {
+    		$('#import_form').form('submit', {
+        		url: "../mstSelfPickup/exportTemplate.json",
+        		method: "post",
+        		onSubmit: function(){
+        			return true;
+        		},
+        		success: function(data){
+        			var _data = $.parseJSON(data);
+        			$.messager.alert("提示", _data);
+        		}
+        	});
+    	}
+    </script>
+  </head>
+  <body>
+    <div class="top_content">
+      <!-- 查询自提点表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 95px;" data-options="collapsible:true" fit="true">
+        <form id="mstSelfPickup_search_form" method="post">
+        <table>
+          <tr>
+            <td class="search_form_tdl"><label for="selfSiteCode">自提点编号：</label></td>
+            <td class="search_form_tdr"><input name="selfSiteCode" id="selfSiteCode" type="text"/></td>
+            <td class="search_form_tdl"><label for="selfSiteName">自提点名称：</label></td>
+            <td class="search_form_tdr"><input name="selfSiteName" id="selfSiteName" type="text"/></td>
+            <td class="search_form_tdl"><label for="contact">负责人：</label></td>
+            <td class="search_form_tdr"><input name="contact" id="contact" type="text"/></td>
+            <td class="search_form_tdl"><label for="lsp">所属承运商：</label></td>
+            <td class="search_form_tdr"><input class="easyui-combobox" name="lsp" id="search_lsp" data-options="valueField:'lspCode',textField:'lspName'" editable="false"/></td>
+          </tr>
+          <tr>
+          	<td class="search_form_tdlf">&nbsp;</td>
+			<td colspan="5" class="search_form_tdr">
+				<input type="hidden" id="ids" name="ids" value=""/>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+            </td>
+          </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+    <div id="selfsite_grid" class="grid_content">
+      <!-- 自提点信息列表GRID -->
+      <table id="selfsiteview" fit="true">
+      </table>
+    </div>
+
+    <!-- 添加自提点模块 begin -->
+    <div id="mstSelfPickup_add_dialog" class="easyui-dialog" style="width: 650px; height: 390px; padding: 10px 20px" closed="true">
+      <div class="ftitle">添加自提点</div>
+      <form id="mstSelfPickup_add_form" method="post" novalidate class="ftitle_form">
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class=form_tr_odd>
+            <td class="search_form_tdl"><label for="selfSiteCode">自提点编码：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="selfSiteCode" id="add_selfSiteCode" required="true" validType="unnormal"/></td>
+            <td class="search_form_tdl"><label for="selfSiteName">自提点名称：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="selfSiteName" id="add_selfSiteName" required="true"  validType="unnormal"/></td>
+          </tr>
+          <tr>
+            <td class="search_form_tdl"><label for="lsp">所属承运商：</label></td>
+            <td class="search_form_tdr"><input class="easyui-combobox" name="lsp" id="add_lsp" data-options="valueField:'lspCode',textField:'lspName'" required="true" editable="false"/></td>
+            <td class="search_form_tdl"><label for="contact">自提点联系人：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="contact" id="add_contact" required="true" validType="unnormal"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+             <td class="search_form_tdl"><label for="telZoneCode">自提点电话区号：</label></td>
+             <td class="search_form_tdr"><input class="easyui-validatebox" name="telZoneCode" id="add_telZoneCode" required="true" validType="unnormal"/></td>
+             <td class="search_form_tdl"><label for="telNum">自提点电话：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="telNum" id="add_telNum" required="true" validType="unnormal"/></td>
+          </tr>
+          <tr>
+            <td class="search_form_tdl"><label for="zipCode">自提点邮编：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="zipCode" id="add_zipCode" required="true" validType="unnormal"/></td>
+            <td class="search_form_tdl"><label for="divisionName">自提点地址：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="divisionName" id="add_divisionName" required="true" validType="unnormal"/></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 添加自提点模块 end -->
+
+    <!-- 修改自提点模块 begin -->
+    <div id="mstSelfPickup_edit_dialog" class="easyui-dialog" style="width: 650px; height:  390px; padding: 10px 20px" closed="true">
+      <div class="ftitle">自提点信息</div>
+      <form id="mstSelfPickup_edit_form" method="post" novalidate class="ftitle_form">
+         <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class=form_tr_odd>
+            <td class="search_form_tdl"><label for="selfSiteName">自提点名称：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="selfSiteName" id="edit_selfSiteName" required="true" validType="unnormal"/></td>
+            <td class="search_form_tdl"><label for="lsp">所属承运商：</label></td>
+            <td class="search_form_tdr"><input class="easyui-combobox" name="lsp" id="edit_lsp" data-options="valueField:'lspCode',textField:'lspName'" editable="false" required="true" validType="unnormal"></td>
+            <input id="selfSiteCode" name="selfSiteCode"  style="display:none;"/>
+          </tr>
+          <tr>
+            <td class="search_form_tdl"><label for="contact">自提点联系人：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="contact" id="edit_contact" required="true" validType="unnormal"/></td>
+             <td class="search_form_tdl"><label for="telNum">自提点电话：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="telNum" id="edit_telNum" required="true" validType="unnormal"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="search_form_tdl"><label for="divisionName">自提点地址：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="divisionName" id="edit_divisionName" required="true" validType="unnormal"/></td>
+             <td class="search_form_tdl"><label for="zipCode">自提点邮编：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="zipCode" id="edit_zipCode" editable="false"/></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 修改自提点模块 end -->
+
+    <!-- 自提点详细信息 begin -->
+    <div id="mstSelfPickup_detail_dialog" title="自提点信息" class="easyui-dialog" style="width: 800px; height: 390px; padding: 10px 20px" closed="true" buttons="#detail-dlg-buttons">
+     <div class="ftitle">自提点详细信息</div>
+      <form id="mstSelfPickup_detail_form" class="detail_form" novalidate>
+         <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class=form_tr_odd>
+            <td class="search_form_tdl"><label for="selfSiteCode">自提点编号：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="selfSiteCode" id="detail_selfSiteCode" editable="false"/></td>
+            <td class="search_form_tdl"><label for="selfSiteName">自提点名称：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="selfSiteName" id="detail_selfSiteName" editable="false"/></td>
+          </tr>
+          <tr class=form_tr_odd>
+            <td class="search_form_tdl"><label for="lsp">所属承运商：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="lsp" id="detail_lsp" editable="false"/></td>
+            <td class="search_form_tdl"><label for="contact">自提点联系人：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="contact" id="detail_contact" editable="false"/></td>
+          </tr>
+          <tr>
+            <td class="search_form_tdl"><label for="telZoneCode">自提点电话区号：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="telZoneCode" id="detail_telZoneCode" editable="false"/></td>
+            <td class="search_form_tdl"><label for="telNum">自提点电话：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="telNum" id="detail_telNum" editable="false"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="search_form_tdl"><label for="divisionName">自提点地址：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="divisionName" id="detail_divisionName" editable="false"/></td>
+            <td class="search_form_tdl"><label for="zipCode">自提点邮编：</label></td>
+            <td class="search_form_tdr"><input class="easyui-validatebox" name="zipCode" id="detail_zipCode" editable="false"/></td>
+          </tr>
+        </table>
+       </form>
+     </div>
+     <!-- 自提点详细信息 end -->
+     
+     <!-- 自提点信息导入begin -->
+     <div id="data_import_dialog" title="自提点信息导入" class="easyui-dialog" 
+     	closed="true">
+     	<form id="import_form" enctype="multipart/form-data" method="post">
+     		<table>
+         		<tr>
+		          	<td colspan="4">
+		          		<input type="file" name="file" id="file" style="width: 250px;">
+		          	</td>
+          		</tr>
+          		<tr>
+          			<td>
+          				【1】只能导入EXCEL文件
+          			</td>
+          		</tr>
+          		<tr>
+          			<td>
+          				【2】所有字段均不允许为空
+          			</td>
+          		</tr>
+          		<tr>
+          			<td>
+          				【3】数据列依次为：自提点代码、自提点名称、所属承运商编码、区域编码、区域名称、
+          						 自提点电话区号、集团门店编码、自提点联系人、自提点电话、自提点电邮、自提点邮编、自提点传真
+          			</td>
+          		</tr>
+          		<tr>
+          			<td colspan="4" style="height:40px;">
+          				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" onclick="javascript:exportTemplate();" id="exportTemplate">模板下载</a>
+              			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" onclick="javascript:data_import();" id="data_import">导入</a>
+            		</td>
+          		</tr>
+          </table>
+     	</form>
+     </div>  
+     <!-- 自提点信息导入end -->
+  </body>
+</html>

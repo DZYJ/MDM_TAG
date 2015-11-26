@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>取货时间</title>
+    [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/jquery.maskedinput.min.js"></script>
+    <script type="text/javascript" src="${resource!}/js/lsp/transport.js"></script>
+    <script type="text/javascript">
+		function formatItem(row){
+			var s = '<span style="font-weight:bold">' + row.division_code + '</span><br/>' +
+					'<span style="color:#888">' + row.division_name + '</span>';
+			return s;
+		}
+	</script>
+  </head>
+  <body  style="visibility: visible;">
+    <div class="top_content">
+      <!-- 查询承运商运力表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 40px;" data-options="collapsible:true" fit="true">
+        <form id="transport_search_form" method="post">
+        <table>
+          <tr>
+            <td  class="search_form_tdl"><label for="lspCode">承运商：</label></td>
+            <td  class="search_form_tdr"><input class="easyui-combobox" id="lsp" name="lsp" style="width: 250px;" 
+	            data-options="valueField:'lspCode',textField:'lspName',panelWidth: 250" editable="false" class="easyui-validatebox"  required="true"></td>
+          	<td>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" id="search_form_reset">重置</a>
+            </td>
+          </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+    <div id="transport_grid" class="grid_content">
+      <!--承运商列表GRID -->
+      <table id="transportView" fit="true">
+      </table>
+    </div>
+    
+    <!--  添加运力模块 begin -->
+    <div id="transport_add_dialog" class="easyui-dialog" style="width: 800px; height: 550px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <form id="transport_add_form" method="post" novalidate class="ftitle_form">
+        <table>
+             <tr>
+	             <td style="width: 300px;">
+	               <div class="fitem fitem_odd">
+				          <label for="lsp">承运商编码:</label> 
+				          <input class="easyui-combobox" id="lspCode" name="lspCode" 
+	            data-options="valueField:'lspCode',textField:'lspName',panelWidth: 250" editable="false" class="easyui-validatebox"  required="true"> 
+                   </div>
+	             </td>
+	              <td rowspan="8">
+	            	<label for="secondLevel">区域范围:</label>
+		            <div class="easyui-panel" style="padding:5px;height:400px;width:350px">
+		            	<ul id="divitionTree" class="easyui-tree" data-options="method:'get',lines:true,animate:true,checkbox:true" class="easyui-validatebox"  required="true"></ul>
+					</div>
+				</td>
+             </tr>
+             <tr>
+	             <td>
+	                  <div class="fitem fitem_odd">
+				          <label  for="priority">优先级:</label> 
+				          <input name="priority" required="true" id="priority" class="easyui-numberbox" value="1"/>
+                      </div>
+	             </td>
+             </tr>
+             <tr>
+           	    <td>
+           	            <div class="fitem fitem_odd">
+					       <label for="maxOrdQty">最大运单量:</label>
+					       <input name="maxOrdQty" required="true" id="maxOrdQty" class="easyui-numberbox" value="999999999"/>
+                        </div>
+	             </td>
+           </tr>
+           <tr>
+	             <td>
+	                   <div class="fitem fitem_odd">
+                           <label for="minDivisor">份额:</label>
+                           <input name="minDivisor" required="true" id="minDivisor" class="easyui-numberbox" value="1"/>
+                       </div>
+	             </td>
+           </tr>
+           <tr>
+	             <td>
+	                  <div class="fitem fitem_odd">
+				          <label for="minAmount">金额下限:</label> 
+				          <input name="minAmount" required="true" id="minAmount" class="easyui-numberbox" value="0"/>
+                      </div>
+	             </td>
+           </tr>
+           <tr>
+           	     <td>
+           	            <div class="fitem fitem_odd">
+					        <label for="maxAmount">金额上限:</label>
+					        <input name="maxAmount" id="maxAmount" class="easyui-numberbox" required="true" value="999999999"/>
+                       </div>
+	             </td>
+           </tr>
+           <tr>
+	             <td>
+	                   <div class="fitem fitem_odd">
+					         <label for="orderDownloadBeginTime">最早订单下载时间:</label>
+					         <input name="orderDownloadBeginTime" id="orderDownloadBeginTime" class="easyui-validatebox" required="true" value="00:00"/>
+                       </div>
+	             </td>
+           </tr>
+           <tr>
+	              <td>
+	                   <div class="fitem fitem_odd">
+					         <label for="orderDownloadEndTime">最晚订单下载时间:</label>
+					         <input name="orderDownloadEndTime" id="orderDownloadEndTime" class="easyui-validatebox" required="true" value="24:00"/>
+                       </div>
+	             </td>
+           </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 添加运力模块 end -->
+    
+    
+    <!--  修改运力模块 begin -->
+    <div id="transport_edit_dialog" class="easyui-dialog" style="width: 800px; height: 400px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">承运商信息</div>
+      <form id="transport_edit_form" method="post" novalidate class="ftitle_form">
+        <table>
+             <tr>
+	             <td>
+	               <div class="fitem fitem_odd">
+				          <label for="lsp">承运商编码:</label> 
+				          <input name="lsp" id="lsp" class="easyui-validatebox"  readonly="readonly" required="true"> 
+                   </div>
+	             </td>
+	             <td>
+	                 <div class="fitem fitem_odd">
+					       <label  for="divisionCode">区域编码:</label> 
+					       <input name="divisionCode" id="divisionCode" class="easyui-validatebox" readonly="readonly" required="true"> 
+                      </div>
+                  </td>
+	             <td>
+	                  <div class="fitem fitem_odd">
+				          <label  for="priority">优先级:</label> 
+				          <input name="priority" required="true" id="priority" class="easyui-validatebox">
+                      </div>
+	             </td>
+             </tr>
+           <tr>
+           	    <td>
+           	            <div class="fitem fitem_odd">
+					       <label for="maxOrdQty">最大运单量:</label>
+					       <input name="maxOrdQty" required="true" id="maxOrdQty" class="easyui-validatebox" validType="value" />
+                        </div>
+	             </td>
+	             <td>
+	                   <div class="fitem fitem_odd">
+                           <label for="minDivisor">份额:</label>
+                           <input name="minDivisor" required="true" id="minDivisor" class="easyui-numberbox" />
+                       </div>
+	             </td>
+	             <td>
+	                  <div class="fitem fitem_odd">
+				          <label for="minAmount">金额下限:</label> 
+				          <input name="minAmount" required="true" id="minAmount" class="easyui-numberbox" />
+                      </div>
+	             </td>
+           </tr>
+           <tr>
+           	     <td>
+           	            <div class="fitem fitem_odd">
+					        <label for="maxAmount">金额上限:</label>
+					        <input name="maxAmount" id="maxAmount" class="easyui-validatebox" required="true" />
+                       </div>
+	             </td>
+	             <td>
+	                   <div class="fitem fitem_odd">
+					         <label for="orderDownloadBeginTime">最早订单下载时间:</label>
+					         <input name="orderDownloadBeginTime" id="orderDownloadBeginTime" class="easyui-validatebox" required="true" />
+                       </div>
+	             </td>
+	              <td>
+	                   <div class="fitem fitem_odd">
+					         <label for="orderDownloadEndTime">最早订单下载时间:</label>
+					         <input name="orderDownloadEndTime" id="orderDownloadEndTime" class="easyui-validatebox" required="true" />
+                       </div>
+	             </td>
+           </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 修改运力模块 end -->
+  </body>
+</html>

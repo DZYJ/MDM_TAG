@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>数据字典列表</title>
+    [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/dataDictionary/dataDictionary.js"></script>
+    <script type="text/javascript">
+    	function data_import() {
+   			var file = $("#file").val();
+   		    if (file == "") {
+   		        $.messager.alert('Excel批量导入', '请选择将要上传的文件!');        
+   		    } else {
+   		    	var strtype = file.substr(file.length-4,file.length-1);
+   		    	strtype = strtype.toUpperCase();
+   		        if (strtype != '.XLS' && strtype != 'XLSX') {
+   		            $.messager.alert('Excel批量导入','文件类型不正确，请选择EXCEL文件!'); 
+   		        } else { 
+   		        	$('#import_form').form('submit', {
+   		        		url: "../dataDictionary/import.do",
+   		        		method: "post",
+   		        		onSubmit: function(){
+   		        			return true;
+   		        		},
+   		        		success: function(data){
+   		        			var _data = $.parseJSON(data);
+   		        			$.messager.alert("提示", _data.msg);
+   		        		}
+   		        	});
+   		        }
+   		    }    
+    	}
+    	function exportTemplate() {
+    		$('#import_form').form('submit', {
+        		url: "../dataDictionary/exportTemplate.json",
+        		method: "post",
+        		onSubmit: function(){
+        			return true;
+        		},
+        		success: function(data){
+        			var _data = $.parseJSON(data);
+        			$.messager.alert("提示", _data);
+        		}
+        	});
+    	}
+    </script>
+  </head>
+  <body  style="visibility: visible;">
+    <div class="top_content">
+      <!-- 查询数据字典表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 95px;" data-options="collapsible:true" fit="true">
+        <form id="dataDictionary_search_form">
+        <table>
+          <tr>
+            <td  class="search_form_tdl"><label for="id">编号：</label></td>
+            <td  class="search_form_tdr"><input name="id" id="id" type="text"/></td>
+            <td  class="search_form_tdl"><label for="englishName">英文名称：</label></td>
+            <td  class="search_form_tdr"><input name="englishName" id="englishName" type="text"/></td>
+            <td  class="search_form_tdl"><label for="chineseName">中文名称：</label></td>
+            <td  class="search_form_tdr"><input name="chineseName" id="chineseName" type="text"/></td>
+            <td  class="search_form_tdl"><label for="indicateName">字段名称：</label></td>
+            <td  class="search_form_tdr"><input name="indicateName" id="indicateName" type="text"/></td>
+          </tr>
+          <tr>
+            <td  class="search_form_tdl"><label for="columnValue">字段值：</label></td>
+            <td  class="search_form_tdr"><input name="columnValue" id="columnValue" type="text"/></td>
+            <td  class="search_form_tdl"><label for="isActivity">是否活动：</label></td>
+            <td  class="search_form_tdr" colspan="5">
+            	<select class="easyui-combobox" name="isActivity" id="isActivity" style="width:162px"/>
+            		<option value=""></option>
+            		<option value="Y">是</option>
+            		<option value="N">否</option>
+            	</select>
+            </td>
+          </tr>
+          <tr>
+          	<td class="search_form_tdlf">&nbsp;</td>
+			<td colspan="7" class="search_form_tdr">
+				<input type="hidden" id="comment" name="comment" value=""/>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+            </td>
+          </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+    <div id="dataDictionary_grid" class="grid_content">
+      <!--数据字典列表GRID -->
+      <table id="dataDictionaryView" fit="true">
+      </table>
+    </div>
+
+    <!-- 添加数据字典模块 begin -->
+    <div id="dataDictionary_add_dialog" class="easyui-dialog" style="width: 500px; height: 500px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">数据字典信息</div>
+      <form id="dataDictionary_add_form" method="post" novalidate class="ftitle_form">
+        <div class="fitem fitem_odd">
+           <label for="englishName">英文名称：</label>
+           <input name="englishName" id="englishName" class="easyui-validatebox" required="true" validType="english">
+        </div>
+        <div class="fitem fitem_even">
+           <label for="chineseName">中文名称：</label>
+           <input name="chineseName" required="true" id="chineseName" class="easyui-validatebox" validType="chinese">
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="indicateName">字段名称：</label>
+           <input name="indicateName" required="true" id="indicateName"  class="easyui-validatebox"  validType="unnormal">
+        </div>
+        <div class="fitem fitem_even">
+           <label for="columnValue">字段值：</label>
+           <input name="columnValue" required="true" id="columnValue" class="easyui-validatebox" validType="unnormal"/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="isActivity">是否活动：</label>
+           <select class="easyui-combobox" name="isActivity" id="isActivity" editable="false" style="width:132px"/><option value="Y">是</option><option value="N">否</option></select>
+        </div>
+        <div class="fitem fitem_even">
+          <label for="comment">备注:</label>
+          <textarea style="height: 80px; width: 200px;" name="comment" id="comment"></textarea>
+        </div>
+      </form>
+    </div>
+    <!-- 添加数据字典模块 end -->
+
+    <!-- 修改数据字典模块 begin -->
+    <div id="dataDictionary_edit_dialog" class="easyui-dialog" style="width: 500px; height: 500px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">数据字典信息</div>
+      <form id="dataDictionary_edit_form" method="post" novalidate class="ftitle_form">
+        <div class="fitem fitem_odd">
+           <label for="englishName">英文名称：</label>
+           <input name="englishName" id="englishName" class="easyui-validatebox" required="true" validType="english">
+           <input name="id" type="hidden" />
+        </div>
+        <div class="fitem fitem_even">
+           <label for="chineseName">中文名称：</label>
+           <input name="chineseName" required="true" id="chineseName" class="easyui-validatebox" validType="chinese">
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="indicateName">字段名称：</label>
+           <input name="indicateName" required="true" id="indicateName"  class="easyui-validatebox" validType="unnormal">
+        </div>
+        <div class="fitem fitem_even">
+           <label for="columnValue">字段值：</label>
+           <input name="columnValue" required="true" id="columnValue" class="easyui-validatebox" validType="unnormal"/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="isActivity">是否活动：</label>
+           <select class="easyui-combobox" name="isActivity" id="isActivity" editable="false" style="width:132px"/><option value="Y">是</option><option value="N">否</option></select>
+        </div>
+        <div class="fitem fitem_even">
+          <label for="comment">备注:</label>
+          <textarea style="height: 80px; width: 200px;" name="comment" id="comment"></textarea>
+        </div>
+      </form>
+    </div>
+    <!-- 修改数据字典模块 end -->
+    
+    <!-- 数据字典详细信息 begin -->
+    <div id="dataDictionary_detail_dialog" title="数据字典信息" class="easyui-dialog" 
+      style="width:800px; height: 360px; padding: 10px 20px" closed="true" buttons="#detail-dlg-buttons">
+     <div class="ftitle">数据字典详细信息</div>
+      <form id="dataDictionary_detail_form" class="detail_form" novalidate>
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class="detail_form_odd">
+            <td width="20%" class="detail_form_tdl">英文名称:</td>
+            <td width="30%" class="detail_form_tdr"><input name="englishName" id="englishName"  readonly="readonly"/></td>
+            <td width="20%" class="detail_form_tdl">中文名称:</td>
+            <td width="30%" class="detail_form_tdr"><input name="chineseName" id="chineseName"  readonly="readonly"/></td>
+          </tr>
+          <tr>
+            <td class="detail_form_tdl">字段名称:</td>
+            <td class="detail_form_tdr"><input name="indicateName" id="indicateName"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">字段值:</td>
+            <td class="detail_form_tdr"><input name="columnValue" id="columnValue"  readonly="readonly"/></td>
+          </tr>
+          <tr class="detail_form_odd">
+            <td class="detail_form_tdl">创建人:</td>
+            <td class="detail_form_tdr"><input name="insertBy" id="insertBy"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">修改人:</td>
+            <td class="detail_form_tdr"><input name="modifiedBy" id="modifiedBy"  readonly="readonly"/></td>
+          </tr>
+          <tr>
+            <td class="detail_form_tdl"><label for="comment">备注:</label></td>
+            <td class="detail_form_tdr"><input name="comment" id="comment" readonly="readonly"></input></td>
+          </tr>
+         </table>
+       </form>
+     </div>
+     <!-- 数据字典详细信息 end -->
+     
+     <!-- 数据字典导入begin -->
+     <div id="data_import_dialog" title="数据字典导入" class="easyui-dialog" 
+     	style="width: 450px; height: 240px; padding: 10px 20px" closed="true">
+     	<form id="import_form" enctype="multipart/form-data" method="post">
+     		<table>
+         		<tr>
+		          	<td colspan="4">
+		          		<input type="file" name="file" id="file" style="width: 250px;">
+		          	</td>
+          		</tr>
+          		<tr>
+          			<td>
+          				【1】只能导入EXCEL文件
+          			</td>
+          		</tr>
+          		<tr>
+          			<td>
+          				【2】所有字段均不允许为空
+          			</td>
+          		</tr>
+          		<tr>
+          			<td>
+          				【3】数据列依次为：英文名称、中文名称、字段标识名称、字段值、是否活动（Y/N）、备注
+          			</td>
+          		</tr>
+          		<tr>
+          			<td colspan="4" style="height:40px;">
+              			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" onclick="javascript:exportTemplate();" id="exportTemplate">模板下载</a>
+              			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" onclick="javascript:data_import();" id="data_import">导入</a>
+            		</td>
+          		</tr>
+          </table>
+     	</form>
+     </div>  
+     <!-- 数据字典导入end -->
+     
+  </body>
+</html>

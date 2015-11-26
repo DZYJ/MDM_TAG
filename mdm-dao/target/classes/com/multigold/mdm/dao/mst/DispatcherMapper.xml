@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.DispatcherMapper">
+
+	<resultMap id="dispatcherResultMap" type="mstDispatcher">
+		<id property="id" column="SU_ID" />
+		<id property="account" column="SU_ACCOUNT" />
+		<id property="siteCode" column="site_code" />
+		<id property="siteName" column="site_name" />
+		<id property="identification" column="identification" />
+		<id property="name" column="SU_NAME" />
+		<id property="email" column="SU_EMAIL" />
+		<id property="password" column="SU_PASSWORD" />
+		<id property="adminFlag" column="SU_ADMIN_FLAG" />
+		<id property="masLoc" column="MAS_LOC" />
+		<id property="extension"   column="su_extension" />             
+        <id property="segment"     column="su_segment" />                
+        <id property="active"      column="su_active" />                  
+        <id property="remark"      column="su_remark" />                   
+         <id property="lspCode"    column="su_lsp_code" />                   
+         <id property="domain"     column="su_domain" />                    
+         <id property="roles"      column="su_roles" />                   
+         <id property="title"      column="su_title" />                     
+         <id property="isEmployee"    column="su_is_employee" />                
+         <id property="managerEmail"  column="su_manager_email" />             
+         <id property="enabled"       column="su_enabled" />
+         <id property="timezone"      column="su_timezone" />                   
+         <id property="language"      column="su_language" />                  
+         <id property="defaultBuid"   column="su_default_buid" />                 
+         <id property="countryCode"   column="su_country_code" />         
+         <id property="defaultAreaCode"  column="su_default_area_code" />        
+         <id property="lastLoginDate"      column="last_login_date" />               
+         <id property="hasChangedPswd"     column="has_changed_pswd" />                
+         <id property="invalidAttampts"    column="invalid_attampts" />                   
+         <id property="lockoutTime"       column="lockout_time" />                  
+         <id property="rfLoginCount"      column="rf_login_count" />          
+         <id property="loginStatus"       column="login_status" />          
+         <id property="telephoneNum"      column="telephone_num" />              
+         <id property="sex"          column="sex" />                             
+         <id property="effectDate"   column="effect_date" />                   
+         <id property="expireDate"   column="expire_date" />                      
+         <id property="employeeNo"   column="employee_no" /> 
+         <id property="insertBy"   column="insert_by" /> 
+         <id property="insertDate"   column="insert_date" /> 
+         <id property="modifiedBy"   column="modified_by" /> 
+         <id property="modifiedDate"   column="modified_date" /> 
+	</resultMap>
+
+
+	<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		INSERT INTO
+		SECURITY_USER(SITE_CODE,IDENTIFICATION,SU_NAME,SEX,TELEPHONE_NUM,su_account,SU_PASSWORD,EFFECT_DATE,EXPIRE_DATE,SU_ACTIVE,insert_by,insert_date,modified_by,modified_date)
+		VALUES
+	</sql>
+	
+	<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstDispatcher">
+		<include refid="insertEntityHeadSql" />
+		(#{siteCode},#{identification},#{name},#{sex},#{telephoneNum},#{name},#{password},#{effectDate},#{expireDate},#{active},#{insertBy},#{insertDate},#{modifiedBy},#{modifiedDate})
+	</insert>
+	
+	<insert id="createMstMasLocUser" parameterType="mstDispatcher">
+		INSERT INTO MST_MAS_LOC_USER(mas_loc,su_account,enabled) VALUES (#{siteCode},#{name},1)
+	</insert>
+
+	<!-- 更新实体 -->
+	<update id="updateEntity" parameterType="mstDispatcher">
+		UPDATE SECURITY_USER
+		<set>
+			<if test="siteCode!=null">site_code=#{siteCode},</if>
+			<if test="name!=null">su_name=#{name},</if>
+			<if test="identification!=null">identification=#{identification},</if>
+			<if test="telephoneNum!=null">telephone_num=#{telephoneNum},</if>
+			<if test="password!=null">su_password=#{password},</if>
+			<if test="expireDate!=null">expire_date=#{expireDate},</if>
+			<if test="effectDate!=null">effect_date=#{effectDate},</if>
+			<if test="active!=null">su_active=#{active},</if>
+			<if test="sex!=null">sex=#{sex}</if>
+		</set>
+		WHERE SU_ID=#{id}
+	</update>
+	
+	<update id="updateMstMasLocUser" parameterType="mstDispatcher">
+		UPDATE MST_MAS_LOC_USER
+		<set>
+			<if test="active!=null and active!='' and active eq 'Y'.toString()">enabled=1,</if>
+			<if test="active!=null and active!='' and active eq 'N'.toString()">enabled=0,</if>
+			<if test="masLoc!=null and masLoc!=''">mas_loc=#{siteCode}</if>
+		</set>
+		where su_account=#{account}
+	</update>
+
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="mstDispatcher" resultMap="dispatcherResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 根据map参数查询列表 -->
+	<select id="queryListByMap" resultMap="dispatcherResultMap">
+		<include refid="queryEntityHeadSql" />
+		 FROM SECURITY_USER SU
+		<where>
+		   <!-- 自定义查询条件 -->
+		</where>
+	</select>
+
+	<!-- 根据ID删除实体 -->
+	<delete id="deleteById" parameterType="long">
+		DELETE FROM SECURITY_USER
+		WHERE SU_ID=#{id}
+	</delete>
+	
+	<delete id="deleteMstMasLocUser" parameterType="mstDispatcher">
+		DELETE FROM MST_MAS_LOC_USER WHERE SU_ACCOUNT=#{account}
+	</delete>
+	
+	<delete id="deleteByIds" parameterType="long">
+		 delete from SECURITY_USER where su_id in
+	    <foreach item="item" collection="ids" open="(" separator="," close=")">
+	      #{item}
+	    </foreach>
+	</delete>
+	
+	<delete id="deleteMstMasLocUsers" parameterType="string">
+		DELETE FROM MST_MAS_LOC_USER WHERE SU_ACCOUNT IN
+		<foreach item="item" collection="ids" open="(" separator="," close=")">
+	      #{item}
+	    </foreach>
+	</delete>
+
+	<!-- 根据对象删除实体，此方法可以根据自己需求实现 -->
+	<delete id="deleteByObject" parameterType="mstDispatcher">
+	     <!-- 自定义删除条件 -->
+	</delete>
+
+	<!-- 根据ID查出实体 -->
+	<select id="queryById" parameterType="long" resultMap="dispatcherResultMap">
+	    <include refid="queryEntityHeadSql"/>
+		FROM SECURITY_USER SU WHERE SU.SU_ID=#{id}
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="mstDispatcher" resultMap="dispatcherResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="mstDispatcher" resultType="long">
+		SELECT count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+			SELECT *
+	</sql>
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM SECURITY_USER SU
+		<where>
+			<if test="id!=null and id!=''">
+				SU.SU_ID= #{id}
+			</if>
+			<if test="name!=null and name!=''">
+				and SU.SU_NAME= #{name}
+			</if>
+
+			<if test="identification!=null and identification!=''">
+				and SU.IDENTIFICATION= #{identification}
+			</if>
+
+			<if test="siteCode!=null and siteCode!=''">
+				and SU.SITE_CODE= #{siteCode}
+			</if>
+		</where>
+	</sql>
+</mapper>

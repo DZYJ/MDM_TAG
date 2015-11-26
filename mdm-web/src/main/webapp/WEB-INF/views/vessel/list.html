@@ -1,0 +1,210 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>容器管理</title>
+    [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/vessel/vessel.js"></script>
+  </head>
+  <body>
+    <div class="top_content">
+      <!-- 查询用户表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 95px;" data-options="collapsible:true" fit="true">
+        <form id="vessel_search_form" method="post" class="search_form"> 
+        <table>
+          <tr>
+            <td class="search_form_tdl"><label for="vesselNo">容器编号：</label></td>
+            <td class="search_form_tdr"><input name="vesselNo" id="vesselNo" type="text"/></td>
+            <td class="search_form_tdl"><label for="vesselName">容器名称：</label></td>
+            <td class="search_form_tdr"><input name="vesselName" id="vesselName" type="text"/></td>
+            <td class="search_form_tdl"><label for="fromDepartment">所属部门：</label></td>
+            <td class="search_form_tdr"><input name="fromDepartment" id="fromDepartment" type="text"/></td>
+          </tr>
+          <tr>
+            <td class="search_form_tdl"><label for="quality">质量情况：</label></td>
+            <td class="search_form_tdr"><input name="quality" id="quality" type="text"/></td>
+            <td class="search_form_tdl"><label for="vesselState">容器状态：</label></td>
+            <td class="search_form_tdr"><input name="vesselState" id="vesselState" type="text"/></td>
+            <td class="search_form_tdl"><label for="material">材质：</label></td>
+            <td class="search_form_tdr"><input name="material" id="material" type="text"/></td>
+          </tr>
+          <tr>
+          	<td class="search_form_tdlf">&nbsp;</td>
+			<td colspan="5" class="search_form_tdr">
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+            </td>
+          </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+    <div id="vessel_grid" class="grid_content">
+      <!-- 容器信息列表GRID -->
+      <table id="vesselview" fit="true">
+      </table>
+    </div>
+
+    <!-- 添加容器模块 begin -->
+    <div id="vessel_add_dialog" class="easyui-dialog" style="width: 650px; height: 360px; padding: 10px 20px" closed="true">
+      <form id="vessel_add_form" method="post" novalidate class="ftitle_form">
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class=form_tr_odd>
+            <td width="20%" class="form_tdl"><label for="vesselName">容器名称:</label></td>
+            <td width="30%" class="form_tdr"><input name="vesselName" id="vesselName" class="easyui-validatebox" required="true"/> </td>
+            <td width="20%" class="form_tdl"><label for="fromDepartment">所属部门:</label></td>
+            <td width="30%" class="form_tdr"><input name="fromDepartment" id="fromDepartment" class="easyui-validatebox" required="true"/> </td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="vesselCoverage">容器面积:</label> </td>
+            <td class="form_tdr"><input name="vesselCoverage" required="true" id="vesselCoverage" class="easyui-validatebox"
+              validType="intOrFloat"/></td>
+            <td class="form_tdl"><label for="material">材质:</label> </td>
+            <td class="form_tdr"><input name="material" required="true" id="material" class="easyui-validatebox"
+              validType="integer"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="quality">质量情况 :</label></td>
+            <td class="form_tdr"><input name="quality" id="quality" required="true" class="easyui-validatebox"/></td>
+            <td class="form_tdl"><label for="vesselState">容器状态:</label></td>
+            <td class="form_tdr"><input name="vesselState" id="vesselState" required="true" class="easyui-validatebox"
+              validType="integer"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="vesselHeight">容器的高度:</label></td>
+            <td class="form_tdr"> <input name="vesselHeight" id="vesselHeight" required="true" class="easyui-validatebox"
+              validType="intOrFloat"/></td>
+            <td class="form_tdl"><label for="vesselLength">容器宽度:</label></td>
+            <td class="form_tdr"><input name="vesselWidth" id="vesselWidth" required="true" class="easyui-validatebox"
+              validType="intOrFloat"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="vesselLength">容器长度:</label></td>
+            <td class="form_tdr"><input name="vesselLength" id="vesselLength" required="true" class="easyui-validatebox"
+              validType="intOrFloat"/></td>
+            <td class="form_tdl"><label for="vesselVolume">容器称重:</label></td>
+            <td class="form_tdr"><input name="vesselVolume" id="vesselVolume" required="true" class="easyui-validatebox"
+              validType="intOrFloat"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl" valign="top"><label for="comment">备注:</label></td>
+            <td class="form_tdr" colspan="3"><textarea style="height: 80px; width: 250px;" name="comment" id="comment"></textarea></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 添加容器模块 end -->
+
+    <!-- 修改容器模块 begin -->
+    <div id="vessel_edit_dialog" class="easyui-dialog" style="width: 650px; height: 360px; padding: 10px 20px" closed="true">
+      <form id="vessel_edit_form" method="post" novalidate class="ftitle_form">
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class=form_tr_odd>
+            <td width="20%" class="form_tdl"><label for="vesselName">容器名称:</label></td>
+            <td width="30%" class="form_tdr"><input name="vesselName" id="vesselName" class="easyui-validatebox" required="true"/>
+              <input name=vesselNo id="vesselNo" type="hidden"/>
+            </td>
+            <td width="20%" class="form_tdl"><label for="fromDepartment">所属部门:</label></td>
+            <td width="30%" class="form_tdr"><input name="fromDepartment" id="fromDepartment" class="easyui-validatebox" required="true"/> </td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="vesselCoverage">容器面积:</label> </td>
+            <td class="form_tdr"><input name="vesselCoverage" required="true" id="vesselCoverage" class="easyui-validatebox"
+              validType="intOrFloat"/></td>
+            <td class="form_tdl"><label for="material">材质:</label> </td>
+            <td class="form_tdr"><input name="material" required="true" id="material" class="easyui-validatebox"
+              validType="integer"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="quality">质量情况 :</label></td>
+            <td class="form_tdr"><input name="quality" id="quality" required="true" class="easyui-validatebox"/></td>
+            <td class="form_tdl"><label for="vesselState">容器状态:</label></td>
+            <td class="form_tdr"><input name="vesselState" id="vesselState" required="true" class="easyui-validatebox"
+              validType="integer"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="vesselHeight">容器的高度:</label></td>
+            <td class="form_tdr"> <input name="vesselHeight" id="vesselHeight" required="true" class="easyui-validatebox"
+              validType="intOrFloat"/></td>
+            <td class="form_tdl"><label for="vesselLength">容器宽度:</label></td>
+            <td class="form_tdr"><input name="vesselWidth" id="vesselWidth" required="true" class="easyui-validatebox"
+              validType="intOrFloat"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="vesselLength">容器长度:</label></td>
+            <td class="form_tdr"><input name="vesselLength" id="vesselLength" required="true" class="easyui-validatebox"
+              validType="intOrFloat"/></td>
+            <td class="form_tdl"><label for="vesselVolume">容器称重:</label></td>
+            <td class="form_tdr"><input name="vesselVolume" id="vesselVolume" required="true" class="easyui-validatebox"
+              validType="intOrFloat"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl" valign="top"><label for="comment">备注:</label></td>
+            <td class="form_tdr" colspan="3"><textarea style="height: 80px; width: 250px;" name="comment" id="comment"></textarea></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 修改容器模块 end -->
+
+    <!-- 容器详细信息 begin -->
+    <div id="vessel_detail_dialog" title="容器信息" class="easyui-dialog" 
+      style="width: 800px; height: 420px; padding: 10px 20px" closed="true" buttons="#detail-dlg-buttons">
+      <form id="vessel_detail_form" class="detail_form" novalidate>
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class=form_tr_odd>
+            <td width="20%" class="form_tdl"><label for="vesselName">容器名称:</label></td>
+            <td width="30%" class="form_tdr"><input name="vesselName" id="vesselName"/>
+              <input name=vesselNo id="vesselNo" type="hidden"/>
+            </td>
+            <td width="20%" class="form_tdl"><label for="fromDepartment">所属部门:</label></td>
+            <td width="30%" class="form_tdr"><input name="fromDepartment" id="fromDepartment"/> </td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="vesselCoverage">容器面积:</label> </td>
+            <td class="form_tdr"><input name="vesselCoverage" id="vesselCoverage" class="easyui-validatebox"/></td>
+            <td class="form_tdl"><label for="material">材质:</label> </td>
+            <td class="form_tdr"><input name="material" id="material" class="easyui-validatebox"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="quality">质量情况 :</label></td>
+            <td class="form_tdr"><input name="quality" id="quality" class="easyui-validatebox"/></td>
+            <td class="form_tdl"><label for="vesselState">容器状态:</label></td>
+            <td class="form_tdr"><input name="vesselState" id="vesselState" class="easyui-validatebox"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="vesselHeight">容器的高度:</label></td>
+            <td class="form_tdr"> <input name="vesselHeight" id="vesselHeight" class="easyui-validatebox"/></td>
+            <td class="form_tdl"><label for="vesselLength">容器宽度:</label></td>
+            <td class="form_tdr"><input name="vesselWidth" id="vesselWidth" class="easyui-validatebox"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="vesselLength">容器长度:</label></td>
+            <td class="form_tdr"><input name="vesselLength" id="vesselLength" class="easyui-validatebox"/></td>
+            <td class="form_tdl"><label for="vesselVolume">容器称重:</label></td>
+            <td class="form_tdr"><input name="vesselVolume" id="vesselVolume" class="easyui-validatebox"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="insertBy">创建人:</label></td>
+            <td class="form_tdr"> <input name="insertBy" id="insertBy" class="easyui-validatebox"/></td>
+            <td class="form_tdl"><label for="insertDateStr">创建时间:</label></td>
+            <td class="form_tdr"><input name="insertDateStr" id="insertDateStr" class="easyui-validatebox"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="modifiedBy">修改人:</label></td>
+            <td class="form_tdr"><input name="modifiedBy" id="modifiedBy" class="easyui-validatebox"/></td>
+            <td class="form_tdl"><label for="modifiedDateStr">修改时间:</label></td>
+            <td class="form_tdr"><input name="modifiedDateStr" id="modifiedDateStr" class="easyui-validatebox"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl" valign="top"><label for="comment">备注:</label></td>
+            <td class="form_tdr" colspan="3"><textarea style="height: 80px; width: 400px;" name="comment" id="comment"></textarea></td>
+          </tr>
+        </table>
+       </form>
+     </div>
+     <!-- 容器详细信息 end -->
+  </body>
+</html>

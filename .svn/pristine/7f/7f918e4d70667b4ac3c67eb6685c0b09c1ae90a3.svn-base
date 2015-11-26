@@ -1,0 +1,316 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>司机管理</title>
+    [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/driverInfo/driverInfo.js"></script>
+  </head>
+  <body>
+    <div class="top_content">
+      <!-- 查询司机表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 95px;" data-options="collapsible:true" fit="true">
+        <form id="driverInfo_form" method="post">
+        <table>
+          <tr>
+            <td class="search_form_tdl"><label for="driverNo">司机编号：</label></td>
+            <td class="search_form_tdr"><input name="driverNo" id="driverNo" type="text" /></td>
+            <td class="search_form_tdl"><label for="driverName">司机姓名 ：</label></td>
+            <td class="search_form_tdr"><input name="driverName" id="driverName" type="text"/></td>
+            <td class="search_form_tdl"><label for="driverLsp">承运商 ：</label></td>
+            <td class="search_form_tdr"><input name="driverLsp" id="driverLsp" type="text"/></td>
+          </tr>
+          <tr>
+            <td class="search_form_tdl"><label for="starDate">出生起始时间 ：</label></td>
+            <td class="search_form_tdr"><input  class="easyui-datebox" name="starDate" id="starDate"  editable="false"/></td>
+            <td class="search_form_tdl"><label for="endDate">出生终止时间 ：</label></td>
+            <td class="search_form_tdr"><input  class="easyui-datebox" name="endDate" id="endDate"  editable="false"/></td>
+            <td class="search_form_tdl"><label for="driverDepartment">车辆类型：</label></td>
+            <td class="search_form_tdr">
+	            <select class="easyui-combobox" name="driverDepartment" style="width:132px"  editable="false">
+					<option value='1'>配送</option>
+					<option value='2'>运输</option>
+					<option value='3'>快递</option>
+				</select>
+            </td>
+          </tr>
+          <tr>
+          	<td class="search_form_tdlf">&nbsp;</td>
+			<td colspan="5" class="search_form_tdr">
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+            </td>
+          </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+    <div id="driverInfo" class="grid_content">
+      <!-- 用户信息列表GRID -->
+      <table id="driverInfoView" fit="true">
+      </table>
+    </div>
+  <!-- 
+    <!-- 添加司机模块 begin -->
+    <div id="driverInfo_add_dialog" class="easyui-dialog" style="width: 650px; height: 390px; padding: 10px 20px" closed="true">
+      <div class="ftitle">添加车辆信息</div>
+      <form id="driverInfo_add_form" method="post" novalidate class="ftitle_form">
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class=form_tr_odd>
+            <td width="20%" class="form_tdl"><label for="driverNo">司机编号:</label></td>
+            <td width="30%" class="form_tdr"><input name="driverNo" id="driverNo" class="easyui-validatebox" required="true" validType="checkSpacebar"/> </td>
+            <td width="20%" class="form_tdl"><label for="driverName">司机姓名:</label></td>
+            <td width="30%" class="form_tdr"><input name="driverName" id="driverName" class="easyui-validatebox" required="true" validType="checkSpacebar"/> </td>
+          </tr>
+          <tr>
+          <td width="20%" class="form_tdl"><label for="driverLsp">承运商:</label></td>
+            <td width="30%" class="form_tdr"><input name="driverLsp" id="driverLsp" class="easyui-validatebox" required="true" validType="checkSpacebar"/> </td>
+            <td class="form_tdl"><label for="driverDepartment">所属部门:</label> </td>
+                 <td class="search_form_tdr">
+          			<select class="easyui-combobox" name="driverDepartment" required="true"  editable="false">
+						<option value='1' selected='selected'>配送</option>
+						<option value='2'>运输</option>
+						<option value='3'>快递</option>
+	         		</select>
+            	</td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td ><label for="driverCard">驾驶证号 :</label></td>
+            <td class="search_form_tdr"><input  class="easyui-validatebox" name="driverCard" id="driverCard" required="true" validType="checkSpacebar" /></td>
+            <td class="form_tdl"><label for="driverBrithDay">出生日期:</label></td>
+            <td class="form_tdr"><input name="driverBrithDay" id="driverBrithDay" required="true"   class="easyui-datebox"   editable="false"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="driverIdCard">身份证  :</label></td>
+            <td > <input name="driverIdCard" id="driverIdCard" required="true" class="easyui-validatebox"  validType="cardID" /></td>
+            <td class="form_tdl"><label for="driverPhone">联系电话:</label></td>
+          	<td ><input class="easyui-numberbox" validType="mobile" name="driverPhone" id="driverPhone" required="true"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="driverAddress">司机联系地址:</label></td>
+            <td><input name="driverAddress" id="driverAddress" required="true" class="easyui-validatebox" validType="checkSpacebar"/></td>
+            <td><label for="driverLevel">员工评级:</label></td>
+           <td class="search_form_tdr">
+          			<select class="easyui-combobox" name="driverLevel" required="true"  editable="false">
+						<option value='1' selected='selected'>高级</option>
+						<option value='2'>中级</option>
+						<option value='3'>初级</option>
+	         		</select>
+            </td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="enterWorkDate">参加工作的时间:</label></td>
+            <td class="form_tdr"><input name="enterWorkDate" id="enterWorkDate" required="true" class="easyui-datebox" editable="false"/></td>
+            <td class="form_tdl"><label for="driverCardCheck">驾照年审日期:</label></td>
+            <td class="form_tdr"><input name="driverCardCheck" id="driverCardCheck" required="true" class="easyui-datebox" editable="false"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="driverCardDate">驾照日期:</label></td>
+            <td class="form_tdr"><input name="driverCardDate" id="driverCardDate" required="true" class="easyui-datebox" editable="false"/></td>
+            <td class="form_tdl"><label for="enterWorkId">从业证号:</label></td>
+              <td class="form_tdr"><input name="enterWorkId" id="enterWorkId" required="true" class="easyui-validatebox" validType="checkSpacebar"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="driverSkillLevel">技能等级:</label></td>
+                <td class="search_form_tdr">
+          			<select class="easyui-combobox" name="driverSkillLevel" required="true"  editable="false">
+						<option value='1' selected='selected'>高级</option>
+						<option value='2'>中级</option>
+						<option value='3'>初级</option>
+	         		</select>
+            	</td>
+            <td class="form_tdl"><label for="driverCarType">驾驶车型:</label></td>
+            <td >
+            	<input  class="easyui-validatebox" name="driverCarType" id="driverCarType" required="true"  validType="checkSpacebar"/>
+            </td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="driverIsActivity">是否活动:</label></td>
+               <td class="form_tdr">     
+            	<select class="easyui-combobox" name="driverIsActivity" required="true"  editable="false">
+					<option value='1'>是</option>
+					<option value='2'>否</option>
+				</select></td>
+          	 <td class="form_tdl"><label for="comment">备注:</label></td>
+           	 <td colspan="3"><textarea style="height: 80px; width: 250px;" name="comment" id="comment" class="easyui-validatebox" validType="checkSpacebar"></textarea></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 添加车辆模块 end -->
+
+    <!-- 修改车辆模块 begin -->
+    <div id="driverInfo_edit_dialog" class="easyui-dialog" style="width: 650px; height: 390px; padding: 10px 20px" closed="true">
+      <div class="ftitle">车辆信息修改</div>
+      <form id="driverInfo_edit_form" method="post" novalidate class="ftitle_form">
+      	<input type="hidden" name="driverId" id='driverId'>
+         <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class=form_tr_odd>
+            <td width="20%" class="form_tdl"><label for="driverNo">司机编号:</label></td>
+            <td width="30%" class="form_tdr"><input name="driverNo" id="driverNo" class="easyui-validatebox" required="true" validType="checkSpacebar"/> </td>
+            <td width="20%" class="form_tdl"><label for="driverName">司机姓名:</label></td>
+            <td width="30%" class="form_tdr"><input name="driverName" id="driverName" class="easyui-validatebox" required="true" validType="checkSpacebar"/> </td>
+          </tr>
+          <tr>
+          <td width="20%" class="form_tdl"><label for="driverLsp">承运商:</label></td>
+            <td width="30%" class="form_tdr"><input name="driverLsp" id="driverLsp" class="easyui-validatebox" required="true" validType="checkSpacebar"/> </td>
+            <td class="form_tdl"><label for="driverDepartment">所属部门:</label> </td>
+           <td class="search_form_tdr">
+          			<select class="easyui-combobox" name="driverDepartment"  editable="false">
+						<option value='1' selected='selected'>配送</option>
+						<option value='2'>运输</option>
+						<option value='3'>快递</option>
+	         		</select>
+            	</td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td ><label for="driverCard">驾驶证号 :</label></td>
+            <td class="search_form_tdr"><input  class="easyui-validatebox" name="driverCard" id="driverCard" validType="checkSpacebar"/></td>
+            <td class="form_tdl"><label for="driverBrithDay">出生日期:</label></td>
+            <td class="form_tdr"><input name="driverBrithDay" id="driverBrithDay" required="true" class="easyui-datebox"  editable="false"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="driverIdCard">身份证  :</label></td>
+            <td > <input name="driverIdCard" id="driverIdCard" required="true" class="easyui-validatebox" validType="checkSpacebar"/></td>
+            <td class="form_tdl"><label for="driverPhone">联系电话:</label></td>
+          	<td ><input class="easyui-validatebox" name="driverPhone" id="driverPhone" required="true" validType="mobile"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="driverAddress">司机联系地址:</label></td>
+            <td><input name="driverAddress" id="driverAddress" required="true" class="easyui-validatebox" validType="checkSpacebar"/></td>
+            <td><label for="driverLevel">员工评级:</label></td>
+           <td class="search_form_tdr">
+          			<select class="easyui-combobox" name="driverLevel"  editable="false">
+						<option value='1' selected='selected'>高级</option>
+						<option value='2'>中级</option>
+						<option value='3'>初级</option>
+	         		</select>
+            </td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="enterWorkDate">参加工作的时间:</label></td>
+            <td class="form_tdr"><input name="enterWorkDate" id="enterWorkDate" required="true" class="easyui-datebox"  editable="false"/></td>
+            <td class="form_tdl"><label for="driverCardCheck">驾照年审日期:</label></td>
+            <td class="form_tdr"><input name="driverCardCheck" id="driverCardCheck" required="true" class="easyui-datebox"  editable="false"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="driverCardDate">驾照日期:</label></td>
+            <td class="form_tdr"><input name="driverCardDate" id="driverCardDate" required="true" class="easyui-datebox"  editable="false"/></td>
+            <td class="form_tdl"><label for="enterWorkId">从业证号:</label></td>
+              <td class="form_tdr"><input name="enterWorkId" id="enterWorkId" required="true" class="easyui-validatebox" validType="checkSpacebar"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="driverSkillLevel">技能等级:</label></td>
+                <td class="search_form_tdr">
+          			<select class="easyui-combobox" name="driverSkillLevel"  editable="false">
+						<option value='1' selected='selected'>高级</option>
+						<option value='2'>中级</option>
+						<option value='3'>初级</option>
+	         		</select>
+            	</td>
+            <td class="form_tdl"><label for="driverCarType">驾驶车型:</label></td>
+            <td >
+            	<input  class="easyui-validatebox" name="driverCarType" id="driverCarType" validType="checkSpacebar"/>
+            </td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="driverIsActivity">是否活动:</label></td>
+               <td class="form_tdr">     
+            	<select class="easyui-combobox" name="driverIsActivity"  editable="false">
+					<option value='1'>是</option>
+					<option value='2'>否</option>
+				</select></td>
+          	 <td class="form_tdl"><label for="comment">备注:</label></td>
+           	 <td colspan="3"><textarea style="height: 80px; width: 250px;" name="comment" id="comment" class="easyui-validatebox" validType="checkSpacebar"></textarea></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 修改车辆模块 end -->
+
+    <!-- 司机详细信息 begin -->
+    <div id="driverInfo_detail_dialog" title="司机详细信息" class="easyui-dialog" 
+      style="width: 800px; height: 450px; padding: 10px 20px" closed="true" buttons="#detail-dlg-buttons">
+     <div class="ftitle">司机详细信息</div>
+      <form id="driverInfo_detail_form" class="detail_form" novalidate>
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class=form_tr_odd>
+            <td width="20%" class="form_tdl"><label for="driverNo">司机编号:</label></td>
+            <td width="30%" class="form_tdr"><input name="driverNo" id="driverNo"/>
+              <input name=driverId id="driverId" type="hidden"/>
+            </td>
+        
+            <td class="form_tdl"><label for="driverName">司机姓名:</label> </td>
+            <td class="form_tdr"><input name="driverName" id="driverName" class="easyui-validatebox"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="driverLsp">承运商:</label> </td>
+            <td class="form_tdr"><input name="driverLsp" id="driverLsp" class="easyui-validatebox" /></td>
+       
+            <td class="form_tdl"><label for="driverDepartment">所属部门 :</label></td>
+            <td class="form_tdr"><input name="driverDepartment" id="driverDepartment" class="easyui-validatebox"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="driverBrithDay">驾驶证号:</label></td>
+            <td class="form_tdr"><input name="driverCard" id="driverCard" class="easyui-validatebox"/></td>
+       
+            <td class="form_tdl"><label for="driverBrithDay">出生日期:</label></td>
+            <td class="form_tdr"> <input name="driverBrithDay" id="driverBrithDay" class="easyui-validatebox"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="driverIdCard">身份证 :</label></td>
+            <td class="form_tdr"><input name="driverIdCard" id="driverIdCard" class="easyui-validatebox"/></td>
+    
+            <td class="form_tdl"><label for="driverPhone">联系电话:</label></td>
+            <td class="form_tdr"><input name="driverPhone" id="driverPhone" class="easyui-validatebox"/></td>
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="driverAddress">司机联系地址:</label></td>
+            <td class="form_tdr"><input name="driverAddress" id="driverAddress" class="easyui-validatebox"/></td>
+
+            <td class="form_tdl"><label for="driverLevel">员工评级:</label></td>
+            <td class="form_tdr"> <input name="driverLevel" id="driverLevel" class="easyui-validatebox"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="enterWorkDate">参加工作的时间:</label></td>
+            <td class="form_tdr"><input name="enterWorkDate" id="enterWorkDate" class="easyui-validatebox"/></td>
+          
+            <td class="form_tdl"><label for="driverCardCheck">驾照年审日期:</label></td>
+            <td class="form_tdr"><input name="driverCardCheck" id="driverCardCheck" class="easyui-validatebox"/></td>
+          
+          </tr>
+          <tr class="form_tr_odd">
+            <td class="form_tdl"><label for="driverCardDate">驾照日期:</label></td>
+            <td class="form_tdr"><input name="driverCardDate" id="driverCardDate" class="easyui-validatebox"/></td>
+      
+            <td class="form_tdl"><label for="enterWorkId">从业证号:</label></td>
+            <td class="form_tdr"><input name="enterWorkId" id="enterWorkId" class="easyui-validatebox"/></td>
+          
+          
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="driverSkillLevel">技能等级:</label></td>
+            <td class="form_tdr"> <input name="driverSkillLevel" id="driverSkillLevel" class="easyui-validatebox"/></td>
+      
+            <td class="form_tdl"><label for="driverCarType">驾驶车型:</label></td>
+            <td class="form_tdr"><input name="driverCarType" id="driverCarType" class="easyui-validatebox"/></td>
+          </tr>
+          <tr>
+            <td class="form_tdl"><label for="driverIsActivity">是否活动:</label></td>
+            <td class="form_tdr"><input name="driverIsActivity" id="driverIsActivity" class="easyui-validatebox"/></td>
+       		<td></td>
+       		<td></td>
+          </tr>
+          <tr>
+          	 <td class="form_tdl"><label for="comment">备注:</label></td>
+            <td class="form_tdr" colspan="3"><textarea style="height: 80px; width: 400px;" name="comment" id="comment"></textarea></td>
+          
+          </tr>
+        </table>
+       </form>
+     </div>
+     <!-- 车辆详细信息 end -->
+  </body>
+</html>

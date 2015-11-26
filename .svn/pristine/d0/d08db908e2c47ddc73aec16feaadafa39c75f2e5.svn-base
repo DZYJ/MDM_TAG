@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+[#include "../../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>发票录入</title>
+    [#include "../../include/base_js_css.html"/]
+  </head>
+  <body>
+    <div>
+	  <h3>发票录入</h3>
+	  <h3>入库单：<br /></h3>
+	</div>
+	<div>
+	  <table width="1000" border="0" class="table">
+	    <tr>
+	      <td> 单据号： </td>
+	      <td><input name="text" type="text"/></td>
+	      <td> 开票日期： </td>
+	      <td><input name="text2" type="text"/></td>
+	    </tr>
+	    <tr>
+	      <td>供应商： </td>
+	      <td><select name="select">
+	        <option value="">xxx供应商</option>
+	      </select>
+	      *自动带入，不可选</td>
+	      <td>价税合计</td>
+	      <td><input name="text22" type="text"/></td>
+	    </tr>
+	    <tr>
+	      <td>税额： </td>
+	      <td><input name="text2" type="text"/></td>
+	      <td>税率： </td>
+	      <td><input name="text2" type="text"/></td>
+	    </tr>
+	    <tr>
+	      <td>无税金额： </td>
+	      <td><input name="text2" type="text" value="价税合计-税额（不可输入）" readonly="readonly"/></td>
+	      <td>&nbsp;</td>
+	      <td>&nbsp;</td>
+	    </tr>
+	  </table>
+	</div>
+	<input name="button" type="button" value="保存"/>
+	<input name="button2" type="button" value="提交并结算"/>
+	<input name="button" type="button" value="取消"/>
+  </body>
+</html>

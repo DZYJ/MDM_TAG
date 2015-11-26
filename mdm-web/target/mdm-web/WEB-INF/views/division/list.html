@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>配送区域列表</title>
+    [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/address/division/division.js"></script>
+  </head>
+  <body  style="visibility: visible;">
+    <div class="top_content">
+      <!-- 查询配送区域表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 80px;" data-options="collapsible:true" fit="true">
+        <form id="division_search_form">
+        <table>
+          <tr>
+            <td  class="search_form_tdl"><label for="divisionCode4">四级区域代码:</label></td>
+            <td  class="search_form_tdr"><input name="divisionCode4" id="divisionCode4"/></td>
+            <input name="divisionCode1" id="search_divisionCode1" style="display:none;"/><input name="divisionCode2" id="search_divisionCode2" style="display:none;"/> <input name="divisionCode4" id="search_divisionCode4" style="display:none;"/> <input name="divisionCode3" id="search_divisionCode3" style="display:none;"/>
+            <td  class="search_form_tdl"><label for="firstLevel">一级区域（省）:</label></td>
+            <td  class="search_form_tdr"><input class="easyui-combobox" name="firstLevel" id="firstLevel" data-options="valueField:'divisionCode',textField:'divisionName'" editable="false"/></td>
+            <td  class="search_form_tdl"><label for="secondLevel">二级区域（市）:</label></td>
+            <td  class="search_form_tdr"><input class="easyui-combobox" name="secondLevel" id="secondLevel" data-options="valueField:'divisionCode',textField:'divisionName'" editable="false"/></td>
+            <td  class="search_form_tdl"><label for="thirdLevel">三级区域（区/县）:</label></td>
+            <td  class="search_form_tdr"><input class="easyui-combobox" name="thirdLevel" id="thirdLevel" data-options="valueField:'divisionCode',textField:'divisionName'" editable="false"/></td>
+          </tr>
+          <tr>
+            <td  class="search_form_tdl"><label for="fourthLevel">四级区域（镇/乡）:</label></td>
+            <td  class="search_form_tdr"><input class="easyui-combobox" name="fourthLevel" id="fourthLevel" data-options="valueField:'divisionCode',textField:'divisionName'" editable="false"/></td>
+            <td  class="search_form_tdl"><label for="isActivity">是否活动:</label></td>
+            <td  class="search_form_tdr"><select class="easyui-combobox" name="isActivity" id="isActivity" editable="false" style="width:132px"/><option value='Y'>是</option><option value='N'>否</option></select></td>
+            <td class="search_form_tdl" colspan="4" style="text-align: left;">
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" id="search_form_reset">重置</a>
+             </td>
+          </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+    <div id="division_grid" class="grid_content">
+      <!--配送区域列表GRID -->
+      <table id="divisionView" fit="true">
+      </table>
+    </div>
+
+    <!-- 添加配送区域模块 begin -->
+    <div id="division_add_dialog" class="easyui-dialog" style="width: 500px; height: 400px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle"><a class="easyui-linkbutton" id="thirdBtn" iconCls="icon-search">新增三级区域</a> &nbsp; &nbsp;<a class="easyui-linkbutton" id="fourthBtn" iconCls="icon-search">新增四级区域</a></div>
+      <div id="addForm" style="display:none;">
+	      <form id="division_add_form" method="post" novalidate class="ftitle_form">
+	        <div class="fitem fitem_odd" >
+	          <label for="subDivisionFlag">是否电子地图解析:</label>
+	          <select name="subDivisionFlag" class="easyui-combobox" id="add_subDivisionFlag" style="width:132px" required="true" editable="false"><option value="0">否</option><option value="1">是</option></select>
+	        </div>
+	        <div class="fitem fitem_even">
+	          <label for="add_firstLevel">一级区域:</label> 
+	          <input name="add_firstLevel" id="add_firstLevel" class="easyui-combobox" data-options="valueField:'divisionCode',textField:'divisionName'" required="true" editable="false"> 
+	        </div>
+	        <div class="fitem fitem_odd">
+	          <label for="add_secondLevel">二级区域:</label> 
+	          <input name="add_secondLevel" id="add_secondLevel" class="easyui-combobox" data-options="valueField:'divisionCode',textField:'divisionName'" required="true" editable="false"> 
+	        </div>
+	        <div class="fitem fitem_even" id="third" style="display:none;" >
+	          <label for="add_thirdLevel">三级区域:</label> 
+	          <input name="add_thirdLevel" id="add_thirdLevel" class="easyui-combobox" data-options="valueField:'divisionCode',textField:'divisionName'" editable="false" > 
+	        </div>
+	        <div class="fitem fitem_odd">
+	          <label  for="divisionCode">区域编码:</label> 
+	          <input  name="divisionCode" id="add_divisionCode" class="easyui-validatebox"  validType="unnormal" required="true"> 
+	        </div>
+	        <div class="fitem fitem_even">
+	          <label  for="divisionName">区域名称:</label> 
+	          <input  name="divisionName" id="add_divisionName" class="easyui-validatebox"  validType="unnormal" required="true"> 
+	        </div>
+	         <div class="fitem fitem_odd" style="display:none;">
+	          <label  for="daId">可卖数:</label> 
+	          <input  name="daId" id="add_daId" class="easyui-validatebox" style="display:none;"> 
+	        </div>
+	        <!-- hidden -->
+            <input name="divLevel" id="add_divLevel" type="text"  style="display:none;">
+            <input name="parentDivisionCode" required="true" id="parentDivisionCode" class="easyui-validatebox" style="display:none;" >
+            <input name="parentDivisionName" required="true" id="parentDivisionName"  class="easyui-validatebox" style="display:none;" >
+	        <!-- hidden -->
+	        <div class="fitem fitem_even">
+	          <label for="isActivity">是否活动:</label>
+	          <select class="easyui-combobox" name="isActivity" id="isActivity" editable="false" style="width:132px" required="true"/><option value='Y' selected="selected">是</option><option value='N'>否</option></select>
+	        </div>
+	      </form>
+      </div>
+    </div>
+    <!-- 添加配送区域模块 end -->
+
+    <!-- 修改配送区域模块 begin -->
+    <div id="division_edit_dialog" class="easyui-dialog" style="width: 500px; height: 400px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">配送区域信息</div>
+      <form id="division_edit_form" method="post" novalidate class="ftitle_form">
+        <!-- hidden -->
+          <input name="divisionCode3" id="edit_divisionCode3" class="easyui-validatebox"  required="true" style="display:none;" >
+          <input name="divisionCode4" id="edit_divisionCode4" class="easyui-validatebox" required="true" style="display:none;">
+        <!-- hidden -->
+        <div class="fitem fitem_even">
+          <label for="divisionName3" >三级区域（区/县）:</label> 
+          <input name="divisionName3" required="true" id="edit_divisionName3"  class="easyui-validatebox">
+        </div>
+        <div class="fitem fitem_odd">
+          <label  for="divisionName4">四级区域（镇/乡）:</label> 
+          <input name="divisionName4" id="edit_divisionName4" class="easyui-validatebox" required="true" validType="unnormal"> 
+        </div>
+        <div class="fitem fitem_even">
+          <label for="isActivity">是否活动:</label>
+          <select class="easyui-combobox" name="isActivity" id="isActivity" editable="false" style="width:132px" required="true"/><option value='Y' selected="selected">是</option><option value='N'>否</option></select>
+        </div>
+      </form>
+    </div>
+    <!-- 修改配送区域模块 end -->
+    
+    <!-- 配送区域详细信息 begin -->
+    <div id="division_detail_dialog" title="配送区域信息" class="easyui-dialog" 
+      style="width: 800px; height:350px; padding: 10px 20px" closed="true" buttons="#detail-dlg-buttons">
+     <div class="ftitle">配送区域详细信息</div>
+      <form id="division_detail_form" class="detail_form" novalidate>
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+          <tr class="detail_form_odd">
+            <td  class="detail_form_tdl">区域地址:</td>
+            <td  class="detail_form_tdr"><input id="detail_address" readonly="readonly" style="width:350px"/></td>
+          </tr>
+          <tr>
+            <td  class="detail_form_tdl">是否活动:</td>
+            <td  class="detail_form_tdr"><input name="isActivity" id="detail_isActivity"  readonly="readonly"/></td>
+            <td  class="detail_form_tdl">是否电子地图解析:</td>
+            <td  class="detail_form_tdr"><input name="subDivisionFlag" id="detail_subDivisionFlag"  readonly="readonly"/></td>
+          </tr>
+          <tr class="detail_form_odd">
+            <td class="detail_form_tdl">创建人:</td>
+            <td class="detail_form_tdr"><input name="insertBy" id="detail_insertBy" readonly="readonly"/></td>
+            <td class="detail_form_tdl">修改人:</td>
+            <td class="detail_form_tdr"><input name="modifiedBy" id="detail_modifiedBy" readonly="readonly"/></td>
+          </tr>
+         </table>
+       </form>
+     </div>
+     <!-- 配送区域详细信息 end -->
+  </body>
+</html>

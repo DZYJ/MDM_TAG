@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.MstLocationMapper">
+
+	<resultMap id="mstLocationResultMap" type="mstLocation">
+		<id property="masLoc" column="Mas_Loc" />    
+		<id property="bucketCode" column="Bucket_Code" />                                     
+		<id property="location" column="Location" />                        
+		<id property="lspCode" column="Lsp_Code" />   
+		<id property="insertBy" column="Insert_By" /> 
+		<id property="insertDate" column="Insert_Date" />                            
+		<id property="modifiedBy" column="ModIfIEd_By" />                              
+		<id property="modifiedDate" column="ModIfIEd_Date" />
+		<id property="lspName" column="LSP_NAME" />
+		<id property="parentMasLoc" column="PARENT_MAS_LOC" />
+		                            
+	</resultMap>
+	
+	
+			
+	
+	
+		<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		 insert into mst_location(Mas_Loc,Bucket_Code,Location,Lsp_Code,Insert_By,Insert_Date,ModIfIEd_By,ModIfIEd_Date)values
+	</sql>
+	
+	
+		<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstLocation">
+		<include refid="insertEntityHeadSql" />
+		(#{masLoc},#{bucketCode},#{location},#{lspCode},#{insertBy},#{insertDate},#{modifiedBy},#{modifiedDate})
+	</insert>
+
+	<!-- 更新实体 -->
+	<update id="updateEntity" parameterType="mstLocation">
+		update  MST_MAS_LOC
+		<set>
+			<if test="parentMasLoc!=null and parentMasLoc!=''"> PARENT_MAS_LOC=#{parentMasLoc}</if>
+		</set>
+		where LSP=#{lspCode}
+	</update>
+	<select id="getMasLoc"  resultType="String">
+	      SELECT CONCAT('P',LPAD(SUBSTR(MAX(MML.MAS_LOC),2,4) +1,3,'0')) 
+        FROM MST_MAS_LOC MML
+        WHERE MML.MAS_LOC LIKE 'P%'
+	</select>
+
+
+
+
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="mstLocation" resultMap="mstLocationResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 根据map参数查询列表 -->
+	<select id="queryListByMap" resultMap="mstLocationResultMap">
+		<include refid="queryEntityHeadSql" />
+		    FROM MST_CAR
+		<where>
+		   <!-- 自定义查询条件 -->
+		</where>
+	</select>
+
+	<!-- 根据ID删除实体 -->
+	<delete id="deleteByIds" parameterType="String">
+		DELETE 	FROM mst_car where CAR_ID in
+		<foreach item="carId" collection="ids" open="(" separator=","
+	      close=")">
+	      #{carId}
+	    </foreach>
+	</delete>
+
+
+	<!-- 根据对象删除实体，此方法可以根据自己需求实现 -->
+	<delete id="deleteByObject" parameterType="mstLocation">
+	     <!-- 自定义删除条件 -->
+	</delete>
+
+	<!-- 根据ID查出实体 -->
+	<select id="queryById" parameterType="long" resultMap="mstLocationResultMap">
+	     SELECT  CAR_ID,CAR_NO,CAR_CARD_ID,CAR_TYPE,CAR_LSP,CAR_BUYINGTIME,DEFAULT_DRIVER,CAR_MODEL,CAR_LEAVEFACTORY_DATE,PRODUCTION_COMPANY,CAR_BOX_LENGTH,OIL_CONSUMPTION,CAR_VOLUME,USE_NATURE,TRAINSTION_INSURANCE_COMPANY,TRAINSTION_INSURANCE_OVERDATE,
+		BUSINESS_INSURANCE_COMPANY,BUSINESS_INSURANCE_OVERDATE,CAR_IMPORT_WAY,ENGINE_NO,CAR_ISACTIVITY,COMMENT
+	     FROM MST_LSP
+	     WHERE LSP_CODE=#{lspCode}
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="mstLocation" resultMap="mstLocationResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="mstLocation" resultType="long">
+		select count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+		  
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		   SELECT        MLN.Lsp_Code Lsp_Code
+						,ML.LSP_NAME LSP_NAME
+						,MML.Mas_Loc Mas_Loc
+                        ,MLN.Bucket_Code  Bucket_Code
+                        ,MLN.Location Location
+                        ,MML.PARENT_MAS_LOC PARENT_MAS_LOC
+	</sql>
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		 FROM  MST_MAS_LOC MML
+               ,MST_LOCATION MLN
+			   ,MST_LSP ML
+		<where>
+		   		MML.MAS_LOC = MLN.MAS_LOC
+				AND ML.LSP_CODE = MLN.LSP_CODE
+				<if test="masLoc!=null and masLoc!='' "> and MML.Mas_Loc=#{masLoc}</if>
+				<if test="bucketCode!=null and bucketCode!=''"> and MLN.Bucket_Code=#{bucketCode}</if>
+				<if test="location!=null and location!=''"> and MLN.Location=#{location}</if>
+				<if test="lspCode!=null and lspCode!=''"> and ML.Lsp_Code=#{lspCode}</if>
+				<if test="lspName!=null and lspName!=''">  and ML.LSP_NAME=#{lspName}</if>
+				<if test="parentMasLoc!= null and parentMasLoc!=''"> and MML.PARENT_MAS_LOC=#{parentMasLoc}></if>
+		</where>
+	</sql>
+
+</mapper>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.MstLspTransportMapper">
+
+	<resultMap id="mstLspTransportResultMap" type="mstLspTransport"> 
+		<id property="id" column="ID" />                                     
+		<id property="lsp" column="LSP" />                        
+		<id property="daId" column="DA_ID" />                        
+		<id property="maxOrdQty" column="MAX_ORD_QTY" />                        
+		<id property="sharePercent" column="SHARE_PERCENT" />                        
+		<id property="minDivisor" column="MIN_DIVISOR" />                        
+		<id property="minAmount" column="MIN_AMOUNT" />
+		<id property="maxAmount" column="MAX_AMOUNT" />
+		<id property="priority" column="PRIORITY" />
+		<id property="insertBy" column="INSERT_BY" />
+		<id property="insertDate" column="INSERT_DATE" />
+		<id property="modifiedBy" column="MODIFIED_BY" />
+		<id property="modifiedDate" column="MODIFIED_DATE" />
+		<id property="partitionDate" column="PARTITION_DATE" />
+		<id property="orderDownloadBeginTime" column="ORDER_DOWNLOAD_BEGIN_TIME" />
+		<id property="orderDownloadEndTime" column="ORDER_DOWNLOAD_END_TIME" />
+		<id property="divisionCode" column="DIVISION_CODE" />
+		<id property="divisionName" column="DIVISION_NAME" />
+		<id property="lspName" column="LSP_NAME" />
+		
+	</resultMap>
+	
+	<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstLspTransport">
+		<include refid="insertEntityHeadSql" />
+		(#{lsp},#{daId},#{maxOrdQty},#{sharePercent},#{minDivisor},
+            #{minAmount},#{maxAmount},#{priority},#{insertBy},#{insertDate},#{modifiedBy},
+            #{modifiedDate},#{partitionDate},#{orderDownloadBeginTime},#{orderDownloadEndTime},#{divisionCode}) 
+	</insert>
+	
+	<!-- 批量插入 -->
+    <insert id="insertTransportList"  parameterType="java.util.List">  
+       <include refid="insertEntityHeadSql" />
+        <foreach collection="list" item="item" index="index" separator="," >  
+            (#{item.lsp},#{item.daId},#{item.maxOrdQty},#{item.sharePercent},#{item.minDivisor},
+            #{item.minAmount},#{item.maxAmount},#{item.priority},#{item.insertBy},#{item.insertDate},#{item.modifiedBy},
+            #{item.modifiedDate},#{item.partitionDate},#{item.orderDownloadBeginTime},#{item.orderDownloadEndTime},#{item.divisionCode}) 
+        </foreach>  
+    </insert>  
+    
+    
+    <!-- 更新实体 -->
+	<update id="updateEntity" parameterType="mstLspTransport">
+		UPDATE TEMP_MST_LSP_TRANSPORT
+		<set>
+			<if test="maxOrdQty!=null">MAX_ORD_QTY=#{maxOrdQty},</if>
+			<if test="sharePercent!=null">SHARE_PERCENT=#{sharePercent},</if>
+			<if test="minDivisor!=null">MIN_DIVISOR=#{minDivisor},</if>
+			<if test="minAmount!=null">MIN_AMOUNT=#{minAmount},</if>
+			<if test="maxAmount!=null">MAX_AMOUNT=#{maxAmount},</if>
+			<if test="priority!=null">PRIORITY=#{priority},</if>
+			<if test="modifiedBy!=null">MODIFIED_BY=#{modifiedBy},</if>
+			<if test="modifiedDate!=null">MODIFIED_DATE=#{modifiedDate},</if>
+			<if test="partitionDate!=null">PARTITION_DATE=#{partitionDate},</if>
+			<if test="orderDownloadBeginTime!=null">ORDER_DOWNLOAD_BEGIN_TIME=#{orderDownloadBeginTime},</if>
+			<if test="orderDownloadEndTime!=null">ORDER_DOWNLOAD_END_TIME=#{orderDownloadEndTime},</if>
+		</set>
+		WHERE  LSP           = #{lsp}
+        AND    DIVISION_CODE = #{divisionCode}
+	</update>
+	
+	  <!-- 批量删除 -->
+	  <delete id="deleteByIds">
+	    DELETE FROM TEMP_MST_LSP_TRANSPORT WHERE ID in
+	    <foreach item="item" collection="ids" open="(" separator=","
+	      close=")">
+	      #{item}
+	    </foreach>
+	  </delete>
+	  
+	  
+	  <delete id ="deleteByObjectList" parameterType = "java.util.List">  
+        <![CDATA[  
+           DELETE FROM TEMP_MST_LSP_TRANSPORT WHERE LSP IN
+        ]]>  
+        <foreach collection="list" item = "model" open="(" separator="," close=")">
+        #{ model.lsp}  
+        </foreach>
+        and DIVISION_CODE IN
+        <foreach collection="list" item = "model" open="(" separator="," close=")">
+        #{ model.divisionCode}  
+        </foreach>
+      </delete>  
+    
+	 
+	 
+	 <!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		INSERT INTO
+		TEMP_MST_LSP_TRANSPORT(LSP,DA_ID,MAX_ORD_QTY,SHARE_PERCENT,MIN_DIVISOR,MIN_AMOUNT,MAX_AMOUNT,PRIORITY,INSERT_BY,INSERT_DATE,
+		MODIFIED_BY,MODIFIED_DATE,PARTITION_DATE,ORDER_DOWNLOAD_BEGIN_TIME,ORDER_DOWNLOAD_END_TIME,DIVISION_CODE)
+		VALUES
+	</sql>
+	
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT T.ID,T.LSP,T.DA_ID,T.MAX_ORD_QTY,T.SHARE_PERCENT,T.MIN_DIVISOR,T.MIN_AMOUNT,T.MAX_AMOUNT,PRIORITY,
+		T.INSERT_BY,T.INSERT_DATE,T.MODIFIED_BY,T.MODIFIED_DATE,
+		T.PARTITION_DATE,T.ORDER_DOWNLOAD_BEGIN_TIME,T.ORDER_DOWNLOAD_END_TIME,T.DIVISION_CODE,D.DIVISION_NAME,L.LSP_NAME 
+		FROM TEMP_MST_LSP_TRANSPORT T,MST_DIVISION D,MST_LSP L  
+	</sql>
+	
+	<select id="pageQueryEntity" parameterType="mstLspTransport" resultMap="mstLspTransportResultMap">
+	    <include refid="queryEntityHeadSql"/>
+	    <where>
+	        T.DIVISION_CODE = D.DIVISION_CODE  AND T.LSP=L.LSP_CODE  
+		    <if test="lsp!=null">  and T.LSP=#{lsp}</if>
+		</where>
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+	
+	<select id="pageQueryEntityCount" parameterType="mstLspTransport" resultType="long">
+		SELECT count(1) as num FROM TEMP_MST_LSP_TRANSPORT T
+		<where>
+		    <if test="lsp!=null">T.LSP= #{lsp}</if>
+		</where>
+	</select>
+	
+	<select id="getCount" parameterType="java.util.Map" resultType="long">
+    	SELECT COUNT(1)
+        FROM   TEMP_MST_LSP_TRANSPORT A
+        WHERE  A.LSP           = #{lsp}
+        AND    A.DA_ID         = #{daId}
+        AND    A.DIVISION_CODE = #{divisionCode}
+    </select>
+
+</mapper>

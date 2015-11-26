@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.MstSelfPickupMapper">
+
+	<resultMap id="mstSelfPickupResultMap" type="mstSelfPickup">
+			
+	    <id property="buid" column="buid" />	
+		<id property="enabled" column="enabled" />
+	    <id property="selfSiteCode" column="store_code" />
+	    <id property="selfSiteName" column="store_name" />
+		<id property="lsp" column="lsp" />
+		<id property="lspName" column="lsp_name" />
+		<id property="divisionCode" column="division_code" />
+		<id property="divisionName"   column="store_address" />             
+	    <id property="telZoneCode"     column="zone_code" />                
+	    <id property="telNum"      column="store_phone" />                  
+	    <id property="companyStoreCode"      column="store_hq_code" />  
+	    <id property="contact"      column="store_contact" />                  
+	    <id property="email"      column="store_email" /> 
+	    <id property="zipCode"      column="store_zip_code" />  
+	    <id property="fax"      column="store_fax" />  
+	    <id property="insertDate"     column="insert_date" />  
+		<id property="insertBy" column="insert_by" />
+		<id property="modifiedDate"      column="modified_date" /> 
+		<id property="modifiedBy" column="modified_by" />
+	</resultMap>
+
+	<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		INSERT INTO MST_SELF_PICKUP (buid,enabled,store_code,store_name,lsp,division_code,store_address,zone_code,store_hq_code,
+		store_contact,store_phone,store_email,store_zip_code,store_fax,insert_date,insert_by,modified_date,modified_by)
+		VALUES
+	</sql>
+	
+	<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstSelfPickup">
+		<include refid="insertEntityHeadSql" />
+		(#{buid},1,#{selfSiteCode},#{selfSiteName},#{lsp},#{divisionCode},#{divisionName}, #{telZoneCode},#{companyStoreCode},
+		 #{contact},#{telNum},#{email},#{zipCode},#{fax}, #{insertDate},#{insertBy},#{modifiedDate},#{modifiedBy})
+	</insert>
+	
+	<!-- 更新实体 -->
+	<update id="updateEntity" parameterType="mstSelfPickup">
+		UPDATE MST_SELF_PICKUP
+		<set>
+		    <if test="selfSiteName!=null">store_name=#{selfSiteName},</if>
+			<if test="lsp!=null">lsp=#{lsp},</if>
+			<if test="divisionCode!=null">division_code=#{divisionCode},</if>
+			<if test="divisionName!=null">store_address=#{divisionName},</if>
+			<if test="telZoneCode!=null">zone_code=#{telZoneCode},</if>
+			<if test="companyStoreCode!=null">store_hq_code=#{companyStoreCode},</if>
+			<if test="contact!=null">store_contact=#{contact},</if>
+			<if test="telNum!=null">store_phone=#{telNum},</if>
+			<if test="email!=null">store_email=#{email},</if>
+			<if test="zipCode!=null">store_zip_code=#{zipCode},</if>
+			<if test="fax!=null">store_fax=#{fax},</if>
+			<if test="insertDate!=null">insert_date=#{insertDate},</if>
+			<if test="insertBy!=null">insert_by=#{insertBy},</if>
+			<if test="modifiedDate!=null">modified_date=#{modifiedDate},</if>
+			<if test="modifiedBy!=null">modified_by=#{modifiedBy}</if>
+		</set>
+		WHERE store_code=#{selfSiteCode}
+	</update>
+
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="mstSelfPickup" resultMap="mstSelfPickupResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 根据map参数查询列表 -->
+	<select id="queryListByMap" resultMap="mstSelfPickupResultMap">
+		<include refid="queryEntityHeadSql" />
+		 FROM MST_SELF_PICKUP 
+	</select>
+
+	<!-- 根据ID删除实体 -->
+	<delete id="deleteById" parameterType="mstSelfPickup">
+		DELETE FROM MST_SELF_PICKUP
+		WHERE store_code=#{selfSiteCode}
+	</delete>
+
+	<!-- 根据对象删除实体，此方法可以根据自己需求实现 -->
+	<delete id="deleteByObject" parameterType="mstSelfPickup">
+	     <!-- 自定义删除条件 -->
+	</delete>
+
+	<!-- 根据ID查出实体 -->
+	<select id="queryById" parameterType="mstSelfPickup" resultMap="mstSelfPickupResultMap">
+        select * 
+        from MST_SELF_PICKUP ss
+        WHERE ss.store_code=#{selfSiteCode} 
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="mstSelfPickup" resultMap="mstSelfPickupResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="mstSelfPickup" resultType="long">
+		SELECT count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+   <!-- 统计结果 -->
+	<select id="queryCountByLspCodeAndSiteCode" resultType="int">
+		SELECT count(1) as num
+		FROM MST_SELF_PICKUP
+		WHERE lsp = #{lsp} and store_code = #{selfSiteCode}
+	</select>
+	
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT  ms.*,mp.lsp_name,ms.lsp
+	</sql>
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM MST_SELF_PICKUP ms, mst_lsp mp
+		<where>
+		    <if test="selfSiteCode!=null and selfSiteCode!=''">ms.store_code=#{selfSiteCode}</if>
+		    <if test="selfSiteName!=null and selfSiteName!=''">and ms.store_name=#{selfSiteName}</if>
+			<if test="lsp!=null and lsp!=''">and ms.lsp=#{lsp}</if>
+			<if test="contact!=null and contact!=''"> and ms.store_contact=#{contact}</if>
+			<if test="ids!=null and ids!=''">
+				and ms.store_code in (${ids})
+			</if>
+			and ms.lsp = mp.lsp_code 
+		</where>
+	</sql>
+	
+  <!-- 批量删除 -->
+  <delete id="deleteByIds">
+    delete from MST_SELF_PICKUP where store_code in
+    <foreach item="item" collection="ids" open="(" separator=","
+      close=")">
+      #{item}
+    </foreach>
+  </delete>
+  
+  <!-- 批量插入 -->
+    <insert id="insertMstSelfPickupList"  parameterType="java.util.List">
+        INSERT INTO MST_SELF_PICKUP (buid,enabled,store_code,store_name,lsp,division_code,store_address,zone_code,
+		store_hq_code,store_contact,store_phone,store_email,store_zip_code,store_fax,insert_date,insert_by,modified_date,modified_by)
+		VALUES 
+        <foreach collection="list" item="item" index="index" separator="," >  
+            (#{item.buid},1,#{item.selfSiteCode},#{item.selfSiteName},#{item.lsp},#{item.divisionCode},#{item.divisionName},
+            #{item.telZoneCode},#{item.companyStoreCode},#{item.contact},#{item.telNum},#{item.email},#{item.zipCode},#{item.fax},#{item.insertDate},
+            #{item.insertBy},#{item.modifiedDate},#{item.modifiedBy})
+        </foreach>  
+    </insert>
+    
+</mapper>

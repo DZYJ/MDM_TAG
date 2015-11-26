@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>登录成功列表</title> [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/loginLog/loginSuccessLog.js"></script>
+  </head>
+  <body style="visibility: visible;">
+    <table id="loginSuccessLogview" fit="true">
+    </table>
+  </body>
+</html>

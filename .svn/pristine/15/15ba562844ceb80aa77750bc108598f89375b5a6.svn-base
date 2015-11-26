@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.MstTransCapacityMapper">
+
+	<resultMap id="mstTransCapacityResultMap" type="mstTransCapacity"> 
+		<id property="id" column="ID" />                                     
+		<id property="lspCode" column="LSP_CODE" />                        
+		<id property="masLoc" column="MAS_LOC" />                        
+		<id property="masName" column="DESCR" />                        
+		<id property="lotSeq" column="LOT_SEQ" />                        
+		<id property="transQty" column="TRANS_QTY" />                        
+		<id property="deliveryTimeLot" column="DELIVERY_TIME_LOT" />
+		<id property="enabled" column="ENABLED" />
+		<id property="divisionCode" column="STATE_CODE" />
+		<id property="divisionName" column="DIVISION_NAME" />
+		<id property="lspName" column="LSP_NAME" />
+		<id property="startTime" column="START_TIME" />
+		<id property="endTime" column="END_TIME" />
+		<id property="standardTime" column="STANDARD_TIME" />
+		
+	</resultMap>
+	
+	<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstTransCapacity">
+		<include refid="insertEntityHeadSql" />
+		(#{lspCode},#{masLoc},#{lotSeq},#{transQty},#{deliveryTimeLot},
+            #{enabled},#{divisionCode}) 
+	</insert>
+    
+    
+    <!-- 更新实体 -->
+	<update id="updateEntity" parameterType="mstTransCapacity">
+		UPDATE MST_TRANS_CAPACITY
+		<set>
+			<if test="lspCode!=null">LSP_CODE=#{lspCode},</if>
+			<if test="masLoc!=null">MAS_LOC=#{masLoc},</if>
+			<if test="lotSeq!=null">LOT_SEQ=#{lotSeq},</if>
+			<if test="transQty!=null">TRANS_QTY=#{transQty},</if>
+			<if test="deliveryTimeLot!=null">DELIVERY_TIME_LOT=#{deliveryTimeLot},</if>
+			<if test="enabled!=null">ENABLED=#{enabled},</if>
+		</set>
+		WHERE  ID   = #{id}
+	</update>
+	
+	  <!-- 批量删除 -->
+	  <delete id="deleteByIds">
+	    DELETE FROM MST_TRANS_CAPACITY WHERE ID in
+	    <foreach item="item" collection="ids" open="(" separator=","
+	      close=")">
+	      #{item}
+	    </foreach>
+	  </delete>
+      
+	 
+	 <!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		INSERT INTO
+		MST_TRANS_CAPACITY(LSP_CODE,MAS_LOC,LOT_SEQ,TRANS_QTY,DELIVERY_TIME_LOT,ENABLED,STATE_CODE)
+		VALUES
+	</sql>
+	
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT T.ID,T.LSP_CODE,T.MAS_LOC,T.STATE_CODE,T.TRANS_QTY,T.DELIVERY_TIME_LOT,T.ENABLED,T.LOT_SEQ,
+        D.DIVISION_NAME,L.LSP_NAME,M.DESCR,O.START_TIME,O.STANDARD_TIME,O.END_TIME
+        FROM MST_TRANS_CAPACITY T,MST_DIVISION D,MST_LSP L,MST_MAS_LOC M,MST_ORDER_TIME_LOT O
+	</sql>
+	
+	<select id="pageQueryEntity" parameterType="mstTransCapacity" resultMap="mstTransCapacityResultMap">
+	    <include refid="queryEntityHeadSql"/>
+	    <where>
+	        T.STATE_CODE=D.DIVISION_CODE AND T.LSP_CODE=L.LSP_CODE
+	        AND T.MAS_LOC=M.MAS_LOC and T.LOT_SEQ=O.LOT_SEQ
+		    <if test="masLoc!=null">  AND T.MAS_LOC=#{masLoc}</if>
+		    <if test="lspCode!=null">  AND T.LSP_CODE=#{lspCode}</if>
+		</where>
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+	
+	<select id="pageQueryEntityCount" parameterType="mstTransCapacity" resultType="long">
+		SELECT count(1) as num FROM MST_TRANS_CAPACITY T
+		<where>
+		    <if test="masLoc!=null">  AND T.MAS_LOC=#{masLoc}</if>
+		    <if test="lspCode!=null">  AND T.LSP_CODE=#{lspCode}</if>
+		</where>
+	</select>
+	
+	<!-- 查询列表 -->
+	<select id="getLotSeqListCombobox" parameterType="mstTransCapacity" resultMap="mstTransCapacityResultMap">
+		  SELECT LOT_SEQ FROM MST_ORDER_TIME_LOT ORDER BY LOT_SEQ
+	</select>
+	
+	<!-- 查询列表 -->
+	<select id="getLotBySeq" parameterType="String" resultMap="mstTransCapacityResultMap">
+		  SELECT START_TIME,END_TIME,STANDARD_TIME FROM MST_ORDER_TIME_LOT WHERE LOT_SEQ=#{lotSeq}
+	</select>
+
+</mapper>

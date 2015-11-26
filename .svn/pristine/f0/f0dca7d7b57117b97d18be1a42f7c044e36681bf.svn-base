@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.mst.HubProcessMatrixHistoryMapper">
+
+	<resultMap id="mstHubProcessMatrixHistoryResultMap" type="mstHubProcessMatrixHistory"> 
+		<id property="hisId" column="HIS_ID" />   
+		<id property="id" column="ID" />                                     
+		<id property="ruleName" column="RULE_NAME" />                        
+		<id property="column1" column="COLUMN1" />                              
+		<id property="column2" column="COLUMN2" />                             
+		<id property="column3" column="COLUMN3" />                            
+		<id property="column4" column="COLUMN4" />                              
+		<id property="column5" column="COLUMN5" />                            
+		<id property="column6" column="COLUMN6" />                  
+		<id property="column7" column="COLUMN7" />                           
+		<id property="column8" column="COLUMN8" />                         
+		<id property="column9" column="COLUMN9" />
+		<id property="column10" column="COLUMN10" />
+		<id property="column11" column="COLUMN11" />
+		<id property="column12" column="COLUMN12" />
+		<id property="column13" column="COLUMN13" />
+		<id property="column14" column="COLUMN14" />
+		<id property="column15" column="COLUMN15" />
+		<id property="operationCode" column="OPERATION_CODE" />
+		<id property="hubCode" column="HUB_CODE" />
+		<id property="masLoc" column="MAS_LOC" />
+		<id property="lineHaul" column="LINE_HAUL" />
+		<id property="carrierCode" column="CARRIER_CODE" />
+		<id property="priority" column="PRIORITY" />
+		<id property="sortingCenterCode" column="SORTING_CENTER_CODE" />
+		<id property="daId" column="DA_ID" />
+		<id property="selfPickupFlag" column="SELF_PICKUP_FLAG" />
+		<id property="insertBy" column="INSERT_BY" />
+		<id property="insertDate" column="INSERT_DATE" />
+		<id property="modifiedBy" column="MODIFIED_BY" />
+		<id property="modifiedDate" column="MODIFIED_DATE" />
+		<id property="lineHaul2" column="LINE_HAUL2" />
+		<id property="deliverymanId" column="DELIVERYMAN_ID" />
+		<id property="enabled" column="ENABLED" />
+		<id property="deliveryLeadTime" column="DELIVERY_LEAD_TIME" />
+		<id property="deleteBy" column="DELETE_BY" />
+		<id property="deleteDate" column="DELETE_DATE" />
+		
+	</resultMap>
+	
+    <insert id="insertHubProcessMatrixHistoryList" parameterType="java.util.Map">  
+    	<selectKey keyProperty="hisId" order="BEFORE" resultType="java.lang.Double">
+			SELECT MAX(HIS_ID)+1 FROM  HUB_PROCESS_MATRIX_HISTORY
+  		</selectKey>
+    
+        INSERT INTO HUB_PROCESS_MATRIX_HISTORY (HIS_ID,RULE_NAME,COLUMN1,COLUMN2,COLUMN3,COLUMN4,COLUMN5,
+        COLUMN6,COLUMN7,COLUMN8,COLUMN9,COLUMN10,COLUMN11,COLUMN12,COLUMN13,COLUMN14,COLUMN15,
+        OPERATION_CODE,HUB_CODE,MAS_LOC,LINE_HAUL,CARRIER_CODE,PRIORITY,SORTING_CENTER_CODE,
+        DA_ID,SELF_PICKUP_FLAG,INSERT_BY,INSERT_DATE,MODIFIED_BY,MODIFIED_DATE,LINE_HAUL2,
+        DELIVERYMAN_ID,ENABLED,DELIVERY_LEAD_TIME,DELETE_BY,DELETE_DATE)   
+        values  
+        <foreach collection="mapList" item="item" index="index" separator="," >  
+            (#{hisId},#{item.ruleName},#{item.column1},#{item.column2},#{item.column3},#{item.column4},#{item.column5}
+            ,#{item.column6},#{item.column7},#{item.column8},#{item.column9},#{item.column10},#{item.column11}
+            ,#{item.column12},#{item.column13},#{item.column14},#{item.column15},#{item.operationCode},#{item.hubCode}
+            ,#{item.masLoc},#{item.lineHaul},#{item.carrierCode},#{item.priority},#{item.sortingCenterCode},#{item.daId}
+            ,#{item.selfPickupFlag},#{item.insertBy},#{item.insertDate},#{item.modifiedBy},#{item.modifiedDate}
+            ,#{item.lineHaul2},#{item.deliverymanId},#{item.enabled},#{item.deliveryLeadTime},#{name},#{dt})  
+        </foreach>  
+    </insert>  
+
+</mapper>

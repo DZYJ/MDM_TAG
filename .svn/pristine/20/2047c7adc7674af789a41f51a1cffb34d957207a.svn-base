@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>凭证查询</title>
+    [#include "../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/accvouch/accvouch.js?date="+new date()></script>
+  </head>
+  <!-- 本html无法参照数据字典的dataDictionary/list.html中id、name在一个html内都相同，因 数据字典没有供应商下拉框部分，
+	由于本html有了下拉框导致easyui.extend.js找不到相对应的id向后台传值，所以在本html中，将id、name设置区分开，例如venName、venName1、venName2等-->
+  <body>
+  	<div class="top_content">
+      <!-- 查询凭证信息表 -->
+      <div class="" title=""  style="border-bottom: 0; height: 115px;" data-options="collapsible:true" fit="true">
+      <div class="ftitle">筛选条件</div>
+        <form id="accvouch_search_form">
+        <table>
+        	<tr>
+	        	<td  class="search_form_tdl"><label for="startDate">开始时间：</label></td>
+	            <td  class="search_form_tdr"><input name="startDate" id="startDate" type="text" class="easyui-datebox"/></td>
+	            <td  class="search_form_tdl"><label for="endDate">结束时间：</label></td>
+	            <td  class="search_form_tdr"><input name="endDate" id="endDate" type="text" class="easyui-datebox"/>
+	            <td  class="search_form_tdl"><label for="period">会计期间：</label></td>
+	            <td  class="search_form_tdr"><input name="period" id="period" type="text"/>
+	        </tr>
+	        <tr>
+	            <td  class="search_form_tdl"><label for="ino_id">凭证号：</label></td>
+	            <td  class="search_form_tdr"><input name="ino_id" id="ino_id" type="text"/>
+	            <td  class="search_form_tdl"><label for="signseq">凭证类型：</label></td>
+	            <td  class="search_form_tdr"><input name="signseq" id="signseq" type="text"/>
+           	</tr>
+           	<tr>
+				<td colspan="4" class="search_form_tdr">
+					<input type="hidden" id="comment" name="comment" value=""/>
+	              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+	              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+	            </td>
+            </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+	<div id="accvouch_grid" class="grid_content">
+      <!--发票信息列表GRID -->
+      <table id="accvouchView" fit="true">
+      </table>
+    </div>
+    <div id="data_detail_dialog" title="凭证明细" class="easyui-dialog" 
+     	style="width: 400px; height: 200px; padding: 10px 20px" closed="true">
+     <!--<div id="pomainRecordDetail_grid" class="grid_content">-->
+      <!--系统参数列表GRID -->
+      <table id="accvouchDetailView" fit="true">
+      </table>
+    </div>
+	<div id="accvouch_export_dialog" class="easyui-dialog" 
+     	style="width: 400px; height: 300px; padding: 10px 20px" closed="true">
+      <div class="ftitle">筛选条件</div>
+      <form id="accvouch_export_form" method="get" novalidate class="ftitle_form" action="../accvouch/exportNcAcc.json">
+        <div class="fitem fitem_odd">
+        	<label for="startDateExport">开始时间：</label>
+			<input name="startDate" id="startDateExport" type="text" class="easyui-datebox"/>
+		</div>
+		<div class="fitem fitem_odd">
+			<label for="endDateExport">结束时间：</label>
+			<input name="endDate" id="endDateExport" type="text" class="easyui-datebox"/>
+		</div>
+		<div class="fitem fitem_odd">
+			<label for="periodExport">会计期间：</label>
+			<input name="iperiod" id="periodExport" type="text"/>
+		</div>
+		<div class="fitem fitem_odd">
+			<label for="ino_idExport">凭证号：</label>
+			<input name="ino_id" id="ino_idExport" type="hidden"/>
+			<input name="ino_id_start" id="ino_idExportStart" type="text" style="width: 50px;text-align: center;"/>-<input name="ino_id_end" id="ino_idExportEnd" type="text" style="width: 50px;text-align: center;"/>
+		</div>
+		<div class="fitem fitem_odd">
+			<label for="signseqExport">凭证类型：</label>
+			<input name="isignseq" id="signseqExport" type="text"/>
+        </div>
+       </form>
+     </div>
+  </body>
+</html>

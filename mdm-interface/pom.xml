@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.multigold.mdm</groupId>
+		<artifactId>mdm</artifactId>
+		<version>1.0.0.tag</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<groupId>com.multigold.mdm</groupId>
+	<artifactId>mdm-interface</artifactId>
+	<version>1.0.0.tag</version>
+	<packaging>war</packaging>
+	<name>Mdm Interface</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<multigold.module.contextPath>mdm-interface</multigold.module.contextPath>
+		<multigold.module.port>8085</multigold.module.port>
+		<multigold.module.stopPort>9097</multigold.module.stopPort>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+		</dependency>
+		<!-- resteasy -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-spring</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson2-provider</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+		</dependency>
+
+		<!-- servlet provider -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- spring dependency -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jms</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<!-- <scope>test</scope> -->
+		</dependency>
+		<!-- test dependency -->
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-test</artifactId> 
+			<scope>test</scope> </dependency> -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+		<!-- Web Service CXF Dependency Begin -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http-jetty</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-ws-security</artifactId>
+		</dependency>
+		<!-- Web Service CXF Dependency End -->
+		
+		<!-- aop -->
+		
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
+		
+		<!-- jms dependency -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jms</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>jms</artifactId>
+		</dependency>
+		<!-- jms end -->
+		<!-- MQ begin -->
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>jmqi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>jms.Nojndi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>mqetclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>mqjms</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.mq</groupId>
+			<artifactId>dhbcore</artifactId>
+		</dependency>
+		<!-- MQ end -->
+
+		<!-- dubbo -->
+
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>dubbo</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.zookeeper</groupId>
+			<artifactId>zookeeper</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.netflix.curator</groupId>
+			<artifactId>curator-framework</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.sgroschupf</groupId>
+			<artifactId>zkclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.jsqlparser</groupId>
+			<artifactId>jsqlparser</artifactId>
+		</dependency>
+		<!-- dubbo -->
+
+		<!-- java project dependency begin -->
+		<dependency>
+			<groupId>com.multigold.mdm</groupId>
+			<artifactId>mdm-dto</artifactId>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>com.multigold.mdm</groupId>
+			<artifactId>mdm-entity</artifactId>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>com.multigold.core</groupId>
+			<artifactId>core-common</artifactId>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>com.multigold.mdm</groupId>
+			<artifactId>mdm-service-api</artifactId>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>com.multigold.upms</groupId>
+			<artifactId>upms-service-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.multigold.T6Inf</groupId>
+			<artifactId>T6-entity</artifactId>
+			<version>1.0.0.tag</version>
+		</dependency>
+		<dependency>
+			<groupId>com.multigold.T6Inf</groupId>
+			<artifactId>T6-dto</artifactId>
+			<version>1.0.0.tag</version>
+		</dependency>
+		<dependency>
+			<groupId>com.multigold.T6Inf</groupId>
+			<artifactId>T6-service-api</artifactId>
+			<version>1.0.0.tag</version>
+		</dependency>
+		<!-- java project dependency end -->
+	</dependencies>
+	<build>
+                <finalName>mdm-interface</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>com.multigold/**/*</include>
+					<include>datasource.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>com.multigold/**/*</exclude>
+					<exclude>datasource.xml</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<filters>
+			<filter>src/main/filters/deploy.properties</filter>
+		</filters>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>emma-maven-plugin</artifactId>
+				<version>1.0-alpha-3</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+				<configuration>
+					<scanIntervalSeconds>0</scanIntervalSeconds>
+					<userRealms>
+						<userRealm implementation="org.mortbay.jetty.security.HashUserRealm">
+							<name>Test Realm</name>
+							<config>src/main/resources/realm.properties</config>
+						</userRealm>
+					</userRealms>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<!-- http://maven.apache.org/plugins/maven-war-plugin/ -->
+					<packagingExcludes>WEB-INF/web.xml</packagingExcludes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

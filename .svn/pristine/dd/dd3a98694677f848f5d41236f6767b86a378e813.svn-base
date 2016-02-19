@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.multigold.mdm.dao.interfaceConfig.InterfaceMapper">
+
+	<resultMap id="interfaceResultMap" type="interfaceEntity">
+		<id property="id" column="id" />    
+		<id property="url" column="url" />                                     
+		<id property="systemName" column="system_name" />                        
+		<id property="interfaceName" column="interface_name" />   
+		<id property="interfaceCode" column="interface_code" /> 
+	</resultMap>
+	<select id="queryUrlConfig" parameterType="map" resultMap="interfaceResultMap">
+		select * from mst_interface_config where interface_code=#{interface_code}
+	</select>
+</mapper>

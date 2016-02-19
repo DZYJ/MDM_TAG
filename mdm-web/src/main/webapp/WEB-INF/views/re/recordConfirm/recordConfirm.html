@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+[#include "../../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>入库单确认列表</title>
+    [#include "../../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/re/recordConfirm.js?date="+new date()></script>
+  
+  </head>
+  <body>
+  	<div class="top_content">
+      <!-- 查询入库单确认表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 95px;" data-options="collapsible:true" fit="true">
+        <form id="recordConfirm_search_form">
+        <table>
+        		<tr>
+	        	<td  class="search_form_tdl"><label for="customerName">客户名称：</label></td>
+	            <td  class="search_form_tdr"><input name="customerName" id="customerName" type="text"/></td>
+	            <td  class="search_form_tdl"><label for="recoveryNum">入库单号：</label></td>
+	            <td  class="search_form_tdr"><input name="recoveryNum" id="recoveryNum" type="text"/></td>
+	            <td  class="search_form_tdl"><label for="productType">商品类型：</label></td>
+            	<td class="search_form_tdr"><input name="productType" class="easyui-combobox" id="productTypeType" type="text" editable="false"
+	              data-options="panelHeight:'auto',valueField:'productType',textField:'productTypeDesc', 
+	              data:[{productType:'',productTypeDesc:'--请选择--',selected:true},
+	              {productType:'01',productTypeDesc:'旧饰'},
+	              {productType:'02',productTypeDesc:'黄金券'}]" />
+	            </td>
+	            <td  class="search_form_tdl"><label for="orderStatus">付款状态：</label></td>
+	            <td class="search_form_tdr"><input name="orderStatus" class="easyui-combobox" id="orderStatusType" type="text" editable="false"
+	              data-options="panelHeight:'auto',valueField:'orderStatus',textField:'orderStatusDesc', 
+	              data:[{orderStatus:'',orderStatusDesc:'--请选择--',selected:true},
+	              {orderStatus:'1',orderStatusDesc:'未付款'},
+	              {orderStatus:'9',orderStatusDesc:'已付款'},
+	              {orderStatus:'4',orderStatusDesc:'已取消'}]" />
+	            </td>
+             </tr>
+             <tr>
+                <td  class="search_form_tdl"><label for="orderChannel">销售渠道：</label></td>
+                <td class="search_form_tdr"><input name="orderChannel" class="easyui-combobox" id="orderChannel" type="text" editable="false"
+	              data-options="panelHeight:'auto',valueField:'orderChannel',textField:'orderChannelDesc', 
+	              data:[{orderChannel:'',orderChannelDesc:'--请选择--',selected:true},
+	              		{orderChannel:3001,orderChannelDesc:'中塔'},
+	              		{orderChannel:3002,orderChannelDesc:'十里堡'}]" />
+	            </td>
+	            <td class="search_form_tdlf"><label for="recoveryDate">入库日期：</label></td>
+	            <td class="search_form_tdr" colspan="3">
+	            	<label for="insertDownDate"></label><input type="text" id="timeFrom" name="timeFrom" class="easyui-datebox">
+	               	<label for="insertUpDate">至</label><input type="text" id="timeTo" name="timeTo" class="easyui-datebox">
+	            </td>
+            </tr>
+            <tr>
+				<td class="search_form_tdr" colspan="4">
+	              	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+	              	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+	            </td>
+	            </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+	 
+	<div id="recordConfirm_grid" class="grid_content">
+      <!--入库单确认信息列表GRID -->
+      <table id="recordConfirmView" fit="true">
+      </table>
+    </div>
+    
+    <!-- 录入旧金回收付款单模块 begin -->
+    <div id="recordConfirm_add_dialog" class="easyui-dialog" style="width: 1100px; height: 1100px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">录入付款单</div>
+      <form id="recordConfirm_add_form" method="post" novalidate class="ftitle_form">
+        <div class="fitem fitem_odd">
+        	<input name="id1" id="id1" type="hidden" />
+           <label for="traceNum1">交易流水号：</label>
+           <input name="traceNum1" id="traceNum1" class="easyui-validatebox" required="true" style="width:182px" validType="maxLength['20']" >
+           <label for="ticketDate1">制单日期：</label>
+           <input type="text" id="ticketDate1" name="ticketDate1" class="easyui-datebox" readonly="readonly" >
+        </div>
+        <div class="fitem fitem_odd">
+         <label for="oppSubject1">对方科目：</label>
+           <input name="oppSubject1" required="true" id="oppSubject1" class="easyui-validatebox" style="width:182px" value="22020101" >
+         </div>
+        <div class="fitem fitem_odd">
+           <label for="customerName1">客户姓名：</label>
+           <input id="customerName1" name="customerName1" required="true" class="easyui-validatebox" style="width:182px" readonly/>
+           <label for="customerBank1">客户银行：</label>
+           <input name="customerBank1" required="true" id="customerBank1" class="easyui-validatebox" style="width:182px" readonly/>
+        </div>
+         <div class="fitem fitem_odd">
+           <label for="customerAccount1">客户账号：</label>
+           <input id="customerAccount1" name="customerAccount1" required="true" class="easyui-validatebox" style="width:182px" readonly />
+           <label for="sum1">回购总金额：</label>
+           <input name="sum1" id="sum1" required="true" class="easyui-validatebox" style="width:182px" readonly/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="clearingForm1">结算方式：</label>
+           <input id="clearingForm1" name="clearingForm1" required="true" class="easyui-validatebox" style="width:182px" data-options="editable:false" />
+           <label for="settlementSubject1">结算科目：</label>
+           <input name="settlementSubject1" id="settlementSubject1" readonly style="width:182px"/>
+        </div>
+      </form>
+    </div>
+    <!-- 录入旧金回收付款单模块 end -->
+    
+    <!-- 修改旧金回收付款单模块 begin -->
+    <div id="recordConfirm_edit_dialog" class="easyui-dialog" style="width: 1100px; height: 1100px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">入库单确认信息</div>
+      <form id="recordConfirm_edit_form" method="post" novalidate class="ftitle_form">
+        <div class="fitem fitem_odd">
+           <label for="traceNum2">交易流水号：</label>
+           <input name="id2" id="id2" type="hidden">
+           <input name="traceNum2" id="traceNum2" class="easyui-validatebox" required="true" style="width:182px" validType="maxLength['20']" >
+           <label for="ticketDate2">制单日期：</label>
+           <input type="text" id="ticketDate2" name="ticketDate2" class="easyui-datebox" readonly="readonly" >
+        </div>
+        <div class="fitem fitem_odd">
+         <label for="oppSubject2">对方科目：</label>
+           <input name="oppSubject2" required="true" id="oppSubject2" class="easyui-validatebox" style="width:182px" value="22020101" >
+         </div>
+        <div class="fitem fitem_odd">
+           <label for="customerName2">客户姓名：</label>
+           <input id="customerName2" name="customerName2" required="true" class="easyui-validatebox" style="width:182px" readonly/>
+           <label for="customerBank2">客户银行：</label>
+           <input name="customerBank2" required="true" id="customerBank2" class="easyui-validatebox" style="width:182px" readonly/>
+        </div>
+         <div class="fitem fitem_odd">
+           <label for="customerAccount2">客户账号：</label>
+           <input id="customerAccount2" name="customerAccount2" required="true" class="easyui-validatebox" style="width:182px" data-options="editable:false" readonly/>
+        	<label for="sum2">回购总金额：</label>
+           	<input name="sum2" id="sum2" required="true" class="easyui-validatebox" style="width:182px" readonly/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="clearingForm2">结算方式：</label>
+           <input id="clearingForm2" name="clearingForm2" required="true" class="easyui-validatebox" style="width:182px" data-options="editable:false" />
+           <label for="settlementSubject2">结算科目：</label>
+           <input name="settlementSubject2" id="settlementSubject2" readonly required="true" class="easyui-validatebox" style="width:182px"/>
+        </div>
+      </form>
+    </div>
+    <!-- 修改旧金回收付款单模块 end -->
+  
+    <!-- 明细信息 begin -->
+    <div id="data_detail_dialog" title="入库单明细" class="easyui-dialog" 
+     	style="width: 400px; height: 200px; padding: 10px 20px" closed="true">
+      <!--系统参数列表GRID -->
+      <table id="recordConfirmDetailView" fit="true">
+      </table>
+    </div>
+     <!-- 明细信息 end -->
+  </body>
+</html>

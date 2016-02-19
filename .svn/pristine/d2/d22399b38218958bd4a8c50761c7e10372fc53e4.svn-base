@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+[#include "../../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>委外预付单列表</title>
+    [#include "../../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/wo/woPrePayment/woPrePayment.js"></script>
+  
+  </head>
+  <body>
+  	<div class="top_content">
+      <!-- 查询委外预付单表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 95px;" data-options="collapsible:true" fit="true">
+        <form id="prePayment_search_form">
+        <table>
+         <tr>
+	        	<td  class="search_form_tdl"><label for="paymentCode">单据编号：</label></td>
+	            <td  class="search_form_tdr"><input name="paymentCode" id="paymentCode" type="text"/></td>
+	        	<td  class="search_form_tdl"><label for="venName">供应商：</label></td>
+	        	<td  class="search_form_tdr"><input name="venCode" id="venCode" type="text"/></td>
+	            <!-- <td  class="search_form_tdr"><input name="venName" id="venName" type="text"/></td> -->
+	            <td  class="search_form_tdr"><label for="status">状态：</label></td>
+	            <td class="search_form_tdr"><input name="status" class="easyui-combobox" id="status" type="text" editable="false"
+	              data-options="panelHeight:'auto',valueField:'status',textField:'statusDesc', 
+	              data:[{status:'',statusDesc:'--请选择--',selected:true},{status:1,statusDesc:'新建'},{status:2,statusDesc:'已提交'}]" />
+	            </td>
+            	<td class="search_form_tdr">
+	               <input type="checkbox" id="redFlag" name="redFlag" value="1"/>
+	               <span style="color:red;font-weight:bold">红字标识</span>
+	            </td>
+            	<td class="search_form_tdlf">&nbsp;</td>
+				<td colspan="7" class="search_form_tdr">
+					<input type="hidden" id="comment" name="comment" value=""/>
+	              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+	              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+	            </td>
+            </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+	 
+	<div id="prePayment_grid" class="grid_content">
+      <!--委外预付单信息列表GRID -->
+      <table id="prePaymentView" fit="true">
+      </table>
+    </div>
+    
+    <!-- 添加委外预付单录入模块 begin -->
+    <div id="prePayment_add_dialog" class="easyui-dialog" style="width: 1100px; height: 1100px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">委外预付单录入</div>
+      <form id="prePayment_add_form" method="post" novalidate class="ftitle_form">
+        <div class="fitem fitem_odd">
+           <label for="paymentCode1">单据编号：</label>
+           <input name="paymentCode1" id="paymentCode1" class="easyui-validatebox" required="true" style="width:182px" validType="paymentCodeCheck['paymentCode1']"  >
+         
+           <label for="ticketDate1">制单日期：</label>
+           <input type="text" id="ticketDate1" name="ticketDate1" class="easyui-datebox" >
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="venName1">供应商名称：</label>
+           <!-- <input id="venCode1" name="venCode1"  class="easyui-validatebox" style="width:182px" type="hidden"/> -->
+           <input id="venCode1" name="venCode1" required="true" class="easyui-validatebox" style="width:182px"  validType="venNameChang['venCode1']"/>
+           <label for="oppSubject1">对方科目：</label>
+           <input name="oppSubject1" required="true" id="oppSubject1" class="easyui-validatebox" style="width:182px"/ value="22020101" >
+        </div>
+         <div class="fitem fitem_odd">
+           <label for="clearingForm1">结算方式：</label>
+           <input id="clearingForm1" name="clearingForm1" required="true" class="easyui-validatebox" style="width:182px" data-options="editable:false" />
+        	<label for="settlementSubject1">结算科目：</label>
+           	<input name="settlementSubject1" id="settlementSubject1" required="true" style="width:182px"/ readonly>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="vendorBank1">供应商银行：</label>
+           <input name="vendorBank1" id="vendorBank1" required="true" class="easyui-validatebox" style="width:182px" validType="vendorBankCheck['vendorBank1']" />
+          <label for="vendorAccount1">供应商账户:</label>
+          <input name="vendorAccount1" id="vendorAccount1" required="true" class="easyui-validatebox" style="width:182px" validType="vendorAccountCheck['vendorAccount1']" validType="integer"/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="itemCode1">项目大类编码：</label>
+           <input name="itemCode1" id="itemCode1" editable="false" style="width:182px" value="00" />
+        	<label for="sum1">金额：</label>
+           <input name="sum1" id="sum1" required="true" class="easyui-validatebox" validType="sumCheck['sum1']" style="width:182px" maxlength="20"/>
+        </div>
+     
+        <div class="fitem fitem_even">
+          <label for="digest1">摘要:</label>
+         <textarea style="width: 500px;" name="digest1" id="digest1" class="easyui-validatebox" validType="maxLength['50']"></textarea>
+            <td class="search_form_tdr">
+               <input type="checkbox" id="redFlag1" name="redFlag1" value="1"/>
+               <span style="color:red;font-weight:bold">红字标识</span>
+             </td>
+        </div>
+      </form>
+    </div>
+      </form>
+    </div>
+    <!-- 添加委外预付单录入模块 end -->
+    
+    <!-- 修改委外预付单录入模块 begin -->
+    <div id="prePayment_edit_dialog" class="easyui-dialog" style="width: 1100px; height: 1100px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">委外预付单信息</div>
+      <form id="prePayment_edit_form" method="post" novalidate class="ftitle_form">
+        <div class="fitem fitem_odd">
+           <input name="id" type="hidden" />
+           <label for="paymentCode2">单据编号：</label>
+           <input name="paymentCode2" id="paymentCode2" class="easyui-validatebox" required="true" style="width:182px" validType="paymentCodeCheck['paymentCode2']">
+           <label for="ticketDate2">制单日期：</label>
+           <input name="ticketDate2" id="ticketDate2" class="easyui-datebox" required="true" style="width:182px">
+        </div>
+        <div class="fitem fitem_odd">
+          <div class="fitem fitem_odd">
+           <label for="venName2">供应商名称：</label>
+           <!-- <input id="venCode1" name="venCode1"  class="easyui-validatebox" style="width:182px" type="hidden"/> -->
+           <input id="venCode2" name="venCode2" required="true" class="easyui-validatebox" style="width:182px"  validType="venNameChang['venCode2']"/>
+           <label for="oppSubject2">对方科目：</label>
+           <input name="oppSubject2" required="true" id="oppSubject2" class="easyui-validatebox" />
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="clearingForm2">结算方式：</label>
+           <input id="clearingForm2" name="clearingForm2" required="true" class="easyui-validatebox" style="width:182px" data-options="editable:false" />
+        	<label for="settlementSubject2">结算科目：</label>
+           	<input name="settlementSubject2" id="settlementSubject2" editable="false" style="width:182px"/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="vendorBank2">供应商银行：</label>
+           <input name="vendorBank2" id="vendorBank2" editable="false" style="width:182px" validType="vendorBankCheck['vendorBank2']"/>
+          <label for="vendorAccount2">供应商账户:</label>
+          <input name="vendorAccount2" id="vendorAccount2" editable="false" class="easyui-validatebox" validType="vendorAccountCheck['vendorAccount1']" style="width:182px"/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="itemCode2">项目大类编码：</label>
+           <input name="itemCode2" id="itemCode2" editable="false" style="width:182px"/>
+           <input type="hidden" id="sumPreHidden" desc="采购预付单金额"/>
+           <input type="hidden" id="sumInHidden" desc="发票金额"/>
+        	<label for="sum2">金额：</label>
+           <input name="sum2" id="sum2" required="true" class="easyui-validatebox"  style="width:182px" validType="sumCheck['sum2']" />
+        </div>
+        <div class="fitem fitem_odd">
+               <input type="checkbox" id="redFlag1" name="redFlag1" value="1"/>
+               <span style="color:red;font-weight:bold">红字标识</span>
+        </div>
+         <div class="fitem fitem_even">
+          <label for="digest2">摘要:</label>
+          <textarea style="width: 500px;" name="digest2" id="digest2" validType="maxLength['50']"></textarea>
+        </div>
+      </form>
+    </div>
+    <!-- 修改委外预付单模块 end -->
+  
+    <!-- 委外预付单详细信息 begin -->
+    <div id="prePayment_detail_dialog" title="委外预付单信息" class="easyui-dialog" 
+      style="width:800px; height: 360px; padding: 10px 20px" closed="true" buttons="#detail-dlg-buttons">
+     <div class="ftitle">委外预付单详细信息</div>
+      <form id="prePayment_detail_form" class="detail_form" novalidate>
+        <table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+           <tr class="detail_form_odd">
+            <td class="detail_form_tdl">单据编号：</td>
+            <td class="detail_form_tdr"><input name="paymentCode" id="paymentCode"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">制单日期：</td>
+            <td class="detail_form_tdr"><input name="ticketDate3" id="ticketDate3"  readonly="readonly"/></td>
+          </tr>
+          <tr>
+            <td class="detail_form_tdl">供应商：</td>
+            <td class="detail_form_tdr"><input name="venName" id="venName" style="width:202px" readonly="readonly"/></td>
+            <td class="detail_form_tdl">对方科目：</td>
+            <td class="detail_form_tdr"><input name="oppSubject" id="oppSubject"  readonly="readonly"/></td>
+          </tr>
+          <tr>  
+            <td class="detail_form_tdl">结算方式：</td>
+            <td class="detail_form_tdr"><input name="clearingForm" id="clearingForm"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">结算科目：</td>
+            <td class="detail_form_tdr"><input name="settlementSubject" id="settlementSubject"  readonly="readonly"/></td>
+          </tr>
+          <tr class="detail_form_odd">
+            <td class="detail_form_tdl">供应商银行：</td>
+            <td class="detail_form_tdr"><input name="vendorBank" id="vendorBank"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">供应商账户：</td>
+            <td class="detail_form_tdr"><input name="vendorAccount" id="vendorAccount"  readonly="readonly"/></td>
+          </tr>
+          <tr class="detail_form_odd">
+            <td class="detail_form_tdl">项目大类编码：</td>
+            <td class="detail_form_tdr"><input name="itemCode" id="itemCode"  readonly="readonly"/></td>
+            <td class="detail_form_tdl">金额：</td>
+            <td class="detail_form_tdr"><input name="sum" id="sum"  readonly="readonly"/></td>
+          </tr>
+          <tr class="detail_form_odd">
+             <td class="detail_form_tdl"><input type="checkbox" id="redFlag" name="redFlag" readonly="readonly" value="1"/></td>
+            <td class="detail_form_tdr"><span style="color:red;font-weight:bold" readonly="readonly">红字付款结算标识</span></td>
+          </tr>
+          <tr>
+            <td class="detail_form_tdl"><label for="comment">摘要:</label></td>
+            <td class="detail_form_tdr"><input name="digest" id="digest" readonly="readonly"></input></td>
+          </tr>
+         </table>
+       </form>
+     </div>
+     <!-- 委外预付单详细信息 end -->
+    
+  </body>
+</html>

@@ -1,0 +1,990 @@
+$(function() {
+	//加载下拉框
+	comboboxVenName("");
+	
+	/*初始化发票grid高度*/
+	$("#invoice_grid").height($(window).height()-120);
+	
+	/*发票GRID*/
+	$('#invoiceView').myDatagrid({
+		"title": "发票信息列表",
+		"url": "../woInvoice/invoice.json",
+		"singleSelect": false, //多选
+		"method": "post", 
+		"columns" : [[
+		    {field : 'id', title : 'id', align : 'center', sortable : true,hidden:true},
+			{field : 'invoiceId', title : '单据号', align : 'center', sortable : true},
+			{field : 'billingDate', title : '开票日期', align : 'center', sortable : true
+				, formatter:function(value){
+				if(value=='' || value==null){
+					//提醒....
+				}else{
+					var inputDate = new Date(value);
+					return inputDate.getFullYear()+'-'+(inputDate.getMonth()+1)+'-'+inputDate.getDate();
+//					+' '+inputDate.getHours()+':'+inputDate.getMinutes()+':'+inputDate.getSeconds();
+//					return inputDate;
+				}
+				return "录入时间有误";
+			}
+			}, 
+			{field : 'venCode',title : '供应商编码', align : 'center', sortable : true,hidden:true}, 
+			{field : 'venName',title : '供应商名称',align : 'center', sortable : true}, 
+			{field : 'businessType',title : '业务类型',align : 'center', sortable : true,formatter:function(value){
+				if(value=="1"){
+					value="采购发票";
+				}else if(value=="2"){
+					value="委外发票";
+				}else if(value=="3"){
+					value="采退发票";
+				}
+				return value;
+			}},
+			{field : 'sum',title : '无税金额（自动计算）',align : 'center', sortable : true},
+			{field : 'tax',title : '税额',align : 'center', sortable : true},
+			{field : 'taxRate',title : '税率',align : 'center', sortable : true},
+			{field : 'price',title : '价税合计',align : 'center', sortable : true},
+			{field : 'inputer',title : '录入人',align : 'center', sortable : true},
+			{field : 'createTd',title : '录入时间',align : 'center', sortable : true, formatter:function(value){
+				if(value=='' || value==null){
+					//提醒....
+				}else{
+					var inputDate = new Date(value);
+					return inputDate.getFullYear()+'-'+(inputDate.getMonth()+1)+'-'+inputDate.getDate()+' '+
+					inputDate.getHours()+':'+inputDate.getMinutes()+':'+inputDate.getSeconds();
+				}
+				return "录入时间有误";
+			}},
+			{field : 'ticketDate',title : '制单日期',align : 'center', sortable : true, formatter:function(value){
+				if(value=='' || value==null){
+					//提醒....
+				}else{
+					var inputDate = new Date(value);
+					return inputDate.getFullYear()+'-'+(inputDate.getMonth()+1)+'-'+inputDate.getDate();
+				}
+				return "录入时间有误";
+			}},
+			{field : 'modifier',title : '修改人',align : 'center', sortable : true,hidden:true},
+			{field : 'updateTd',title : '修改时间',align : 'center', sortable : true,hidden:true, formatter:function(value){
+				if(value=='' || value==null){
+					//提醒....
+				}else{
+					var inputDate = new Date(value);
+					return inputDate.getFullYear()+'-'+(inputDate.getMonth()+1)+'-'+inputDate.getDate()+' '+
+					inputDate.getHours()+':'+inputDate.getMinutes()+':'+inputDate.getSeconds();
+				}
+				return "";
+			}},
+			{field : 'status',title : '状态',align : 'center', sortable : true,formatter:function(value){
+				if(value=="1"){
+					value="新建";
+				}else if(value=="2"){
+					value="已提交";
+				}else if(value=="3"){
+					value="作废";
+				}
+				return value;
+			}},
+			{field : 'storageId',title : '入库单',align : 'center', sortable : true,hidden:true},
+			{field : 'coCode',title : '入库单号',align : 'center', sortable : true,hidden:true},
+			{field : 'storageIdMoneyTotal',title : '入库单总金额',align : 'center', sortable : true,hidden:true},
+			{field : 'redFlag', title : '红字标识', align : 'center', sortable : true,hidden:true}
+		]],
+		"toolbar": [
+				{
+					id : 'bt_cataAdd',
+					text : '新建',
+					iconCls : 'icon-add',
+					handler : function() {
+						var dataForm  = $("#invoice_add_form");//form
+						dataForm.form("reset"); // 清空表单
+						var dataDialog = $("#invoice_add_dialog");
+						comboboxVenName("1");//加载供应商
+						getDateFromSession();//时间放入session内
+						var buttons = [];
+				//		if (true) {
+							/* 编辑或新增的时候的提交按钮 */
+							buttons.push({
+								"text" : "保存",
+								"iconCls" : "icon-ok",
+								"handler" : function() {
+									var bValidate = true;
+									$("#venCode1").val($("input[name='venCode1']").val());
+									bValidate = $(dataForm).form("validate");
+									
+									var coCode1 = $("#coCode1").val();
+									if(coCode1 == null || coCode1 == ""){
+										$.messager.alert("提示", "请录入入库单！");
+										return;
+									}
+									
+									var price1 = $("#price1").val();
+									var storageIdMoneyTotal1 = $("#storageIdMoneyTotal1").val();
+									if($("#redFlag1").attr("checked") == "checked"){
+										if(price1 >= 0){
+											$.messager.alert("提示", "红字发票金额必须为负数！");
+											return;
+										}
+										if(storageIdMoneyTotal1 >= 0){
+											$.messager.alert("提示", "红字发票入库单总金额必须为负数！");
+											return;
+										}
+									}else{
+										if(price1 < 0){
+											$.messager.alert("提示", "蓝字发票金额不能小于零！");
+											return;
+										}
+										if(storageIdMoneyTotal1 < 0){
+											$.messager.alert("提示", "蓝字发票入库单总金额不能小于零！");
+											return;
+										}
+									}
+									if(bValidate){
+										// 异步提交
+										updateRecordAddStatus(dataForm,status,"0");
+									}
+								}
+							});
+				//		}
+						/* 取消按钮 */
+						buttons.push({
+							"text" : "取消",
+							"iconCls" : 'icon-cancel',
+							"handler" : function() {
+								dataDialog.dialog("close");
+							}
+						});
+						
+						dataDialog.show().dialog({
+							"title" : "新建",
+							//"width": handler.dialog.width,
+							//"height": dh,
+							"closed" : false,
+							"modal" : true,
+							"buttons" : buttons
+						});
+						btnExt();
+					},
+					"permission": "mdm:invoice:add" //新建
+			},
+		    {
+				id : 'bt_cataUpdate',
+				text : '修改',
+				iconCls : 'icon-edit',
+				handler : function() {
+					var selectRow = false;
+					var bMany = false;
+					if(!selectRow){
+						var dataGrid = $("#invoiceView");
+						var selectRows = dataGrid.datagrid("getSelections");// var selectRow = $(oGrid).datagrid("getSelected");
+						if (!selectRows || selectRows.length <= 0) {
+							$.messager.alert("提示", "&nbsp;&nbsp;请选择一行数据！");
+							return;
+						}
+						selectRow = selectRows[0]; // 默认对选中的第一条数据进行操作
+						if (selectRows.length > 1) {
+							bMany = true; // 用户选中多条数据
+							var firstIndex = dataGrid.datagrid("getRowIndex", selectRow);
+							dataGrid.datagrid("unselectAll");
+							dataGrid.datagrid("selectRow", firstIndex);
+						}
+					}
+					var dataForm  = $("#invoice_edit_form");//form
+					var formData  = selectRow;
+					formData.status2 = formData.status;
+					var _status = formData.status2;
+					if (_status == "2") {
+						$.messager.alert("警告", "已提交，不能修改");
+						return;
+					}else if(_status == "3"){
+						$.messager.alert("警告", "已作废，不能修改");
+						return;
+					}
+					var _redFlag = formData.redFlag;
+					if(_redFlag == "1"){
+						formData.redFlag2 = _redFlag;
+						$("#redFlag2").attr("checked",true);
+					}
+					//formData.id2 = formData.id;
+					formData.invoiceId2 = formData.invoiceId;
+					var _billingDate = new Date(formData.billingDate);
+					_billingDate = _billingDate.getFullYear()+'-'+(_billingDate.getMonth()+1)+'-'+_billingDate.getDate();
+//					+' '+_billingDate.getHours()+':'+_billingDate.getMinutes()+':'+_billingDate.getSeconds();
+					formData.billingDate2 = _billingDate;
+					formData.venName2 = formData.venName;
+					$("#venName2").val(formData.venName2);
+					$("#venCode2").val(formData.venCode);
+					formData.businessType2 = formData.businessType;
+					formData.sum2 = formData.sum;
+					formData.tax2 = formData.tax;
+					formData.taxRate2 = formData.taxRate;
+					formData.price2 = formData.price;
+					formData.inputer2 = formData.inputer;
+					var _createTd = new Date(formData.createTd);
+					_createTd = _createTd.getFullYear()+'-'+(_createTd.getMonth()+1)+'-'+_createTd.getDate();
+//					+' '+_createTd.getHours()+':'+_createTd.getMinutes()+':'+_createTd.getSeconds();
+					formData.createTd2 = _createTd;
+					formData.modifier2 = formData.modifier;
+					var _updateTd = new Date(formData.updateTd);
+					_updateTd = _updateTd.getFullYear()+'-'+(_updateTd.getMonth()+1)+'-'+_updateTd.getDate();
+//					+' '+_updateTd.getHours()+':'+_updateTd.getMinutes()+':'+_updateTd.getSeconds();
+					formData.updateTd2 = _updateTd;
+					formData.storageId2 = formData.storageId;
+					var _ticketDate = new Date(formData.ticketDate);
+					_ticketDate = _ticketDate.getFullYear()+'-'+(_ticketDate.getMonth()+1)+'-'+_ticketDate.getDate();
+//					+' '+_ticketDate.getHours()+':'+_ticketDate.getMinutes()+':'+_ticketDate.getSeconds();
+					formData.ticketDate2 = _ticketDate;
+					formData.coCode2 = formData.coCode;
+					formData.storageIdMoneyTotal2 = formData.storageIdMoneyTotal;
+					comboboxVenName("2");
+					if (formData) {
+						dataForm.form("load", formData); // 修改或查询，绑定数据到编辑表单
+					}
+					var dataDialog = $("#invoice_edit_dialog");
+					var buttons = [];
+					buttons.push({
+						"text" : "保存",
+						"iconCls" : "icon-ok",
+						"handler" : function() {
+							var bValidate = true;
+//							if(dataForm.form.validate){
+								bValidate = $(dataForm).form("validate");
+							/*}else{
+								bValidate = true;
+							}*/
+								var coCode2 = $("#coCode2").val();
+								if(coCode2 == null || coCode2 == ""){
+									$.messager.alert("提示", "请录入入库单！");
+									return;
+								}
+								
+								var price2 = $("#price2").val();
+								var storageIdMoneyTotal2 = $("#storageIdMoneyTotal2").val();
+								if($("#redFlag2").attr("checked") == "checked"){
+									if(price2 >= 0){
+										$.messager.alert("提示", "红字发票金额必须为负数！");
+										return;
+									}
+									if(storageIdMoneyTotal2 >= 0){
+										$.messager.alert("提示", "红字发票入库单总金额必须为负数！");
+										return;
+									}
+								}else{
+									if(price2 < 0){
+										$.messager.alert("提示", "蓝字发票金额不能小于零！");
+										return;
+									}
+									if(storageIdMoneyTotal2 < 0){
+										$.messager.alert("提示", "蓝字发票入库单总金额不能小于零！");
+										return;
+									}
+								}
+							if(bValidate){
+								// 异步提交
+								updateRecordUpdateStatus(dataForm,status,"0");
+							}
+						}
+					});
+					/* 取消按钮 */
+					buttons.push({
+						"text" : "取消",
+						"iconCls" : 'icon-cancel',
+						"handler" : function() {
+							dataDialog.dialog("close");
+						}
+					});
+					dataDialog.show().dialog({
+						"title" : "修改",
+						//"width": handler.dialog.width,
+						//"height": dh,
+						"closed" : false,
+						"modal" : true,
+						"buttons" : buttons
+					});
+					btnExt();
+					/* 当用户选中多条数据时，提示用户将默认对其选择的第一条数据进行操作 */
+					if (bMany) {
+						multiRowMessge();
+					}
+				},
+				"permission": "mdm:invoice:edit" //修改
+			},
+			{
+				id : 'bt_cataDetail',
+				text : '查看',
+				iconCls : 'icon-search',
+				handler : function() {
+					var $tb  = $("#invoiceView");
+					var rows = $tb.datagrid("getSelections");
+					if(!rows || rows.length<=0){
+						$.messager.alert("提示", "请先选择所要提交的单据。");
+						return;
+					} 
+					
+					var row = rows[0];
+					var _billingDate = row.billingDate;
+					_billingDate = new Date(_billingDate);
+					_billingDate = _billingDate.getFullYear()+'-'+(_billingDate.getMonth()+1)+'-'+_billingDate.getDate();
+					row.billingDate3 = _billingDate;
+					
+					var _ticketDate = row.ticketDate;
+					_ticketDate = new Date(_ticketDate);
+					_ticketDate = _ticketDate.getFullYear()+'-'+(_ticketDate.getMonth()+1)+'-'+_ticketDate.getDate();
+					row.ticketDate3 = _ticketDate;
+					
+					if (rows.length > 1) {
+						//bMany = true; // 用户选中多条数据
+						var firstIndex = $tb.datagrid("getRowIndex", row);
+						$tb.datagrid("unselectAll");
+						$tb.datagrid("selectRow", firstIndex);
+					}
+					
+					var dataForm = $("#invoice_detail_form");
+					dataForm.form("reset"); // 清空表单
+					if (row) {
+						dataForm.form("load", row); // 修改或查询，绑定数据到编辑表单
+					}
+					var dataDialog = $("#invoice_detail_dialog");
+					dataDialog.show().dialog({
+						"title" : "详细信息",
+						"closed" : false,
+						"width": 900,    
+					    "height": 380, 
+						"modal" : true,
+						"buttons" : [{
+							"text" : "关闭",
+							"iconCls" : 'icon-cancel',
+							"handler" : function() {
+								//$('#pomainRecordDetailView').datagrid('loadData',{total:0,rows:[]}); 
+								dataDialog.dialog("close");
+							}
+						}]
+					});
+					if (rows.length > 1) {
+						multiRowMessge();
+					}
+					btnExt();
+				},
+			     "permission": "mdm:invoice:query" //查看
+			},
+		    {
+			id : 'bt_cataCommit',
+			text : '提交',
+			iconCls : 'icon-remove',
+			handler : function() {
+				var $tb  = $("#invoiceView");
+				var rows = $tb.datagrid("getSelections");
+				if(!rows || rows.length<=0){
+					$.messager.alert("提示", "请先选择所要提交的单据。");
+					return;
+				} 
+				var row = "";
+				row = rows[0];
+				if (rows.length > 1) {
+					//bMany = true; // 用户选中多条数据
+					var firstIndex = $tb.datagrid("getRowIndex", row);
+					$tb.datagrid("unselectAll");
+					$tb.datagrid("selectRow", firstIndex);
+					multiRowMessge();
+				}
+				//已提交，不能再次提交
+				var status = rows[0].status;
+				if( status=='2' ){
+					$.messager.alert("提示", "&nbsp;&nbsp;发票单据已提交，无需再次提交！");
+					return;
+				}else if(status == "3"){
+					$.messager.alert("提示", "已作废，不能提交");
+					return;
+				}
+				
+				//自动生成凭证提示
+				$.messager.confirm("操作提示", "提交后将自动生成凭证，您确定要执行操作吗？", function (data) {
+		            if (data) {
+		            	updateRecordStatus(rows[0].id,status,"0");
+		            }
+		            else {
+		            }
+		        });
+				
+			},
+			"permission": "mdm:invoice:commit" //提交
+			},
+			{
+				id : 'bt_cataPass',
+				text : '作废',
+				iconCls : 'icon-remove',
+				handler : function() {
+					var selectRow = false;
+					//var bMany = false;
+					if(!selectRow){
+						var dataGrid = $("#invoiceView");
+						var selectRows = dataGrid.datagrid("getSelections");// var selectRow = $(oGrid).datagrid("getSelected");
+						if (!selectRows || selectRows.length <= 0) {
+							$.messager.alert("提示", "&nbsp;&nbsp;请选择一行数据！");
+							return;
+						}
+						selectRow = selectRows[0]; // 默认对选中的第一条数据进行操作
+						if (selectRows.length > 1) {
+							//bMany = true; // 用户选中多条数据
+							var firstIndex = dataGrid.datagrid("getRowIndex", selectRow);
+							dataGrid.datagrid("unselectAll");
+							dataGrid.datagrid("selectRow", firstIndex);
+							multiRowMessge();
+						}
+					}
+					//var dataForm  = $("#invoice_edit_form");//form
+					var formData  = selectRow;
+					//formData.status2 = formData.status;
+					var _status = formData.status;
+					if( _status=='2' ){
+						$.messager.alert("提示", "&nbsp;&nbsp;发票单据已提交，不可作废！");
+						return;
+					}else if(_status == "3"){
+						$.messager.alert("提示", "已作废，无需再次作废");
+						return;
+					}
+					//进行作废
+					$.messager.confirm("操作提示", "单据将作废，您确定要执行操作吗？", function (data) {
+			            if (data) {
+			            	updateRecordDeleteStatus(formData.id,formData.storageId,formData.businessType,"0");
+			            }
+			            else {
+			            }
+			        });
+				},
+				"permission": "mdm:invoice:delete" //作废
+			}
+		],
+		"model": "invoice", //当不指定form、dialog的ID，插件会根据该属性来自动匹配页面元素，如修改数据字典窗口，将自动匹配ID：dataDictionary_edit_dialog
+		//"dblClickHandler": "detailHandler", //双击行时进行的操作(当定义了onDblClickRow时，此参数将失效)
+		/*增删改查配置*/
+		"editHandlerTime": {
+			"enable": false,
+			"title": "修改", 
+			"handler" : function() {
+				var $tb  = $("#invoiceView");
+				var rows = $tb.datagrid("getSelections");
+				//已提交不能修改
+				var aStatus = rows[0].status;
+				if( aStatus=='2' ){
+					$.messager.alert("警告", "已提交，不能修改");
+					return;
+				}
+				var redFlag = rows[0].redFlag;
+				comboboxVenNameUpdate();
+			},
+			"form": {"validate":true, "submitUrl": "../woInvoice/updateInvoice.do"},
+			"permission": "mdm:invoice:edit" //编辑
+		},
+		"addHandlerPo": {
+			"enable": false,
+			"title": "新建", 
+			"handler" : function() {
+				comboboxVenName();
+				getDateFromSession();
+			},
+			/*"form": {"validate":true, "submitUrl": "../paymentSettlement/create.do"}*/
+			"form": {"validate":true, "submitUrl": "../woInvoice/createInvoice.do"},
+			"permission": "mdm:invoice:add" //编辑
+		},
+		"detailHandler": {
+			"enable": false,
+			"title": "查看",
+            "handler": function(){
+				//是否活动显示
+				var billingDate = $("#billingDate2");
+//				var billingDate = $(this).find("input[name='billingDate2']");
+				var val = billingDate.val();
+				var inputDate = new Date(val);
+				inputDate = inputDate.getFullYear()+'-'+(inputDate.getMonth()+1)+'-'+inputDate.getDate();
+				billingDate.val(inputDate);
+			}
+		}
+		/*"subHandlerPo": {
+			"enable": true,
+			"title": "提交",
+			"submitUrl": "../woInvoice/commitByIds.json", 
+			"dataParams": "rowsData"
+		}*/
+	});
+	
+	function comboboxVenName(index){
+		$("#venCode"+index).combobox({
+			url:"../woInvoice/invoiceVenNameList.json?index="+index,
+			valueField:'venCode'+index,
+			textField:'venName'+index,
+			method:'post',
+		});
+	}
+	
+	function getDateFromSession(){
+		$.ajax({
+			   type: "POST",  
+			   url : "../woInvoice/getDateFromSession.json",  
+			   dataType:"json",  
+			   success: function(data){
+				   $("#billingDate1").datebox("setValue", data.billingDate1);
+				   $("#ticketDate1").datebox("setValue", data.ticketDate1);
+			   }  
+			 });
+	}
+	
+	function queryDate(){
+		var billingDateId = $("#billingDate").val();
+		alert(billingDateId);
+		var billingDateName = $("input[name='billingDate']");
+		billingDateName[1].value = billingDateId;
+		alert(billingDateName[1].value);
+	}
+	
+	$(".datebox :text").attr("readonly","readonly");
+	
+	/*查询grid*/
+	$("#search_form_submit").on("click", function(){
+		$('#invoiceView').datagrid("load", $("#invoice_search_form").form("formToJson"));
+	});
+	$("#search_form_reset").on("click", function(){
+		$("#invoice_search_form").form("reset");
+	});
+	
+	/**
+	 * 提交
+	 */
+	function updateRecordStatus(id,status,role){
+		$.ajax({
+			url: "../woInvoice/commitByIds.json",
+			data: {"id":id,"status":status,"role":role},
+			dataType: "json",
+			type: "post",
+			cache: false,
+			error:function(data){
+				
+			},
+			success: function(result){
+				 // 返回需要修改的数据信息
+				if(result && (result.state == true || result.state == "true")){
+					$.messager.show({
+						"title" : "操作成功",
+						"msg" : result.msg
+					});
+					$('#invoiceView').datagrid("load", $("#invoice_search_form").form("formToJson"));// 重绘表格
+					
+				} else {
+					$.messager.alert("操作失败", result.msg);
+				}
+			
+			}
+		});
+		
+	}
+	/**
+	 * 新建
+	 */
+	function updateRecordAddStatus(dataForm,status,role){
+		$.ajax({
+			url: "../woInvoice/createInvoice.do",
+			data: dataForm.form("formToJson"),
+			dataType: "json",
+			type: "post",
+			cache: false,
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				$.messager.alert("提示", XMLHttpRequest + textStatus+ errorThrown);
+			},
+			success: function(result){
+				// 返回需要修改的数据信息
+				if(result && (result.state == true || result.state == "true")){
+					$.messager.show({
+						"title" : "操作成功",
+						"msg" : result.msg
+					});
+					$("#invoice_add_dialog").dialog("close"); // 关闭DIALOG
+					$("#invoice_add_form").form("clear"); // 清空表单
+					$('#invoiceView').datagrid("load", $("#invoice_search_form").form("formToJson"));// 重绘表格
+				} else {
+					$.messager.alert("操作失败", result.msg);
+				}
+				
+			}
+		});
+		
+	}
+	
+	/**
+	 * 修改
+	 */
+	function updateRecordUpdateStatus(dataForm,status,role){
+		$.ajax({
+			url: "../woInvoice/updateInvoice.do",
+			data: dataForm.form("formToJson"),
+			dataType: "json",
+			type: "post",
+			cache: false,
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				$.messager.alert("提示", XMLHttpRequest + textStatus+ errorThrown);
+			},
+			success: function(result){
+				// 返回需要修改的数据信息
+				if(result && (result.state == true || result.state == "true")){
+					$.messager.show({
+						"title" : "操作成功",
+						"msg" : result.msg
+					});
+					$("#invoice_edit_dialog").dialog("close"); // 关闭DIALOG
+					$("#invoice_edit_form").form("clear"); // 清空表单
+					$('#invoiceView').datagrid("load", $("#invoice_search_form").form("formToJson"));// 重绘表格
+				} else {
+					$.messager.alert("操作失败", result.msg);
+				}
+				
+			}
+		});
+		
+	}
+	/**
+	 * 作废
+	 */
+	function updateRecordDeleteStatus(id,storageId,businessType,role){
+		$.ajax({
+			url: "../woInvoice/deleteMgRdAndInv.do",
+			data: {"id":id,"storageId":storageId,"businessType":businessType},
+			dataType: "json",
+			type: "post",
+			cache: false,
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				$.messager.alert("提示", XMLHttpRequest + textStatus+ errorThrown);
+			},
+			success: function(result){
+				// 返回需要修改的数据信息
+				if(result && (result.state == true || result.state == "true")){
+					$.messager.show({
+						"title" : "操作成功",
+						"msg" : result.msg
+					});
+					//$("#invoice_edit_dialog").dialog("close"); // 关闭DIALOG
+					//$("#invoice_edit_form").form("clear"); // 清空表单
+					$('#invoiceView').datagrid("load", $("#invoice_search_form").form("formToJson"));// 重绘表格
+				} else {
+					$.messager.alert("操作失败", result.msg);
+				}
+				
+			}
+		});
+		
+	}
+	
+	//用户选择多行时，默认只处理第一行
+	function multiRowMessge(){
+		$.messager.show({
+			"title" : "温馨提示",
+			"msg" : "<span style='color:red;'>*</span>由于您选择了多条数据，系统将默认对您选择的第一条数据进行操作。",
+			"style" : {
+				"right" : "",
+				"top" : document.body.scrollTop + document.documentElement.scrollTop,
+				"bottom" : ""
+			},
+			"timeout" : 5000
+		});
+	}
+	
+});
+
+$(document).ready(function(){
+	$("#button1").click(function(){
+//		var vendorSelectVal = $("#venName1").val();
+		var vendorSelectVal = $("input[name='venCode1']").val();
+		var redFlag = null;
+		if($("#redFlag1").attr("checked") == "checked"){
+			redFlag = "1";
+		}
+		if(vendorSelectVal == null || vendorSelectVal ==""){
+			alert("请先选择供应商！");
+			return false;
+		}else{
+			$('#data_detail_dialog').dialog({
+				title: '入库单列表',    
+				width: 900,    
+				height: 380,    
+				closed: false,    
+				cache: false,    
+				href: '',    
+				modal: true
+			});
+			$('#invoiceDetailView').myDatagrid({
+//				"title": "入库单列表",
+				"url": "../woInvoice/mgRdAndInv.json",
+				"queryParams":{"vendorSelectVal":vendorSelectVal,"redFlag":redFlag},
+				"singleSelect": false, //多选
+				"method": "post", 
+		  		"columns":[[
+		  					{field : 'id', title : 'ID', sortable : true, align : 'center' },          
+							{field : 'coCode', title : '入库单号', sortable : true, align : 'center'},
+							{field : 'orderDate', title : '入库日期', sortable : true, align : 'center', formatter:function(value){
+								var d = new Date(value);
+								return UI.Date.dateStr(d, "yyyy-mm-dd");
+	      					}},
+							{field : 'whName', title : '仓库',sortable : true, align : 'center'},
+							{field : 'citemCode', title : '订单号', sortable : true, align : 'center'},
+							/*{field : 'orderCode', title : '项目编码', sortable : true, align : 'center', hidden:true},*/
+							{field : 'isum', title : '含税总金额', sortable : true, align : 'center'},
+							{field : 'iprice', title : '不含税总金额', sortable : true, align : 'center'},
+							{field : 'busType', title : '业务类型', sortable : true, align : 'center'},
+							/*{field : 'cptName', title : '采购类型', sortable : true,  align : 'center'},*/
+							{field : 'venName', title : '委外商', sortable : true, align : 'center'},
+							/*{field : 'cBusType', title : '入库类别', sortable : true, align : 'center'},*/
+							{field : 'auditStatus', title : '审核状态代码', sortable : true,  align : 'center', hidden:true}
+		  				]],
+				"toolbar": [{
+		        	  id : 'data_form_detail',
+		        	  text : '确定',
+		        	  iconCls : 'icon-remove',
+		        	  handler : function() {
+		        		  var $tb  = $("#invoiceDetailView");
+		        		  var rows = $tb.datagrid("getSelections");
+		        		  var id ;
+		        		  var sum = "";
+		        		  var sums = 0.0;
+		        		  var coCodes = "";
+		        		  var ids = '';
+		        		  var citemCode = [];
+		        		  var booleanFlag = true;
+		        		  for(var i=0;i<rows.length;i++){
+		        			  id = rows[i].id;
+		        			  sum = rows[i].isum;
+		        			  sum = sum*1;
+		        			  sums += sum ;
+		        			  coCodes += rows[i].coCode+",";
+		        			  ids = ids + id + ",";
+		        			  citemCode[i] = rows[i].citemCode;
+		        		  }
+		        		  for(var i=0;i<citemCode.length;i++){
+		        			  if(citemCode[i] != citemCode[0]){
+		        				  booleanFlag = false;
+		        			  }
+		        		  }
+		        		  if(booleanFlag){
+		        			  determine("inv1",ids,sums,coCodes);
+		        		  }else{
+		        			  $.messager.alert("提示", "请选择相同项目编码的入库单！");
+		        			  return;
+		        		  }
+		        	  },
+					  "permission": "mdm:invoice:ok" //确定
+		         }]
+			});
+		}
+	}); 
+	$("#button2").click(function(){
+//		var vendorSelectVal = $("#venName2").val();
+		var vendorSelectVal = $("input[name='venCode2']").val();
+		var invoiceId = $("#id").val();
+		var redFlag = null;
+		if($("#redFlag2").attr("checked") == "checked"){
+			redFlag = "1";
+		}
+		if(vendorSelectVal == null || vendorSelectVal ==""){
+			alert("请先选择供应商！");
+			return false;
+		}else{
+			$('#data_detail_dialog').dialog({
+				title: '入库单列表',    
+				width: 900,    
+				height: 380,    
+				closed: false,    
+				cache: false,    
+				href: '',    
+				modal: true
+			}); 
+			$('#invoiceDetailView').myDatagrid({
+				//"title": "入库单列表",
+				"url": "../woInvoice/mgRdAndInv.json",
+				"queryParams":{"vendorSelectVal":vendorSelectVal,"invoiceId":invoiceId,"redFlag":redFlag},
+				"singleSelect": false, //多选
+				"method": "post", 
+	      		"columns":[[
+	      					{field : 'id', title : 'ID', sortable : true, align : 'center' },          
+							{field : 'coCode', title : '入库单号', sortable : true, align : 'center'},
+							{field : 'orderDate', title : '入库日期', sortable : true, align : 'center', formatter:function(value){
+								var d = new Date(value);
+								return UI.Date.dateStr(d, "yyyy-mm-dd");
+	      					}},
+							{field : 'whName', title : '仓库',sortable : true, align : 'center'},
+							{field : 'citemCode', title : '订单号', sortable : true, align : 'center'},
+							/*{field : 'citemCode', title : '项目编码', sortable : true, align : 'center', hidden:true},*/
+							{field : 'isum', title : '含税总金额', sortable : true, align : 'center'},
+							{field : 'iprice', title : '不含税总金额', sortable : true, align : 'center'},
+							{field : 'busType', title : '业务类型', sortable : true, align : 'center'},
+							/*{field : 'cptName', title : '采购类型', sortable : true,  align : 'center'},*/
+							{field : 'venName', title : '委外商', sortable : true, align : 'center'},
+							/*{field : 'cptName', title : '入库类别', sortable : true, align : 'center'},*/
+							{field : 'auditStatus', title : '审核状态代码', sortable : true,  align : 'center', hidden:true}
+	      				]],
+				"toolbar": [{
+	            	  id : 'data_form_detail',
+	            	  text : '确定',
+	            	  iconCls : 'icon-remove',
+	            	  handler : function() {
+	            		  var $tb  = $("#invoiceDetailView");
+	            		  var rows = $tb.datagrid("getSelections");
+	            		  var id ;
+	            		  var sum = "";
+	            		  var sums = 0.0;
+	            		  var coCodes = "";
+	            		  var ids = '';
+	            		  var citemCode = [];
+		        		  var booleanFlag = true;
+	            		  for(var i=0;i<rows.length;i++){
+	            			  id = rows[i].id;
+	            			  sum = rows[i].isum;
+	            			  sum = sum*1;
+		        			  sums += sum ;
+	            			  coCodes += rows[i].coCode+",";
+	            			  ids = ids + id + ",";
+	            			  citemCode[i] = rows[i].citemCode;
+	            		  }
+	            		  for(var i=0;i<citemCode.length;i++){
+		        			  if(citemCode[i] != citemCode[0]){
+		        				  booleanFlag = false;
+		        			  }
+		        		  }
+	            		  if(booleanFlag){
+	            			  determine("inv2",ids,sums,coCodes);
+		        		  }else{
+		        			  $.messager.alert("提示", "请选择相同项目编码的入库单！");
+		        			  return;
+		        		  }
+	            	  },
+	            	  "permission": "mdm:invoice:ok" //确定
+	              }]
+			});
+		}
+	});
+});
+
+function determine(flag,ids,sums,coCodes){
+	sums = sums.toFixed(4);
+	$.messager.show({
+		"title" : "操作成功"
+	});
+	if(flag == "inv1"){
+		$('#storageId1').val(ids);
+		$('#storageIdMoneyTotal1').val(sums);
+		$('#coCode1').val(coCodes);
+	}else if(flag == "inv2"){
+		$('#storageId2').val(ids);
+		$('#storageIdMoneyTotal2').val(sums);
+		$('#coCode2').val(coCodes);
+	}
+	$('#data_detail_dialog').dialog('close');
+}
+
+function checkOther(obj){
+	var str = obj.value;
+	var reg =/\d{4}-\d{2}-\d{2}/; 
+	if(str!=null&&str!="")
+   	{
+		if (!reg.test(str)){
+			alert("日期格式不正确！应为YYYY-MM-DD");
+			obj.focus();
+		}
+   	}
+}
+
+function price1(){
+	
+}
+
+function price2(){
+	var price = $("#price2").val();//价税合计
+	var taxRate = $("#taxRate2").val();//税率
+	var _price = null;
+	var _taxRate = null;
+	
+	if(price != null && price!= ""){
+		_price = price*1;
+	}
+	if(taxRate != null && taxRate!= ""){
+		_taxRate = taxRate*1;
+	}
+	if(price!= "" && taxRate!= ""){
+		var _sum = _price/(1+_taxRate/100);//无税金额
+		var _tax = _price-_sum;//税额
+		_sum = _sum.toFixed(4);
+		_tax = _tax.toFixed(4);
+		$("#sum2").val(_sum);
+		$("#tax2").val(_tax);
+	}
+}
+
+//redFlag 红字标识校验
+function redFlagAddOrUpdateCheck(param){
+	var storageId = $("#storageId"+param).val();
+//	var redFlag1 = $("#redFlag1").ckecked;
+	if($("#redFlag"+param).attr("checked")=="checked"){
+		if(storageId != null && storageId != ""){
+    		$.messager.confirm("操作提示", "红字发票需选择红字入库单，勾选后需重新选择入库单，是否确认？", function (data) {
+	            if (data) {
+	            	$("#storageId"+param).val("");
+	            	$("#coCode"+param).val("");
+	            	$("#storageIdMoneyTotal"+param).val("");
+	            }
+	            else {
+	            }
+	        });
+    	}
+	}
+}
+
+//校验方法
+$.extend($.fn.validatebox.defaults.rules,{
+	//单据编号校验
+	paymentCodeCheck:{ 
+		validator:function(value){
+	     	var reg = /^[A-Za-z0-9]+$/;
+	    	if(reg.test(value)&&value.length<20){
+	    			return true;
+	    	}
+		},
+		message:'请检查单据编号的位数与格式'
+	},
+	//供应商校验
+	venNameChang:{ 
+	    validator:function(value,param){
+	    	var _param = param[0];
+	    	var cVenName=$("input[name='"+_param+"']").val();
+
+	    	if(cVenName!=null){
+	    		return true;
+	    	}
+	    }, 
+	    message:'选择的供应商有误！' 
+	},
+    //校验
+	sumAddOrUpdateCheck:{ 
+	    validator:function(value,param){
+	    	var _param = param[1];
+	    	var cc = /^(\-|\+)?\d+(.[0-9]{1,4})?$/;
+    		if(value.length<20&&cc.test(value)){
+	    		var price = $("#price"+_param).val();//价税合计
+	    		var taxRate = $("#taxRate"+_param).val();//税率
+	    		var _price = null;
+	    		var _taxRate = null;
+	    		
+	    		if(price != null && price!= ""){
+	    			_price = price*1;
+	    		}
+	    		if(taxRate != null && taxRate!= ""){
+	    			_taxRate = taxRate*1;
+	    		}
+	    		if(price!= "" && taxRate!= ""){
+	    			var _sum = _price/(1+_taxRate/100);//无税金额
+	    			var _tax = _price-_sum;//税额
+	    			_sum = _sum.toFixed(4);
+	    			_tax = _tax.toFixed(4);
+	    			$("#sum"+_param).val(_sum);
+	    			$("#tax"+_param).val(_tax);
+	    		}
+	    		return true; 
+	    	}
+	    }, 
+	    message:'请检查输入价格合计的位数与格式' 
+	}
+}); 

@@ -1,0 +1,42 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
+     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+     http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+     http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring   
+     http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd">
+    
+    <context:annotation-config />
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+	
+	<aop:aspectj-autoproxy />
+	
+	<context:component-scan base-package="com.multigold.mdm.**.*" />
+	
+	<import resource="dubbo-consumer.xml" />
+	<import resource="classpath:spring-mq.xml" />
+	
+	<import resource="classpath:spring-mq-queue.xml" />
+
+	<!-- 接收OMS发过来的库存移动 -->
+	<import resource="classpath:spring-mq-listener.xml" />
+	
+	<!-- 向队列发送消息 -->
+	<import resource="spring-jobs.xml" />
+	<!-- 
+	<import resource="ws-tnt.xml"/>
+	 -->
+</beans>

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+[#include "../../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>第三方收款信息列表</title>
+    [#include "../../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/sales/salesProceeds.js?date="+new date()></script>
+    <script type="text/javascript">
+ 	function exportTemplate() {
+		$("#proceeds_download_form").form('submit', {  
+			url: "../salesProceeds/exportTemplate.json?_method=delete",
+    		method: "post",
+            success: function(data) { 
+    			return true;
+    		}
+    	});
+	}
+    </script>
+  </head>
+  <body>
+  	<div class="top_content">
+      <!-- 第三方收款查询条件 -->
+      <div class="" title=""  style="border-bottom: 0; height: 80px;" data-options="collapsible:true" fit="true">
+        <form id="salesReturn_search_form">
+        <table>
+        	<tr>
+	        	<td  class="search_form_tdl"><label for="paymentCode">销售订单号：</label></td>
+	            <td  class="search_form_tdr"><input name="paymentCode" id="paymentCode" type="text"/></td>
+	            <td  class="search_form_tdl"><label for="cremark">销售渠道：</label></td>
+	        	<td  class="search_form_tdr"><input name="orderChannel" id="orderChannel" type="text"/></td>
+	            <td class="search_form_tdlf"><label for="orderDate">订单日期：</label></td>
+	            <td class="search_form_tdr">
+	            	<label for="insertDownDate"></label><input type="text" id="timeFrom" name="timeFrom" class="easyui-datebox" editable="false" >
+	               	<label for="insertUpDate">至</label><input type="text" id="timeTo" name="timeTo" class="easyui-datebox" editable="false">
+	            </td>
+	        </tr>
+	        <tr>	           
+				<td colspan="3" class="searchw_form_tdr">
+	              	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+	              	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+	              	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="exportTemplate" onclick="exportTemplate();">模板下载</a>
+	            </td>
+             </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+    <form id="proceeds_download_form" method="post" novalidate class="ftitle_form" enctype="multipart/form-data">
+    </form>
+	<div id="salesReturn_grid" class="grid_content">
+      <!--第三方收款字段列表-->
+      <table id="salesReturnView" fit="true">
+      </table>
+    </div>
+     <!-- 文件导入 -->
+    <div id="proceeds_import_dialog" class="easyui-dialog" 
+     	style="width: 350px; height: 200px; padding: 0px 0px" closed="true">
+      <form id="proceeds_import_form" method="post" novalidate class="ftitle_form" enctype="multipart/form-data"  action="../salesProceeds/importProceeds.json">
+		<div class="fitem fitem_odd"  style="overflow:hidden">
+		
+			<label for="fileImport" style="margin-top:0.1cm;float:left">导入文件：</label>
+			<input  id="file" name="file" type="file"  style="float:left;width: 200px; background: White;white-space:nowrap"/> 
+		</div>
+       </form>
+       <div style="color:red; margin-left: 15px;font-size: 10px;font-weight: bold;">*请按照模板格式填入信息！</div>
+       <div id="errorMessage" style="color:red; margin-left: 15px;font-size: 10px;font-weight: bold;"></div>
+     </div> 
+  </body>
+</html>

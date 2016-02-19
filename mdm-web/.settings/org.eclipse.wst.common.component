@@ -4,6 +4,7 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+<<<<<<< .mine
         <dependent-module archiveName="mdm-dto-1.0.0.tag.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mdm-dto/mdm-dto">
             <dependency-type>uses</dependency-type>
         </dependent-module>
@@ -25,6 +26,8 @@
         <dependent-module archiveName="T6-service-api-1.0.0.tag.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/T6-service-api/T6-service-api">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+=======
+>>>>>>> .r40668
         <property name="context-root" value="mdm-web"/>
         <property name="java-output-path" value="/mdm-web/target/classes"/>
         <property name="component.exclusion.patterns" value="WEB-INF/web.xml"/>

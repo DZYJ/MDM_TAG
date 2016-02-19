@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <display-name>mdm-interface</display-name>    
+    
+    <context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:/applicationContext.xml</param-value>
+	</context-param>
+	
+    <context-param>
+        <param-name>multiServerMode</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    
+	<listener>
+        <listener-class>
+            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
+        </listener-class>
+    </listener>
+    
+    <listener>
+        <listener-class>
+            org.jboss.resteasy.plugins.spring.SpringContextLoaderListener
+        </listener-class>
+    </listener>	   
+
+    <servlet>
+        <servlet-name>Resteasy</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Resteasy</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+    
+    <!-- -->
+    <filter>
+    	<filter-name>springRequestFilter</filter-name>
+    <filter-class>org.springframework.web.filter.RequestContextFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	    <filter-name>springRequestFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
+ 	
+   <!-- CXF WebService Begin -->
+    <servlet>
+	  <servlet-name>CXFServlet</servlet-name>
+	  <servlet-class>
+	   org.apache.cxf.transport.servlet.CXFServlet
+	  </servlet-class>
+	  <load-on-startup>1</load-on-startup>
+	 </servlet>
+
+	 <servlet-mapping>
+	  <servlet-name>CXFServlet</servlet-name>
+	  <url-pattern>/ws/*</url-pattern>
+	 </servlet-mapping>
+ 	<!-- CXF WebService End -->
+    
+  <security-constraint>
+      <web-resource-collection>
+         <web-resource-name>Resteasy</web-resource-name>
+         <url-pattern>/rest/*</url-pattern>
+      </web-resource-collection>
+       <auth-constraint>
+         <role-name>role1</role-name>
+         <role-name>user</role-name>
+         <role-name>admin</role-name>
+      </auth-constraint>
+   </security-constraint>
+   
+   <login-config>
+      <auth-method>BASIC</auth-method>
+      <realm-name>Test Realm</realm-name>
+   </login-config>
+
+   <security-role>
+      <role-name>role1</role-name>
+   </security-role>
+   <security-role>
+      <role-name>user</role-name>
+   </security-role>
+   <security-role>
+      <role-name>admin</role-name>
+   </security-role>
+</web-app>

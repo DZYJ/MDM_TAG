@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+[#include "../../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>入库单确认列表</title>
+    [#include "../../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/re/queryRecordConfirm.js?date="+new date()></script>
+  </head>
+  <body>
+  	<div class="top_content">
+      <!-- 查询入库单确认表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 145px;" data-options="collapsible:true" fit="true">
+      <div class="ftitle">筛选条件</div>
+        <form id="recordConfirm_search_form">
+        <table>
+        	<tr>
+	        	<td  class="search_form_tdl"><label for="customerName">客户名称：</label></td>
+	            <td  class="search_form_tdr"><input name="customerName" id="customerName" type="text"/></td>
+	            <td  class="search_form_tdl"><label for="recoveryNum">入库单号：</label></td>
+	            <td  class="search_form_tdr"><input name="recoveryNum" id="recoveryNum" type="text"/></td>
+	            <td  class="search_form_tdl"><label for="tradeType">业务类型：</label></td>
+            	<td class="search_form_tdr"><input name="tradeType" class="easyui-combobox" id="tradeType" type="text" editable="false"
+	              data-options="panelHeight:'auto',valueField:'tradeType',textField:'tradeTypeDesc', 
+	              data:[{tradeType:'',tradeTypeDesc:'--请选择--',selected:true},{tradeType:'1',tradeTypeDesc:'回购'},{tradeType:'2',tradeTypeDesc:'收金'}]" />
+	            </td>
+	            <td  class="search_form_tdl"><label for="orderStatus">付款状态：</label></td>
+	            <td class="search_form_tdr"><input name="orderStatus" class="easyui-combobox" id="orderStatusType" type="text" editable="false"
+	              data-options="panelHeight:'auto',valueField:'orderStatus',textField:'orderStatusDesc', 
+	              data:[{orderStatus:'',orderStatusDesc:'--请选择--',selected:true},
+	              {orderStatus:'1',orderStatusDesc:'未付款'},
+	              {orderStatus:'9',orderStatusDesc:'已付款'},
+	              {orderStatus:'3',orderStatusDesc:'已充卡付款'},
+	              {orderStatus:'4',orderStatusDesc:'已取消'}]" />
+	            </td>
+             </tr>
+             <tr>
+             	<td  class="search_form_tdl"><label for="productType">商品类型：</label></td>
+            	<td class="search_form_tdr"><input name="productType" class="easyui-combobox" id="productTypeType" type="text" editable="false"
+	              data-options="panelHeight:'auto',valueField:'productType',textField:'productTypeDesc', 
+	              data:[{productType:'',productTypeDesc:'--请选择--',selected:true},{productType:'01',productTypeDesc:'旧饰'},{productType:'02',productTypeDesc:'黄金券'}]" />
+	            </td>
+             	<td class="search_form_tdlf"><label for="recoveryDate">入库日期：</label></td>
+	            <td class="search_form_tdr" colspan="3">
+	            	
+	            	<label for="insertDownDate"></label><input type="text" id="timeFrom" name="timeFrom" class="easyui-datebox">
+	               	<label for="insertUpDate">至</label><input type="text" id="timeTo" name="timeTo" class="easyui-datebox">
+	            </td>
+            </tr>
+            <tr>
+                <td  class="search_form_tdl"><label for="orderChannel">销售渠道：</label></td>
+                <td class="search_form_tdr"><input name="orderChannel" class="easyui-combobox" id="orderChannel" type="text" editable="false"
+	              data-options="panelHeight:'auto',valueField:'orderChannel',textField:'orderChannelDesc', 
+	              data:[{orderChannel:'',orderChannelDesc:'--请选择--',selected:true},
+	              		{orderChannel:3001,orderChannelDesc:'中塔'},
+	              		{orderChannel:3002,orderChannelDesc:'十里堡'}]" />
+	            </td>
+	            <!-- {orderChannel:1000,orderChannelDesc:'多边金都网站'},
+	              		{orderChannel:1001,orderChannelDesc:'多边金都wap'},
+	              		{orderChannel:1002,orderChannelDesc:'多边金都安卓app'},
+	              		{orderChannel:1003,orderChannelDesc:'多边金都ios app'},
+	              		{orderChannel:1015,orderChannelDesc:'京东'},
+	              		{orderChannel:1016,orderChannelDesc:'国美在线3PP'},
+	              		{orderChannel:1017,orderChannelDesc:'国美在线店铺平台'},
+	              		{orderChannel:1018,orderChannelDesc:'微店'},
+	              		{orderChannel:2000,orderChannelDesc:'天猫'}, -->
+	           
+	            <td class="search_form_tdlf">&nbsp;</td>
+             </tr>
+                <tr>
+                <td class="search_form_tdr" colspan="4">
+	              	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+	              	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+	            </td>
+                </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+	 
+	<!--入库单确认信息列表GRID -->
+	<div id="recordConfirm_grid" class="grid_content">
+      <table id="recordConfirmView" fit="true">
+      </table>
+    </div>
+    
+    <!-- 明细信息 begin -->
+    <div id="recordConfirm_detail_dialog" title="入库单明细" class="easyui-dialog" 
+     	style="width: 400px; height: 200px; padding: 10px 20px" closed="true">
+      <table id="recordConfirmDetailView" fit="true">
+      </table>
+    </div>
+     <!-- 明细信息 end -->
+  </body>
+</html>

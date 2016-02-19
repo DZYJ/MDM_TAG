@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+[#include "../../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>退款单打印</title>
+    [#include "../../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/sales/salesReturnPrint.js?date="+new date()></script>
+    <script type="text/javascript" src="${resource!}/js/jquery.PrintArea.js"></script>
+    <link href="${resource!}/css/print.css" type="text/css" rel="stylesheet" type="text/css"  media="print"/>
+    <style>
+    	* { color: #000; font-family: 宋体 Arail; font-size: 16px;}
+		.print { color: #000; font-family: 宋体 Arail; font-size: 16px;}
+		body{text-align:center}
+		.printDiv{width: 750px;text-align:center;height: auto;}
+		.printTable{width:750px;}
+		.printTable tr td{text-align: left; width: 175px;}
+		.myDiv{width: 750px;text-align:center;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;}
+		#salesReturn_grid{height: auto;}
+		#salesReturnView{height: auto;}
+		.datagrid-wrap{height: auto;}
+		#salesReturnView td{line-height:28px;font-size:16px;text-align:center}
+    </style>
+  </head>
+  <body>
+  <div class="myDiv">
+  	<div style="text-align: right; width: 750px;"><input id="print" type="button" value="打印" onclick="print('printDiv');"/></div>
+  	<div class="top_content" id="printDiv">
+  	<div style="font-size: 25px;font-weight: bold;font-family: 黑体;text-align: center;width: 750px;" class="print">退款单打印</div>
+  	<br/>
+      <!-- 退款打印主表 -->
+       <table class="printTable" width="100%" cellspacing="0">
+       	<tr>
+        	<td  class=" print" >退单订单号：</td>
+            <td  class=" print" id="orderNum"   ></td>
+            <td  class=" print" >交易流水号：</td>
+            <td  class=" print" id="traceNum" ></td>
+           
+       	</tr>
+       	<tr>
+       		 <td  class=" print" >原始主订单号：</td>
+            <td  class=" print" id="originOrderNumber"></td>
+            <td  class=" print">原始子订单号：</td>
+            <td  class=" print" id="originparentOrderNum"></td>
+        </tr>
+       	<tr>
+            <td  class=" print">客户名称：</td>
+            <td  class=" print" id="customerName"></td>
+            <td  class=" print">支付方式：</td>
+            <td  class=" print" id="paymentType"></td>
+        </tr>
+       	<tr>
+            <td  class=" print">订单日期：</td>
+            <td  class=" print" id="orderDate" ></td>
+            <td  class=" print">退款金额：</td>
+            <td  class=" print" id="refundAmount">
+            </td>
+        </tr>
+       </table>
+       <br/>
+      <!--退款打印子表title-->
+      <div style="font-size: 15px;font-weight: bold;font-family: 黑体;text-align: left;width: 750px;" class="print">退款单详情</div>
+      <table id="salesReturnView"  width="100%" border="1" bordercolor="#000" cellspacing="0"  >
+      	<tr>
+      	<td class=" print" > 序号 </td>
+      	<td class=" print" > 款式码 </td>
+      	<td class=" print" > sku码 </td>
+      	<td class=" print" > 商品名称 </td>
+      	<td class=" print" > 商品单价</td>
+      	<td class=" print" > 数量 </td>
+      	<td class=" print" > 商品总价 </td>
+      	<td class=" print" > 运费 </td>
+      	</tr>
+     <!--  </table>
+      退款打印子表数据
+      <table id="salesReturnsView"   width="100%" border="1" bordercolor="#000" cellspacing="0" > 
+      	<tr>
+      	<td class="search_form_tdl print" id="styleNumber" ></td>
+      	<td class="search_form_tdl print" id="partNumber" ></td>
+      	<td class="search_form_tdl print" id="cinvName" ></td>
+      	<td class="search_form_tdl print" id="partPrice" ></td>
+      	<td class="search_form_tdl print" id="quantity" ></td>
+      	<td class="search_form_tdl print" id="sum" ></td>
+      	<td class="search_form_tdl print" id="freight" ></td>
+      	</tr>
+      	-->
+      </table>
+    </div>
+	 </div>
+  </body>
+</html>

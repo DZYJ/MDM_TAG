@@ -1,0 +1,9 @@
+@charset "utf-8";
+* { color: #000; font-family: 宋体 Arail; font-size: 16px;}
+.print { color: #000; font-family: 宋体 Arail; font-size: 16px;}
+body{text-align:center}
+.printDiv{width: 750px;text-align:center;height: auto;}
+.printTable{width:750px;}
+.printTable tr td{text-align: left; width: 175px;}
+.myDiv{width: 750px;text-align:center;MARGIN-RIGHT: auto; MARGIN-LEFT: auto;}
+#salesReturnView td{line-height:28px;font-size:16px;text-align:center}

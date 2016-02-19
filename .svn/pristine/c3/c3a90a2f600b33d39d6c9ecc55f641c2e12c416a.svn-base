@@ -1,0 +1,76 @@
+#####for dubbo###
+service.group=mdm
+service.upms.group=upms
+service.tsix.group=tsix
+#registry.address=redis://localhost:6379
+registry.address=zookeeper://127.0.0.1:2181
+registry.upms.address=zookeeper://127.0.0.1:2181
+registry.tsix.address=zookeeper://127.0.0.1:2181
+#registry.address=redis://10.126.53.168:6379
+#registry.address=zookeeper://10.58.46.59:2181
+dubbo-port=-1
+dubbo-timeout=300000
+dubbo-retries=0
+mq.transportType=1
+mq.ccsid=1208
+
+###### MQ Service Configuration Begin SIT ######
+#mq.manager=QM_MG01
+#mq.hostname=10.129.161.74
+#mq.port=1416
+#mq.channel=C_SVR_MG01
+###### MQ Service Configuration End  SIT ######
+#mq.user=mqm
+#mq.pwd=123456
+###### MQ Service Configuration Begin UAT ######
+mq.manager=QM_UAT_MG01
+mq.hostname=10.129.161.74
+mq.port=2426
+mq.channel=C_SVR_ERP
+mq.user=erp
+mq.pwd=erp!1234
+###### MQ Service Configuration End  UAT ######
+
+###### MQ Service Configuration Begin \u751F\u4EA7 ######
+#mq.manager=QM_MG01
+#mq.hostname=10.145.3.50
+#mq.port=5888
+#mq.channel=C_SVR_MG01
+#mq.user=erp
+#mq.pwd=erp!1234
+###### MQ Service Configuration End  \u751F\u4EA7 ######
+
+#\u961F\u5217\u540D\u79F0-\u53D1\u9001\u65B9-\u6D88\u606F\u8FD4\u56DE
+queue.name.send.ack=QR_MG02_ERP_ACK_TO_OMS_ACK
+#\u961F\u5217\u540D\u79F0-\u53D1\u9001\u65B9-\u5546\u54C1\u4E3B\u6570\u636E\uFF08\u6B3E\u5F0F\u7801\uFF09
+queue.name.send.pm=QR_MG02_ERP_PM_TO_OMS_PM
+#\u961F\u5217\u540D\u79F0-\u53D1\u9001\u65B9-\u91C7\u8D2D\u8BA2\u5355\uFF0C\u59D4\u5916\u8BA2\u5355
+queue.name.send.po=QR_MG02_ERP_PO_TO_OMS_PO
+#\u961F\u5217\u540D\u79F0-\u53D1\u9001\u65B9-SO\u6279\u53D1
+queue.name.send.so=QR_MG02_ERP_SO_TO_OMS_SO
+#\u961F\u5217\u540D\u79F0-\u53D1\u9001\u65B9-SO\u6279\u53D1\u53D6\u6D88
+queue.name.send.tnt=QR_MG02_ERP_TNT_TO_OMS_TNT
+queue.name.send.vendor=QR_MG02_ERP_VENDOR_TO_OMS_VENDOR
+###### MQ Service Configuration End   ######
+SAVE_URL=/log/interfaceLog/mq-xml
+
+#A9FTP-SIT
+#ip=10.145.200.20
+#port=21
+#userName=dbjb_tb
+#password=multi010tb
+
+#A9FTP-UAT
+ip=10.145.200.21
+port=21
+#userName=dbjb_account
+#password=multi010acc
+#txn_batch_path=/A9/srcdata/txn_batch/A3/batch_TXN_
+#txn_path=/A9/srcdata/txn/A3/TXN_
+#A9FTP-\u751F\u4EA7
+#ip=10.145.200.20
+#port=21
+userName=dbjb_tb
+password=multi010tb
+txn_batch_path=/A9/srcdata/txn_batch/T6/batch_TXN_
+txn_path=/A9/srcdata/txn/T6/TXN_

@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+[#include "../../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>发票信息</title>
+    [#include "../../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/wo/woInvoice/woInvoice.js"></script>
+  </head>
+  <!-- 本html无法参照数据字典的dataDictionary/list.html中id、name在一个html内都相同，因 数据字典没有供应商下拉框部分，
+	由于本html有了下拉框导致easyui.extend.js找不到相对应的id向后台传值，所以在本html中，将id、name设置区分开，例如venName、venName1、venName2等-->
+  <body>
+  	<div class="top_content">
+      <!-- 查询发票信息表单 -->
+      <div class="" title=""  style="border-bottom: 0; height: 95px;" data-options="collapsible:true" fit="true">
+        <form id="invoice_search_form">
+        <table>
+        	<tr>
+	        	<td  class="search_form_tdl"><label for="invoiceId">单据编号：</label></td>
+	            <td  class="search_form_tdr"><input name="invoiceId" id="invoiceId" type="text"/></td>
+	            <td  class="search_form_tdl"><label for="venName">供应商：</label></td>
+	            <td  class="search_form_tdr"><input name="venCode" id="venCode" type="text"/>
+	        	<!-- <td  class="search_form_tdr"><input name="venCode" id="venCode" type="hidden"/></td>
+	            <td  class="search_form_tdr"><input name="venName" id="venName" type="text"/></td> -->
+	            <td  class="search_form_tdr"><label for="status">状态：</label></td>
+	            <td class="search_form_tdr"><input name="status" class="easyui-combobox" id="status" type="text" editable="false"
+	              data-options="panelHeight:'auto',valueField:'status',textField:'statusDesc', 
+	              data:[{status:'',statusDesc:'--请选择--',selected:true},{status:1,statusDesc:'新建'},{status:2,statusDesc:'已提交'},
+	              {status:3,statusDesc:'作废'}]" />
+	            </td>
+        		<td class="search_form_tdr">
+	               <input type="checkbox" id="redFlag" name="redFlag" value="1"/>
+	               <span style="color:red;font-weight:bold">红字标识</span>
+	            </td>
+            	<td class="search_form_tdlf">&nbsp;</td>
+				<td colspan="7" class="search_form_tdr">
+					<input type="hidden" id="comment" name="comment" value=""/>
+	              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+	              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+	            </td>
+            </td>
+            </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+	<div id="invoice_grid" class="grid_content">
+      <!--发票信息列表GRID -->
+      <table id="invoiceView" fit="true">
+      </table>
+    </div>
+    
+    <!-- 添加发票录入模块 begin -->
+    <div id="invoice_add_dialog" class="easyui-dialog" style="width: 1100px; height: 1100px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">发票录入</div>
+      <form id="invoice_add_form" method="post" novalidate class="ftitle_form">
+        <div class="fitem fitem_odd">
+           <label for="invoiceId1">单据号：</label>
+           <input name="invoiceId1" id="invoiceId1" class="easyui-validatebox" required="true" style="width:182px" validType="paymentCodeCheck['invoiceId1']">
+           <label for="billingDate1">开票日期：</label>
+           <input name="billingDate1" required="true" id="billingDate1" class="easyui-datebox" style="width:182px"/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="venName1">供应商：</label>
+           <input id="venCode1" name="venCode1" required="true" class="easyui-validatebox" style="width:182px" validType="venNameChang['venCode1']"/>
+           <label for="price1">价税合计：</label>
+           <input name="price1" required="true" id="price1" class="easyui-validatebox" style="width:182px"  validType="sumAddOrUpdateCheck['price1','1']"/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="tax1">税额：</label>
+           <input name="tax1" id="tax1" readonly="readonly" style="width:182px"/>
+        	<label for="taxRate1">税率：</label>
+           	<input name="taxRate1" id="taxRate1" required="true" class="easyui-validatebox" style="width:182px" validType="sumAddOrUpdateCheck['taxRate1','1']"/>%
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="sum1">无税金额：</label>
+           <input name="sum1" id="sum1" readonly="readonly" style="width:182px"/>
+           <label for="ticketDate1">制单日期：</label>
+           <input name="ticketDate1" id="ticketDate1" class="easyui-datebox" required="true" style="width:182px">
+        </div>
+        <div class="fitem fitem_odd">
+        	<input type="checkbox" id="redFlag1" name="redFlag1" value="1" onclick="redFlagAddOrUpdateCheck('1')"/>
+        	<font style="color:red;font-weight:bold">红字发票标识</font>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="storageId1">入库单：</label>
+           <input name="storageId1" id="storageId1" type="hidden" style="width:182px"  readonly="readonly"/>
+           <input name="coCode1" id="coCode1" style="width:182px" readonly="readonly"/>
+           <input name="button" type="button" value="选择" id="button1"/>
+           	入库单总金额为：<input name="storageIdMoneyTotal1" id="storageIdMoneyTotal1" style="width:82px" readonly="readonly"/>
+        </div>
+        <div id="invoice_grid" class="grid_content">
+	      <!--发票信息列表GRID -->
+	      <table id="invoiceView" fit="true">
+	      </table>
+	    </div>
+	    
+      </form>
+    </div>
+    <!-- 添加发票录入模块 end -->
+    
+    <div id="data_detail_dialog" title="发票" class="easyui-dialog" 
+     	style="width: 400px; height: 200px; padding: 10px 20px" closed="true">
+     <!-- <div id="pomainRecordDetail_grid" class="grid_content">
+       系统参数列表GRID  -->
+      <table id="invoiceDetailView" fit="true">
+      </table>
+    </div>
+    
+    <!-- 修改发票模块 begin -->
+    <div id="invoice_edit_dialog" class="easyui-dialog" style="width: 1100px; height: 1100px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">发票信息</div>
+      <form id="invoice_edit_form" method="post" novalidate class="ftitle_form">
+        <div class="fitem fitem_odd">
+        	<input name="id" id="id" type="hidden" />
+           <label for="invoiceId2">单据号：</label>
+           <input name="invoiceId2" id="invoiceId2" class="easyui-validatebox" required="true" style="width:182px" validType="paymentCodeCheck['invoiceId2']">
+           <label for="billingDate2">开票日期：</label>
+           <input name="billingDate2" required="true" id="billingDate2" class="easyui-datebox" style="width:182px"/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="venCode2">供应商：</label>
+           <input id="venCode2" name="venCode2" required="true" class="easyui-validatebox" style="width:182px" validType="venNameChang['venCode2']"/>
+           <label for="price2">价税合计：</label>
+           <input name="price2" required="true" id="price2" class="easyui-validatebox" style="width:182px" validType="sumAddOrUpdateCheck['price2','2']"/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="tax2">税额：</label>
+           <input name="tax2" id="tax2" readonly="readonly" style="width:182px"/>
+        	<label for="taxRate2">税率：</label>
+           	<input name="taxRate2" id="taxRate2" required="true" class="easyui-validatebox" style="width:182px" validType="sumAddOrUpdateCheck['taxRate2','2']"/>%
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="sum2">无税金额：</label>
+           <input name="sum2" id="sum2" readonly="readonly" style="width:182px"/>
+          <label for="ticketDate2">制单日期：</label>
+           <input name="ticketDate2" id="ticketDate2"  required="true" class="easyui-datebox" style="width:182px">
+        </div>
+        <div class="fitem fitem_odd">
+        	<input type="checkbox" id="redFlag2" name="redFlag2" value="1" onclick="redFlagAddOrUpdateCheck('2')"/>
+	       	<span style="color:red;font-weight:bold">红字发票标识</span>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="storageId2">入库单：</label>
+           <input name="storageId2" id="storageId2" type="hidden" style="width:182px" readonly="readonly"/>
+           <input name="coCode2" id="coCode2" style="width:182px" readonly="readonly"/>
+           <input name="button" type="button" value="选择" id="button2"/>
+           	入库单总金额为：<input name="storageIdMoneyTotal2" id="storageIdMoneyTotal2"  style="width:82px" readonly="readonly"/>
+        </div>
+      </form>
+    </div>
+    <!-- 修改发票模块 end -->
+    
+    <!-- 发票详细信息 begin -->
+    <div id="invoice_detail_dialog" title="发票信息" class="easyui-dialog" 
+      style="width:800px; height: 360px; padding: 10px 20px" closed="true" buttons="#detail-dlg-buttons">
+      <div class="ftitle">发票信息</div>
+      <form id="invoice_detail_form" novalidate class="detail_form">
+      	<table style="width: 100%; border: none; border: 0;" cellpadding="0" cellspacing="0">
+			<tr class="detail_form_odd">
+				<td class="detail_form_tdl">单据号：</td>
+	            <td class="detail_form_tdr"><input name="invoiceId" id="invoiceId"  readonly="readonly"/></td>
+	            <td class="detail_form_tdl">开票日期：</td>
+	            <td class="detail_form_tdr"><input name="billingDate3" id="billingDate3"  readonly="readonly"/></td>
+			</tr>
+			<tr class="detail_form_odd">
+				<td class="detail_form_tdl">供应商：</td>
+	            <td class="detail_form_tdr"><input name="venName" id="venName" style="width:202px" readonly="readonly"/></td>
+	            <td class="detail_form_tdl">价税合计：</td>
+	            <td class="detail_form_tdr"><input name="price" id="price"  readonly="readonly"/></td>
+			</tr>
+			<tr class="detail_form_odd">
+				<td class="detail_form_tdl">税额：</td>
+	            <td class="detail_form_tdr"><input name="tax" id="tax"  readonly="readonly"/></td>
+	            <td class="detail_form_tdl">税率：</td>
+	            <td class="detail_form_tdr"><input name="taxRate" id="taxRate"  readonly="readonly"/></td>
+			</tr>
+			<tr class="detail_form_odd">
+				<td class="detail_form_tdl">无税金额：</td>
+	            <td class="detail_form_tdr"><input name="sum" id="sum"  readonly="readonly"/></td>
+				<td class="detail_form_tdl">制单日期：</td>
+	            <td class="detail_form_tdr"><input name="ticketDate3" id="ticketDate3"  readonly="readonly"/></td>
+	        </tr>
+	        <tr class="detail_form_odd">
+	        	<td class="detail_form_tdl"><input type="checkbox" id="redFlag" name="redFlag" disabled="disabled" readonly="readonly" value="1"/></td>
+	            <td class="detail_form_tdr"><span style="color:red;font-weight:bold" readonly="readonly">红字发票标识</span></td>
+		    </tr>
+			<tr class="detail_form_odd">
+				<td class="detail_form_tdl">入库单：</td>
+	            <td class="detail_form_tdr"><input name="coCode" id="coCode" readonly="readonly" style="width:182px"/></td>
+	            <td class="detail_form_tdl">入库单总金额为：</td>
+	            <td class="detail_form_tdr"><input name="storageIdMoneyTotal" id="storageIdMoneyTotal" readonly="readonly"/></td>
+			</tr>
+         </table>
+       </form>
+     </div>
+     <!-- 发票详细信息 end -->
+	
+  </body>
+</html>

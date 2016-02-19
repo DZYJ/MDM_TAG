@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+[#include "../../include/taglibs.html"/]
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>退款管理列表</title>
+    [#include "../../include/base_js_css.html"/]
+    <script type="text/javascript" src="${resource!}/js/sales/salesReturn.js?date="+new date()></script>
+  
+  </head>
+  <body>
+  	<div class="top_content">
+      <!-- 退款管理查询条件 -->
+      <div class="" title=""  style="border-bottom: 0; height: 80px;" data-options="collapsible:true" fit="true">
+        <form id="salesReturn_search_form">
+        <table>
+        	<tr>
+	        	<td  class="search_form_tdl"><label for="orderNum">退单订单号：</label></td>
+	            <td  class="search_form_tdr"><input name="orderNum" id="orderNum" type="text"/></td>
+	            <td  class="search_form_tdl"><label for="customerName">客户姓名：</label></td>
+	            <td  class="search_form_tdr"><input name="customerName" id="customerName" type="text"/></td>
+	            <td class="search_form_tdlf"><label for="orderDate">订单日期：</label></td>
+	            <td class="search_form_tdr">
+	            	<label for="insertDownDate"></label><input type="text" id="timeFrom" name="timeFrom" class="easyui-datebox">
+	               	<label for="insertUpDate">至</label><input type="text" id="timeTo" name="timeTo" class="easyui-datebox">
+	            </td>
+	        </tr>
+	        <tr>	           
+				<td colspan="3" class="searchw_form_tdr">
+	              	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="search_form_submit">查询</a>
+	              	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+	            </td>
+             </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+	 
+	<div id="salesReturn_grid" class="grid_content">
+      <!--退款管理字段待确认列表-->
+      <table id="salesReturnView" fit="true">
+      </table>
+    </div>
+    
+    <!-- 退款管理退款单录入 begin -->
+    <div id="salesReturn_add_dialog" class="easyui-dialog" style="width: 1100px; height: 1100px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">录入退款单</div>
+      <form id="salesReturn_add_form" method="post" novalidate class="ftitle_form">
+        <div class="fitem fitem_odd">
+           <input name="id1" id="id1" type="hidden" />
+           <label for="traceNum1">交易流水号：</label>
+           <input name="traceNum1" id="traceNum1" class="easyui-validatebox" required="true" style="width:182px" validType="maxLength['20']" >
+           <label for="ticketDate1">制单日期：</label>
+           <input type="text" id="ticketDate1" name="ticketDate1" class="easyui-datebox" data-options="editable:false" >
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="customerName1">客户姓名：</label>
+           <input id="customerName1" name="customerName1" required="true" class="easyui-validatebox" style="width:182px" readonly/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="clearingForm1">结算方式：</label>
+           <input id="clearingForm1" name="clearingForm1" required="true" class="easyui-validatebox" style="width:182px" data-options="editable:false" />
+           <label for="settlementSubject1">结算科目：</label>
+           <input name="settlementSubject1" id="settlementSubject1" class="easyui-validatebox" readonly style="width:182px"/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="customerBank1">客户银行：</label>
+           <input name="customerBank1" id="customerBank1"  style="width:182px" readonly/>
+           <label for="customerAccount1">客户账号：</label>
+           <input id="customerAccount1" name="customerAccount1" style="width:182px"  readonly/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="itemCode1">项目大类编码：</label>
+           <input name="itemCode1" id="itemCode1" editable="false" style="width:182px" value="00" />
+           <label for="refundAmount1">金额：</label>
+           <input name="refundAmount1" id="refundAmount1" required="true" class="easyui-validatebox" style="width:182px" readonly/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="remark1">摘要:</label>
+           <textarea style="width: 500px;" name="remark1" id="remark1" class="easyui-validatebox" validType="maxLength['50']"></textarea>
+        </div>
+      </form>
+    </div>
+    <!-- 退款管理退款单录入 end -->
+    
+    <!-- 退款管理退款单修改 begin -->
+    <div id="salesReturn_edit_dialog" class="easyui-dialog" style="width: 1100px; height: 1100px; padding: 10px 20px" closed="true" buttons="#dlg-buttons">
+      <div class="ftitle">入库单确认信息</div>
+      <form id="salesReturn_edit_form" method="post" novalidate class="ftitle_form">
+        <div class="fitem fitem_odd">
+           <input name="id2" id="id2" type="hidden" />
+           <label for="traceNum2">交易流水号：</label>
+           <input name="traceNum2" id="traceNum2" class="easyui-validatebox" required="true" style="width:182px" validType="maxLength['20']" >
+           <label for="ticketDate2">制单日期：</label>
+           <input type="text" id="ticketDate2" name="ticketDate2" class="easyui-datebox" data-options="editable:false" >
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="customerName2">客户姓名：</label>
+           <input id="customerName2" name="customerName2" required="true" class="easyui-validatebox" style="width:182px" readonly/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="clearingForm2">结算方式：</label>
+           <input id="clearingForm2" name="clearingForm2" required="true" class="easyui-validatebox" style="width:182px" data-options="editable:false" />
+           <label for="settlementSubject2">结算科目：</label>
+           <input name="settlementSubject2" id="settlementSubject2" readonly style="width:182px"/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="customerBank2">客户银行：</label>
+           <input name="customerBank2" id="customerBank2" style="width:182px"  readonly/>
+           <label for="customerAccount2">客户账号：</label>
+           <input id="customerAccount2" name="customerAccount2" style="width:182px" readonly/>
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="itemCode2">项目大类编码：</label>
+           <input name="itemCode2" id="itemCode2" editable="false" style="width:182px" value="00" />
+           <label for="refundAmount2">金额：</label>
+           <input name="refundAmount2" id="refundAmount2" required="true" class="easyui-validatebox" style="width:182px" readonly />
+        </div>
+        <div class="fitem fitem_odd">
+           <label for="remark2">摘要:</label>
+           <textarea style="width: 500px;" name="remark2" id="remark2" class="easyui-validatebox" validType="maxLength['50']"></textarea>
+        </div>
+      </form>
+    </div>
+    <!-- 退款管理退款单修改 end -->
+    
+    <!-- 查看明细 begin -->
+    <div id="data_detail_dialog" title="退款单明细" class="easyui-dialog" style="width: 400px; height: 200px; padding: 10px 20px" closed="true">
+      <!--系统参数列表GRID -->
+      <table id="salesReturnDetailView" fit="true">
+      </table>
+    </div>
+    <!-- 查看明细 end -->
+  </body>
+</html>

@@ -1,0 +1,535 @@
+$(function() {
+	//加载下拉框
+	comboboxVenName("");
+	/*初始化预付单grid高度*/
+	$("#prePayment_grid").height($(window).height()-120);
+	/*预付单GRID*/
+	$('#prePaymentView').myDatagrid({
+		"title": "预付单列表",
+		"url": "../woPrePayment/prePaymentLists.json",
+		"singleSelect": false, //多选
+		"method": "post", 
+		"columns" : [[
+		            {field : 'id', title : 'id', align : 'center', sortable : true,hidden:true},
+		  			{field : 'paymentCode', title : '单据编号', align : 'center', sortable : true},
+		  			{field : 'venName', title : '供应商', align : 'center', sortable : true}, 
+		  			{field : 'venCode', title : '供应商', align : 'center', sortable : true,hidden:true}, 
+		  			{field : 'clearingForm',title : '结算方式', align : 'center'}, 
+		  			{field : 'settlementSubject',title : '结算科目',align : 'center', sortable : true}, 
+		  			{field : 'vendorBank',title : '供应商银行',align : 'center'},
+		  			{field : 'vendorAccount',title : '供应商账户',align : 'center', sortable : true},
+		  			{field : 'itemCode',title : '项目大类编码',align : 'center', sortable : true},
+		  			{field : 'oppSubject',title : '对方科目',align : 'center', sortable : true},
+//		  			{field : 'oppItemCode',title : '对方项目编码',align : 'center', sortable : true},
+		  			{field : 'payType',title : '预付类型',align : 'center', sortable : true,formatter:function(value){
+		  				if(value=="1"){
+		  					value="采购";
+		  				}else if(value=="2"){
+		  					value="委外";
+		  				}
+		  				return value;
+		  			}},
+		  			{field : 'type',title : '款项类型',align : 'center', sortable : true,formatter:function(value){
+		  				if(value=="1"){
+		  					value="预付款";
+		  				}else if(value=="2"){
+		  					value="应付款";
+		  				}
+		  				return value;
+		  			}},
+		  			{field : 'sum',title : '金额',align : 'center', sortable : true},
+//		  			{field : 'comment',title : '入库单编号',align : 'center', sortable : true},
+		  			{field : 'status',title : '状态',align : 'center', sortable : true,formatter:function(value){
+		  				if(value=="1"){
+		  					value="新建";
+		  				}else if(value=="2"){
+		  					value="已提交";
+		  				}else if(value=="3"){
+		  					value="已审核";
+		  				}else if(value=="4"){
+		  					value="作废";
+		  				}
+		  				return value;
+		  			}},
+		  			{field : 'inputer',title : '录入人',align : 'center', sortable : true},
+		  			{field : 'createTd',title : '录入时间',align : 'center', sortable : true, formatter:function(value){
+		  				if(value=='' || value==null){
+		  					//提醒....
+		  				}else{
+		  					var inputDate = new Date(value);
+		  					return inputDate.getFullYear()+'-'+(inputDate.getMonth()+1)+'-'+inputDate.getDate()+' '+
+		  					inputDate.getHours()+':'+inputDate.getMinutes()+':'+inputDate.getSeconds();
+		  				}
+		  				return "录入时间有误";
+		  			}},
+		  			{field : 'digest',title : '摘要',align : 'center', sortable : true},
+		  			{field : 'prePaymentID', title : '预付单ID', align : 'center', sortable : true,hidden:true}, 
+		  			{field : 'invoiceID', title : '发票ID', align : 'center', sortable : true,hidden:true},
+		  			{field : 'ticketDate', title : '制单日期', align : 'center', sortable : true,hidden:true}, 
+		  			{field : 'redFlag', title : '红字标识', align : 'center', sortable : true,hidden:true}
+		]],
+		"toolbar": [{
+			id : 'bt_cataAdd',
+			text : '新建',
+			iconCls : 'icon-add',
+			handler : function() {
+				var dataForm  = $("#prePayment_add_form");//form
+				dataForm.form("reset"); // 清空表单
+				var dataDialog = $("#prePayment_add_dialog");
+				comboboxVenName('1');
+				
+				getDateFromSession();
+				var buttons = [];
+					/* 编辑或新增的时候的提交按钮 */
+					buttons.push({
+						"text" : "保存",
+						"iconCls" : "icon-ok",
+						"handler" : function() {
+							var bValidate = true;
+							bValidate = $(dataForm).form("validate");
+							$("#venCode1").val($("input[name='venCode1']").val());
+								 if (!!$("#redFlag1").attr("checked")) {  //未被选中
+									 $.messager.alert("操作失败", "勾选红字标示金额必须是负数");
+										return; 
+									}
+							if(bValidate){
+								// 异步提交
+								updateRecordAddStatus(dataForm,status,"0");
+							}
+						}
+					});
+				/* 取消按钮 */
+				buttons.push({
+					"text" : "取消",
+					"iconCls" : 'icon-cancel',
+					"handler" : function() {
+						dataDialog.dialog("close");
+					}
+				});
+				dataDialog.show().dialog({
+					"title" : "新建",
+					//"width": handler.dialog.width,
+					//"height": dh,
+					"closed" : false,
+					"modal" : true,
+					"buttons" : buttons
+				});
+				btnExt();
+			},
+			"permission": "mdm:prePayment:add" //新建
+		},
+		            {
+			id : 'bt_cataPass',
+			text : '提交',
+			iconCls : 'icon-remove',
+			handler : function() {
+				var $tb  = $("#prePaymentView");
+				var rows = $tb.datagrid("getSelections");
+				if(!rows || rows.length<=0){
+					$.messager.alert("提示", "请先选择所要提交的单据。");
+					return;
+				} 
+				if (rows.length > 1) {
+					multiRowMessge();
+				}
+				//已提交，不能再次提交
+				var status = rows[0].status;
+				if( status=='2' ){
+					$.messager.alert("提示", "&nbsp;&nbsp;已提交，不允许进行再次提交！");
+					return;
+				}
+				//自动生成凭证提示
+				$.messager.confirm("操作提示", "提交后将自动生成凭证，您确定要执行操作吗？", function (data) {
+		            if (data) {
+		            	updateRecordStatus(rows[0].id,status,"0");
+		            }
+		            else {
+		            }
+		        });
+			},
+			"permission": "mdm:prePayment:commit" //提交
+		},
+		{
+			id : 'bt_cataUpdate',
+			text : '修改',
+			iconCls : 'icon-edit',
+			handler : function() {
+				var selectRow = false;
+				var bMany = false;
+				if(!selectRow){
+					var dataGrid = $("#prePaymentView");
+					var selectRows = dataGrid.datagrid("getSelections");// var selectRow = $(oGrid).datagrid("getSelected");
+					if (!selectRows || selectRows.length <= 0) {
+						$.messager.alert("提示", "&nbsp;&nbsp;请选择一行数据！");
+						return;
+					}
+					selectRow = selectRows[0]; // 默认对选中的第一条数据进行操作
+					if (selectRows.length > 1) {
+						bMany = true; // 用户选中多条数据
+						var firstIndex = dataGrid.datagrid("getRowIndex", selectRow);
+						dataGrid.datagrid("unselectAll");
+						dataGrid.datagrid("selectRow", firstIndex);
+					}
+				}
+				var dataForm  = $("#prePayment_edit_form");//form
+				var formData  = selectRow;
+				formData.status2 = formData.status;
+				var _status = formData.status2;
+				if (_status == "2") {
+					$.messager.alert("警告", "已提交，不能修改");
+					return;
+				}else if(_status == "4"){
+					$.messager.alert("警告", "已作废，不能修改");
+					return;
+				}
+				var _redFlag = formData.redFlag;
+				if(_redFlag == "1"){
+					formData.redFlag2 = _redFlag;
+					$("#redFlag2").attr("checked",true);
+				}
+				formData.paymentCode2 = formData.paymentCode;
+				formData.venName2 = formData.venName;
+				$("#venName2").val(formData.venName2);
+				$("#venCode2").val(formData.venCode);
+				formData.clearingForm2 = formData.clearingForm;
+				$("#clearingForm2").val(formData.clearingForm2);
+				formData.settlementSubject2 = formData.settlementSubject;
+				formData.vendorBank2 = formData.vendorBank;
+				formData.vendorAccount2 = formData.vendorAccount;
+				formData.itemCode2 = formData.itemCode;
+				formData.oppSubject2 = formData.oppSubject;
+				formData.oppItemCode2 = formData.oppItemCode;
+				formData.payType2 = formData.payType;
+				formData.type2 = formData.type;
+				formData.sum2 = formData.sum;
+				formData.inputer2 = formData.inputer;
+				formData.createTd2 = formData.createTd;
+				formData.digest2 = formData.digest;
+				formData.prePaymentID2 = formData.prePaymentID;
+				formData.invoiceID2 = formData.invoiceID;
+				var inputDate = new Date(formData.ticketDate);
+				inputDate = inputDate.getFullYear()+'-'+(inputDate.getMonth()+1)+'-'+inputDate.getDate()+' '+
+				inputDate.getHours()+':'+inputDate.getMinutes()+':'+inputDate.getSeconds();
+				formData.ticketDate2 = inputDate;
+				if (formData) {
+					dataForm.form("load", formData); // 修改或查询，绑定数据到编辑表单
+				}
+				var dataDialog = $("#prePayment_edit_dialog");
+				comboboxVenNameUpdate('2');
+				var buttons = [];
+				buttons.push({
+					"text" : "保存",
+					"iconCls" : "icon-ok",
+					"handler" : function() {
+						var bValidate = true;
+						bValidate = $(dataForm).form("validate");
+						if($("#redFlag2").attr("checked") == "checked"){
+							if(sum2 >= 0){
+								$.messager.alert("提示", "红字预付款金额必须为负数！");
+								return;
+							}
+						}else{
+							if(sum2 < 0){
+								$.messager.alert("提示", "蓝字付款结算金额不能小于零！");
+								return;
+							}
+						}
+						if(bValidate){
+							// 异步提交
+							updateRecordUpdateStatus(dataForm,status,"0");
+						}
+					}
+				});
+				/* 取消按钮 */
+				buttons.push({
+					"text" : "取消",
+					"iconCls" : 'icon-cancel',
+					"handler" : function() {
+						dataDialog.dialog("close");
+					}
+				});
+				dataDialog.show().dialog({
+					"title" : "修改",
+					"closed" : false,
+					"modal" : true,
+					"buttons" : buttons
+				});
+				btnExt();
+				/* 当用户选中多条数据时，提示用户将默认对其选择的第一条数据进行操作 */
+				if (bMany) {
+					multiRowMessge();
+				}
+			},
+			"permission": "mdm:prePayment:edit" //修改
+		},
+		{
+			id : 'bt_cataPass',
+			text : '查看',
+			iconCls : 'icon-search',
+			handler : function() {
+				var $tb  = $("#prePaymentView");
+				var rows = $tb.datagrid("getSelections");
+				if(!rows || rows.length<=0){
+					$.messager.alert("提示", "请先选择所要查看的单据。");
+					return;
+				} 
+				var row = rows[0];
+				var _ticketDate = row.ticketDate;
+				_ticketDate = new Date(_ticketDate);
+				_ticketDate = _ticketDate.getFullYear()+'-'+(_ticketDate.getMonth()+1)+'-'+_ticketDate.getDate();
+				row.ticketDate3 = _ticketDate;
+				if (rows.length > 1) {
+					//bMany = true; // 用户选中多条数据
+					var firstIndex = $tb.datagrid("getRowIndex", row);
+					$tb.datagrid("unselectAll");
+					$tb.datagrid("selectRow", firstIndex);
+				}
+				var dataForm = $("#prePayment_detail_form");
+				dataForm.form("reset"); // 清空表单
+				if (row) {
+					2239852586  
+					dataForm.form("load", row); // 修改或查询，绑定数据到编辑表单
+				}
+				var dataDialog = $("#prePayment_detail_dialog");
+				dataDialog.show().dialog({
+					"title" : "详细信息",
+					"closed" : false,
+					"width": 900,    
+				    "height": 380, 
+					"modal" : true,
+					"buttons" : [{
+						"text" : "关闭",
+						"iconCls" : 'icon-cancel',
+						"handler" : function() {
+							//$('#pomainRecordDetailView').datagrid('loadData',{total:0,rows:[]}); 
+							dataDialog.dialog("close");
+						}
+					}]
+				});
+				if (rows.length > 1) {
+					multiRowMessge();
+				}
+				btnExt();
+			},
+			"permission": "mdm:prePayment:detail" //查看权限
+		}
+		],
+		"model": "prePayment" //当不指定form、dialog的ID，插件会根据该属性来自动匹配页面元素，如修改预付单窗口，将自动匹配ID：dataDictionary_edit_dialog
+		//"dblClickHandler": "detailHandler", //双击行时进行的操作(当定义了onDblClickRow时，此参数将失效)
+		/*增删改查配置*/
+	});
+	$(".datebox :text").attr("readonly","readonly");
+	/*查询grid*/
+	$("#search_form_submit").on("click", function(){
+		$('#prePaymentView').datagrid("load", $("#prePayment_search_form").form("formToJson"));
+	});
+	$("#search_form_reset").on("click", function(){
+		$("#prePayment_search_form").form("reset");
+	});
+});
+function comboboxVenName(index){
+	$("#venCode1"+index).combobox({ 
+		url:"../woPrePayment/prePaymentVenNameList.json?index="+index,
+		valueField:'venCode'+index,
+		textField:'venName'+index,
+		method:'post',
+	});
+	$("#clearingForm1").combobox({ 
+		url:"../woPrePayment/querySettles.json",
+		valueField:'cCode',
+		textField:'cSSName',
+		method:'post',
+		onSelect:function(param){
+			$("input[name='clearingForm1']").val(param.cSSName);
+			$("#clearingForm1").val(param.cCode);
+			$("#settlementSubject1").val(param.cCode);
+		},
+		onUnselect:function(param){
+			$("#clearingForm1").val("");
+		}
+	});
+}
+//加载下拉框
+function comboboxVenNameUpdate(index){
+	$("#venCode2"+index).combobox({ 
+		url:"../woPrePayment/prePaymentVenNameList.json?index="+index,
+		valueField:'venCode'+index,
+		textField:'venName'+index,
+		method:'post',
+	});
+	$("#clearingForm2").combobox({ 
+		url:"../woPrePayment/querySettles.json",
+		valueField:'cCode',
+		textField:'cSSName',
+		method:'post',
+		onSelect:function(param){
+			$("#clearingForm2").val(param.cSSName);
+			$("#settlementSubject2").val(param.cCode);
+		},
+		onUnselect:function(param){
+			$("#clearingForm2").val("");
+		}
+	});
+}
+/*查询grid*/
+$("#search_form_submit").on("click", function(){
+	$('#prePaymentView').datagrid("load", $("#prePayment_search_form").form("formToJson"));
+});
+$("#search_form_reset").on("click", function(){
+	$("#prePayment_search_form").form("reset");
+});
+
+$("#redFlag").on("click",function(){
+	var str = $("#redFlag").checked;
+	if(str!=null&&str!="")
+	{
+		if(str){
+			$("#sum").attr("validType","hedgeCurrency");
+		}else{
+			$("#sum").attr("validType","currency");
+		}
+	}
+});
+//红字标示
+function checkRedFlag(obj){
+	var str = obj.checked;
+	if(str!=null&&str!="")
+	{
+		if(str){
+			$("#sum1").attr("validType","hedgeCurrency");
+		}
+	}
+}
+/**
+ * 提交
+ */
+function updateRecordStatus(id,status,role){
+	$.ajax({
+		url: "../woPrePayment/commitByIds.json",
+		data: {"id":id,"status":status,"role":role},
+		dataType: "json",
+		type: "post",
+		cache: false,
+		error:function(data){
+		},
+		success: function(result){
+			 // 返回需要修改的数据信息
+			if(result && (result.state == true || result.state == "true")){
+				$.messager.show({
+					"title" : "操作成功",
+					"msg" : result.msg
+				});
+				$('#prePaymentView').datagrid("load", $("#prePayment_search_form").form("formToJson"));// 重绘表格
+				
+			} else {
+				$.messager.alert("操作失败", result.msg);
+			}
+		}
+	});
+}
+/**
+ * 新建
+ */
+function updateRecordAddStatus(dataForm,status,role){
+	$.ajax({
+		url: "../woPrePayment/createPrePayment.do",
+		data: dataForm.form("formToJson"),
+		dataType: "json",
+		type: "post",
+		cache: false,
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			$.messager.alert("提示", XMLHttpRequest + textStatus+ errorThrown);
+		},
+		success: function(result){
+			// 返回需要修改的数据信息
+			if(result && (result.state == true || result.state == "true")){
+				$.messager.show({
+					"title" : "操作成功",
+					"msg" : result.msg
+				});
+				$("#prePayment_add_dialog").dialog("close"); // 关闭DIALOG
+				$("#prePayment_add_form").form("clear"); // 清空表单
+				$('#prePaymentView').datagrid("load", $("#prePayment_search_form").form("formToJson"));// 重绘表格
+			} else {
+				$.messager.alert("操作失败", result.msg);
+			}
+		}
+	});
+}
+/**
+ * 修改
+ */
+function updateRecordUpdateStatus(dataForm,status,role){
+	$.ajax({
+		url: "../woPrePayment/updatePrePayment.do",
+		data: dataForm.form("formToJson"),
+		dataType: "json",
+		type: "post",
+		cache: false,
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			$.messager.alert("提示", XMLHttpRequest + textStatus+ errorThrown);
+		},
+		success: function(result){
+			// 返回需要修改的数据信息
+			if(result && (result.state == true || result.state == "true")){
+				$.messager.show({
+					"title" : "操作成功",
+					"msg" : result.msg
+				});
+				$("#prePayment_edit_dialog").dialog("close"); // 关闭DIALOG
+				$("#prePayment_edit_form").form("clear"); // 清空表单
+				$('#prePaymentView').datagrid("load", $("#prePayment_search_form").form("formToJson"));// 重绘表格
+			} else {
+				$.messager.alert("操作失败", result.msg);
+			}
+			
+		}
+	});
+	
+}
+//制单日期
+function getDateFromSession(){
+	$.ajax({  
+		   type: "POST",  
+		   url : "../woPrePayment/getDateFromSession.json",  
+		   dataType:"json",  
+		   success: function(data){
+			   $("#ticketDate1").datebox("setValue", data.ticketDate);
+		   }  
+		 });
+}
+//校验方法
+$.extend($.fn.validatebox.defaults.rules,{ 
+	 venNameChang:{ 
+		   validator:function(value,param){
+		    	var _param = param[0];
+		    	var cVenName=$("input[name='"+_param+"']").val();
+
+		    	if(cVenName!=null){
+		    		return true;
+		    	}
+		    }, 
+	    message:'选择的供应商有误！' 
+   },
+    //金额校验
+   sumCheck:{ 
+	   validator:function(value){  
+	    	var cc = /^(\-|\+)?\d+(.[0-9]{1,4})?$/;
+	//	    	 var reg = /^-[0-9]+([\.]{0,1}[0-9]{1,3})$/;
+	    	if(cc.test(value)){
+	    		return true; 
+	    	}
+	   }, 
+	   message:'输入金额的位数或格式有误！' 
+   },
+   //单据编号校验
+   paymentCodeCheck:{ 
+	   validator:function(value){  
+			var reg = /^[A-Za-z0-9]+$/;
+			if(reg.test(value)&&value.length<20){
+				return true;
+			}
+	   },
+	   message:'单据编号的格式或长度错误' 
+   } 
+ }); 
